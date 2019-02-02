@@ -1101,7 +1101,13 @@ ul.bx-soa-pp-list li {
         }*/
 }
 
-@media only screen and (-webkit-min-device-pixel-ratio: 2),@media only screen and (min--moz-device-pixel-ratio: 2),@media only screen and (-moz-min-device-pixel-ratio: 2),@media only screen and (-o-min-device-pixel-ratio: 2/1),@media only screen and (min-device-pixel-ratio: 2),@media only screen and (min-resolution: 192dpi),@media only screen and (min-resolution: 2dppx){
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (min--moz-device-pixel-ratio: 2),
+only screen and (-moz-min-device-pixel-ratio: 2),
+only screen and (-o-min-device-pixel-ratio: 2/1),
+only screen and (min-device-pixel-ratio: 2),
+only screen and (min-resolution: 192dpi),
+only screen and (min-resolution: 2dppx){
     .bx-soa-location-input-container {
         border-width: .5px;
     }
@@ -1537,7 +1543,9 @@ label[data-bx-user-consent] input{
 
 
 /*****************ADD***********************/
-textarea{min-height: 100px;}
+textarea{min-height: 35px; max-height: 35px;}
 .bx-soa-pp-company-subTitle{display: none;}
 .bx-soa-pp-list{}
+
+
 
