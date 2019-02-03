@@ -47,8 +47,8 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
     <header class="bx-header">
         <div class="row bx-header-TopRow">
             <div class="container bx-header-1st-row">
-                <div data-test="001" class="col-lg-8 col-md-8 hidden-sm hidden-xs">
-                    <?/* $APPLICATION->IncludeComponent(
+                <div class="col-lg-8 col-md-8 hidden-sm hidden-xs">
+                    <? $APPLICATION->IncludeComponent(
                         "bitrix:menu",
                         "horizontal_multilevel_top_menu",
                         array(
@@ -67,7 +67,7 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
                             "COMPONENT_TEMPLATE" => "horizontal_multilevel_top_menu"
                         ),
                         false
-                    ); */?>
+                    ); ?>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="bx-inc-orginfo">
@@ -168,7 +168,7 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
                 </div>
             </div>
             <div class="row bx-header-BottomRow">
-                <div data-test="002" class="col-md-3 hidden-xs">
+                <div class="col-md-3 hidden-xs">
                     <? $APPLICATION->IncludeComponent(
                         "bitrix:menu",
                         "gopro",
@@ -188,8 +188,32 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
                         ),
                         false
                     ); ?>
+
+                    <!-- MOBILE -->
+                    <div style="display:none;">
+                        <? $APPLICATION->IncludeComponent(
+                            "bitrix:menu",
+                            "arhi_catalog_horizontal",
+                            array(
+                                "ROOT_MENU_TYPE" => "left",
+                                "MENU_CACHE_TYPE" => "N",
+                                "MENU_CACHE_TIME" => "3600",
+                                "MENU_CACHE_USE_GROUPS" => "Y",
+                                "MENU_THEME" => "site",
+                                "MENU_CACHE_GET_VARS" => array(),
+                                "MAX_LEVEL" => "3",
+                                "CHILD_MENU_TYPE" => "left",
+                                "USE_EXT" => "Y",
+                                "DELAY" => "N",
+                                "COMPONENT_TEMPLATE" => "gopro",
+                                "ALLOW_MULTI_SELECT" => "N",
+                            ),
+                            false
+                        ); ?>
+                    </div>
                 </div>
-                <div data-test="003" class="col-md-9 hidden-xs">
+
+                <div class="col-md-9 hidden-xs">
                     <? $APPLICATION->IncludeComponent(
                         "bitrix:menu",
                         "arhi_catalog_horizontal",
