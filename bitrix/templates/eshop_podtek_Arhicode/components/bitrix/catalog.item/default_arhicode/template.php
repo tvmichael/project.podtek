@@ -294,3 +294,4 @@ if (isset($arResult['ITEM']))
 	<?
 	unset($item, $actualItem, $minOffer, $itemIds, $jsParams);
 }
+?>

@@ -204,10 +204,9 @@ if ($isFilter || $isSidebar): ?>
 			?>
 		</div>
 		<div class="col-xs-12">
-			<?
-			$APPLICATION->IncludeComponent(
+			<?$APPLICATION->IncludeComponent(
 				"bitrix:catalog.section.list",
-				"",
+				"default_list",
 				array(
 					"IBLOCK_TYPE" => $arParams["IBLOCK_TYPE"],
 					"IBLOCK_ID" => $arParams["IBLOCK_ID"],
@@ -226,8 +225,9 @@ if ($isFilter || $isSidebar): ?>
 				),
 				$component,
 				array("HIDE_ICONS" => "Y")
-			);
+			);?>
 
+            <?
 			if ($arParams["USE_COMPARE"]=="Y")
 			{
 				$APPLICATION->IncludeComponent(
@@ -249,10 +249,10 @@ if ($isFilter || $isSidebar): ?>
 				);
 			}
 
-/*---------------------------------------------*/
-//if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_FIELD"]); echo '</pre>';}
-//if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_ORDER"]); echo '</pre>';}
-$arSortFields = array(
+            /*---------------------------------------------*/
+            //if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_FIELD"]); echo '</pre>';}
+            //if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_ORDER"]); echo '</pre>';}
+            $arSortFields = array(
 						//"SHOWS" => array(
 						//"ORDER"=> "DESC",
 						//"CODE" => "SHOWS",
@@ -360,13 +360,11 @@ $arSortFields = array(
 				</div>
 			<?endif;?>
 		</div>
-<?
-//if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_FIELD"]); echo '</pre>';}
-//if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_ORDER"]); echo '</pre>';}
-/*---------------------------------------------*/
 
-
-			$intSectionID = $APPLICATION->IncludeComponent(
+            <?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_FIELD"]); echo '</pre>';}
+            //if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_ORDER"]); echo '</pre>';}
+            /*---------------------------------------------*/?>
+        <?$intSectionID = $APPLICATION->IncludeComponent(
 				"bitrix:catalog.section",
 				"",
 				array(

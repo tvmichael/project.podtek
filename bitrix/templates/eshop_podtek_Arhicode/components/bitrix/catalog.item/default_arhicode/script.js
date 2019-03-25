@@ -663,6 +663,25 @@
 					BX.addCustomEvent('onCatalogDeleteCompare', BX.proxy(this.checkDeletedCompare, this));
 				}
 			}
+
+			/*
+            var obSelect = BX.findChild(this.obProduct, {
+                    "tag" : "A",
+                    "attribute" : {'data-click':'off'}
+                },
+                true, true
+            );
+			if (Array.isArray(obSelect))
+				for (var i=0; i<obSelect.length; i++){
+                    console.log(obSelect[i]);
+                    obSelect[i].onclick = function() {return true;};
+				}
+            console.log(obSelect);
+
+
+            console.log('JCCatalogItem');
+			//console.log(this);
+			*/
 		},
 
 		setAnalyticsDataLayer: function(action)

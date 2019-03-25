@@ -24,7 +24,7 @@ use \Bitrix\Main\Localization\Loc;
 
 <div class="product-item">
 	<a class="product-item-image-wrapper" href="<?=$item['DETAIL_PAGE_URL']?>" title="<?=$imgTitle?>"
-		data-entity="image-wrapper">
+		data-entity="image-wrapper" onclick="return true;" data-click="off">
 		<span class="product-item-image-slider-slide-container slide" id="<?=$itemIds['PICT_SLIDER']?>"
 			<?=($showSlider ? '' : 'style="display: none;"')?>
 			data-slider-interval="<?=$arParams['SLIDER_INTERVAL']?>" data-slider-wrap="true">
@@ -113,7 +113,7 @@ use \Bitrix\Main\Localization\Loc;
 		?>
 	</a>
 	<div class="product-item-title">
-		<a href="<?=$item['DETAIL_PAGE_URL']?>" title="<?=$productTitle?>"><?=$productTitle?></a>
+		<a href="<?=$item['DETAIL_PAGE_URL']?>" title="<?=$productTitle?>" onclick="return true;" data-click="off"><?=$productTitle?></a>
 	</div>
 	<?
 	if (!empty($arParams['PRODUCT_BLOCKS_ORDER']))
