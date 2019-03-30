@@ -1,39 +1,12 @@
 <?
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 CJSCore::Init(array("jquery"));
-$APPLICATION->AddHeadScript('/equipment_selection/script.js');
+$APPLICATION->SetAdditionalCss($APPLICATION->GetCurPage()."style.css");
+$APPLICATION->AddHeadScript($APPLICATION->GetCurPage().'script.js');
 $APPLICATION->SetTitle("Подбор оборудования");
 ?>
-<style>
-    .panel.panel-default .panel-heading{
-        position: relative;
-    }
-    .panel .ac-panel-default{
-        display: none;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: 20px;
-        font-size: 18px;
-    }
-    .panel .ac-panel-default > div{
-        display: inline-block;
-        font-weight: 700;
-    }
-    .panel .ac-panel-default > span{
-        position: relative;
-        top: -5px;
-        font-size: 14px;
-    }
-    .ac-table-poll{
-        width: 100%;
-        line-height: 2;
-    }
-    .ac-table-poll td[colspan]{
-        font-weight: bold;
-    }
-</style>
 <br>
+<script>var acUrlAjax = '<?=$APPLICATION->GetCurPage().'volume_ajax.php';?>';</script>
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4>Подбор оборудования для басейна</h4>
@@ -75,8 +48,8 @@ $APPLICATION->SetTitle("Подбор оборудования");
     </div>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-body" id="select-result"></div>
+<div class="row">
+    <div class="col-xs-12" id="select-result"></div>
 </div>
 
 <?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>

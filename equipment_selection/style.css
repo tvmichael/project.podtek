@@ -1,0 +1,111 @@
+.panel.panel-default .panel-heading{
+    position: relative;
+}
+.panel .ac-panel-default{
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 20px;
+    font-size: 18px;
+}
+.panel .ac-panel-default > div{
+    display: inline-block;
+    font-weight: 700;
+}
+.panel .ac-panel-default > span{
+    position: relative;
+    top: -5px;
+    font-size: 14px;
+}
+.ac-table-poll{
+    width: 100%;
+    line-height: 2;
+}
+.ac-table-poll td[colspan]{
+    font-weight: bold;
+}
+
+/* PRODUCT */
+.product-item-container{
+    position: relative;
+    padding: 10px 15px;
+}
+.product-item-container:hover{
+    box-shadow: 0px 0px 4px 1px rgba(0, 0, 0, 0.3);
+}
+.product-item-container .product-item-image{
+    position: relative;
+    display: block;
+    margin-bottom: 15px;
+    padding-top: 116%;
+    width: 100%;
+    transition: all 300ms ease;
+}
+.product-item-container .product-item-image span{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: opacity 300ms linear;
+}
+.product-item-container .product-item-image div{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-block;
+    clear: both;
+    background: #f42c2c;
+    color: #fff;
+    vertical-align: middle;
+    text-align: center;
+    transition: all 250ms ease;
+    font-size: 16px;
+    padding: 12px 0px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-weight: bold;
+}
+.product-item-container .product-item-title{
+    height: 80px;
+    overflow: hidden;
+}
+.product-item-container .product-item-price{
+    text-align: center;
+    height: 45px;
+    white-space: nowrap;
+    font-size: 14px;
+}
+.product-item-container .product-item-price .base-price{
+    color: #1485ce;
+}
+.product-item-container .product-item-price .new-price{
+    color: red;
+}
+.product-item-container .product-item-price .old-price{
+    color: grey;
+    text-decoration: line-through;
+}
+
+.product-item-container .product-item-button{
+    text-align: center;
+    padding: 5px 0px;
+}
+.product-item-container .product-item-button button{
+    background-color: #1485ce;
+    border-color: #1485ce;
+    color: #FFF;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}

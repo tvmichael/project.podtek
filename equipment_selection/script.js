@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     function acVolumePoll(){
         var length = parseFloat($("#select-length").val()),
             width = parseFloat($("#select-width").val()),
@@ -37,10 +36,20 @@ $(document).ready(function () {
         acVolumePoll();
     });
 
+    $('#select-result').on('click', 'button[data-id]', function () {
+        var id = $(this).attr('data-id');
+        if(id && acUrlAjax)
+            $.post( acUrlAjax, {productId:id, action:"Add2Basket"})
+                .done(function( data ) {
+                    var data = JSON.parse(data);
+                    if(parseInt(data.result) > 0) BX.onCustomEvent('OnBasketChange');
+                });
+    });
+
     $("#select-equipment .btn").click(function () {
         var volume = acVolumePoll();
-        if(volume)
-            $.post( "/test/p/volume_ajax.php", { volume: volume, action: "equipment" })
+        if(volume && acUrlAjax)
+            $.post( acUrlAjax, {volume:volume, action:"equipment"})
                 .done(function( data ) { $('#select-result').html(data);});
     });
 });
