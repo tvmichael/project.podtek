@@ -35,11 +35,17 @@ $APPLICATION->SetTitle("Подбор оборудования");
                     <input class="form-control" type="text" maxlength="20" id="select-depth" placeholder="0" value="">
                 </div>
             </div>
-
-            <div class="col-sm-6">
-                <small>Введите длинну, ширину и глубину басейна в метрах</small> <br />
+            <div class="col-sm-12">
+                <small>Введите длинну, ширину и глубину басейна в метрах или объем бассейна</small> <br />
             </div>
-            <div class="col-sm-6">
+			<div class="col-sm-4">
+                <div class="form-group">
+                    <label class="form-group" for="select-volume">Объем бассейна:</label>
+                    <input class="form-control" type="text" maxlength="20"  id="select-volume" placeholder="0" value="">
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <br>
                 <div class="text-right">
                     <button class="btn sv-view-n" type="button"> Подобрать оборудование </button>
                 </div>

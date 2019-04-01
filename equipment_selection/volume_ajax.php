@@ -45,14 +45,6 @@ if($valueAction=='equipment')
                                             $acText = true;
                                             $background_image = CFile::GetPath($ar_res["DETAIL_PICTURE"]);
                                             if(!$background_image) $background_image = CFile::GetPath($ar_res["PREVIEW_PICTURE"]);
-                                            //echo '<pre>';
-                                            //echo $background_image;
-                                            //print_r($ar_res);
-                                            //echo CurrencyFormat($arPrice['RESULT_PRICE']['BASE_PRICE'], $arPrice['PRICE']['CURRENCY']);
-                                            //echo '<br/>';
-                                            //echo CurrencyFormatNumber($arPrice['RESULT_PRICE']['BASE_PRICE'], $arPrice['PRICE']['CURRENCY']);
-                                            //print_r($arPrice);
-                                            //echo '</pre>';
                                         }
                                         ?>
                                         <a class="product-item-wrapper" href="<?=$ar_res['DETAIL_PAGE_URL'];?>">

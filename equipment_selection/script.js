@@ -3,10 +3,18 @@ $(document).ready(function () {
         var length = parseFloat($("#select-length").val()),
             width = parseFloat($("#select-width").val()),
             depth = parseFloat($("#select-depth").val()),
-            volume;
+            volume = parseFloat($("#select-volume").val()),
+            volumeMultiple;
 
         if(length && width && depth){
-            volume = (length * width * depth).toFixed(2);
+            volumeMultiple = (length * width * depth).toFixed(2);
+            $('.ac-panel-default').show();
+            $('.ac-volume-poll-number').html(volumeMultiple);
+            $('#select-volume').val(volumeMultiple);
+            return volumeMultiple;
+        }
+        else if (volume){
+            volume = volume.toFixed(2);
             $('.ac-panel-default').show();
             $('.ac-volume-poll-number').html(volume);
             return volume;
@@ -16,7 +24,6 @@ $(document).ready(function () {
             return false;
         }
     }
-
     $("#select-length").focusout(function () {
         var $t = $(this);
         if (parseFloat($t.val())) $t.css('border-color','#CCD5DB');
@@ -35,6 +42,7 @@ $(document).ready(function () {
         else $t.css('border-color','red');
         acVolumePoll();
     });
+    $("#select-volume").focusout(function(){acVolumePoll();});
 
     $('#select-result').on('click', 'button[data-id]', function () {
         var id = $(this).attr('data-id');
