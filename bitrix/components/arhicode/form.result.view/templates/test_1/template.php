@@ -327,6 +327,7 @@ $arHeatingColNum[] = 1; $arMyNameHeatingItem[] = 'отсутствует'; $arMy
 $GLOBALS['APPLICATION']->RestartBuffer();
 ob_end_clean();
 require_once $_SERVER['DOCUMENT_ROOT']."/tcpdf/tcpdf.php";
+
 $html_text = <<<EOD
 <table border="0" cellpadding="1" cellspacing="1" style="width: 75%; margin: 15px;">
     <tr>
@@ -354,7 +355,9 @@ $html_text = <<<EOD
         <td></td>
     </tr>
 </table>
+EOD;
 
+$html_text .= <<<EOD
 <table border="0" cellpadding="2" cellspacing="1" style="margin: 15px; width: 100%">
     <tr>
         <td width="5%"><b>№</b></td>
@@ -510,6 +513,7 @@ $html_text = <<<EOD
     </tr>
 </table>
 EOD;
+
 $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 $pdf->setPrintHeader(false); 
 $pdf->setPrintFooter(false);
