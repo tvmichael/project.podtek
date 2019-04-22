@@ -124,7 +124,7 @@ else
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
 							<div><h6 class="bx-title" style = "float: right;"><?=$item['DISPLAY_PROPERTIES']['KIND_OF_ACTIVITY']['VALUE']?></h6></div>
-							<div class="col-xs-12 " style = "height: 75px;">
+							<div class="col-xs-12" style = "height: 75px;">
 								<div class="product-item-detail-slider-images-container" data-entity="images-container">
 								<?
 								if (!empty($morePhoto))
@@ -132,9 +132,14 @@ else
 									foreach ($morePhoto as $key => $photo)
 									{
 										?>
-										<div class="product-item-detail-slider-image active" data-entity="image" data-id="<?=$photo['ID']?>">
+										<!--div class="product-item-detail-slider-image <?=($key==0?'active':'');?>" data-entity="image" data-id="<?=$photo['ID']?>">
 											<img src="<?=$photo['SRC']?>" alt="<?=$alt?>" title="<?=$title?>"<?=($key == 0 ? ' itemprop="image"' : '')?>>
-										</div>
+										</div-->
+                                        <div class="col-sm-12">
+                                            <div class="bx-photo-slider">
+                                                <img src="<?=$photo['SRC']?>" alt="<?=$alt?>" title="<?=$title?>"<?=($key == 0 ? ' itemprop="image"' : '');?>>
+                                            </div>
+                                        </div>
 										<?
 									}
 								}
