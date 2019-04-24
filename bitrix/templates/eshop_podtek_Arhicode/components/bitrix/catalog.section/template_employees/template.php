@@ -680,7 +680,9 @@ if ($arParams['HIDE_SECTION_DESCRIPTION'] !== 'Y')
 									?>
 									<div class="col-xs-12 product-item-line-card">
 										<?
-										$APPLICATION->IncludeComponent(
+                                        //if($USER->IsAdmin()) {echo '<pre>'; print_r($item['PROPERTIES']['PHOTO']); echo '</pre>';}
+                                        ?>
+										<?$APPLICATION->IncludeComponent(
 											'bitrix:catalog.item',
 											'default_arhicode_employees',
 											array(

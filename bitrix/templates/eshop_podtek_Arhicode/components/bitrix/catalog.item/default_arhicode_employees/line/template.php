@@ -44,8 +44,8 @@ else
 		</div>
 	</div-->
 	<div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
-		<a class="product-item-image-wrapper" href="<?=$item['DETAIL_PAGE_URL']?>" title="<?=$imgTitle?>"
-			data-entity="image-wrapper">
+        <a class="product-item-image-wrapper" href="<?=$item['DETAIL_PAGE_URL']?>" title="<?=$imgTitle?>"
+           data-entity="image-wrapper">
 			<!--span class="product-item-image-slider-slide-container slide" id="<?=$itemIds['PICT_SLIDER']?>"
 				<!--?=($showSlider ? '' : 'style="display: none;"')?>
 				data-slider-interval="<!--?=$arParams['SLIDER_INTERVAL']?>" data-slider-wrap="true">
@@ -76,8 +76,6 @@ else
 				</span>
 				<!-?
 			}
-
-			
 			?-->
 			<!--div class="product-item-image-slider-control-container" id="<!--?=$itemIds['PICT_SLIDER']?>_indicator"
 				<!--?=($showSlider ? '' : 'style="display: none;"')?>>
@@ -123,42 +121,79 @@ else
 							<h6 class="bx-title"><?=$item['DISPLAY_PROPERTIES']['PHONE']['VALUE']?></h6>
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-							<div><h6 class="bx-title" style = "float: right;"><?=$item['DISPLAY_PROPERTIES']['KIND_OF_ACTIVITY']['VALUE']?></h6></div>
-							<div class="col-xs-12" style = "height: 75px;">
-								<div class="product-item-detail-slider-images-container" data-entity="images-container">
-								<?
-								if (!empty($morePhoto))
-								{
-									foreach ($morePhoto as $key => $photo)
-									{
-										?>
-										<!--div class="product-item-detail-slider-image <?=($key==0?'active':'');?>" data-entity="image" data-id="<?=$photo['ID']?>">
-											<img src="<?=$photo['SRC']?>" alt="<?=$alt?>" title="<?=$title?>"<?=($key == 0 ? ' itemprop="image"' : '')?>>
-										</div-->
-                                        <div class="col-sm-12">
-                                            <div class="bx-photo-slider">
-                                                <img src="<?=$photo['SRC']?>" alt="<?=$alt?>" title="<?=$title?>"<?=($key == 0 ? ' itemprop="image"' : '');?>>
+							<div><h6 class="bx-title" style="float:right;"><?=$item['DISPLAY_PROPERTIES']['KIND_OF_ACTIVITY']['VALUE']?></h6></div>
+							<div class="col-xs-12">
+                                <?
+                                if (!empty($morePhoto))
+                                {
+                                    $slidesToShow = 6;
+                                    $slidesToShowList = false;
+                                    if(count($morePhoto) > $slidesToShow) $slidesToShowList = true;
+                                    else $slidesToShow = count($morePhoto);
+                                }
+                                else $slidesToShow = 0;
+                                ?>
+                                <div class="bx-photo-list-container" style="width:<?=$slidesToShow*85;?>px;">
+                                    <!--div class="product-item-detail-slider-images-container" data-entity="images-container">
+                                    <?/*
+                                    if (!empty($morePhoto))
+                                    {
+                                        foreach ($morePhoto as $key => $photo)
+                                        {
+                                            ?>
+                                            <div class="product-item-detail-slider-image <?=($key==0?'active':'');?>" data-entity="image" data-id="<?=$photo['ID']?>">
+                                                <img src="<?=$photo['SRC']?>" alt="<?=$alt?>" title="<?=$title?>"<?=($key == 0 ? ' itemprop="image"' : '')?>>
                                             </div>
+                                            <?
+                                        }
+                                    }
+                                    if ($arParams['SLIDER_PROGRESS'] === 'Y')
+                                    {
+                                        ?>
+                                        <div class="product-item-detail-slider-progress-bar" data-entity="slider-progress-bar" style="width: 0;"></div>
+                                        <?
+                                    }
+                                    */?>
+                                    </div-->
+                                    <div class="bx-photo-slider-full" >
+                                        <div id="slider_<?php echo $itemIds['ID'];?>" class="bx-photo-slider">
+                                            <?
+                                            if (!empty($morePhoto))
+                                            {
+                                                foreach ($morePhoto as $key => $photo)
+                                                {
+                                                    ?>
+                                                    <div class="bx-link" style="background-image: url('<?=$photo['SRC']?>');" title="<?=$imgTitle?>">
+                                                        <a href="<?=$item['DETAIL_PAGE_URL']?>"></a>
+                                                    </div>
+                                                    <?
+                                                }
+                                            }
+                                            ?>
                                         </div>
-										<?
-									}
-								}
-
-								if ($arParams['SLIDER_PROGRESS'] === 'Y')
-								{
-									?>
-									<div class="product-item-detail-slider-progress-bar" data-entity="slider-progress-bar" style="width: 0;"></div>
-									<?
-								}
-								?>
-								</div>
-							
+                                    </div>
+                                    <div id="list_<?echo $itemIds['ID'];?>" class="bx-photo-list">
+                                        <?
+                                        if (!empty($morePhoto))
+                                        {
+                                            foreach ($morePhoto as $key => $photo)
+                                            {
+                                                ?>
+                                                <div>
+                                                    <div class="bx-photo-list-img" data-key-id="<?=$key;?>">
+                                                        <img src="<?=$photo['SRC']?>">
+                                                    </div>
+                                                </div>
+                                                <?
+                                            }
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
 							</div>
 							<div><h6 class="bx-title" style = "float: right;"><?=$item['DISPLAY_PROPERTIES']['CITY']['VALUE']?></h6></div>
 						</div>
 						<!--?if($USER->IsAdmin()) {echo '<pre>'; print_r($item['DISPLAY_PROPERTIES']['PHOTO']); echo '</pre>';}?-->
-						
-							
 						</dl>
 					</div>
 					<?
@@ -678,4 +713,29 @@ else
 			?>
 		</div>
 	</div>
+    <? if ($slidesToShow!=0):?>
+    <script>
+        var currentSlideNumber = 1;
+        var slider_<?php echo $itemIds['ID'];?> = $("#slider_<?php echo $itemIds['ID'];?>").fotorama({
+            allowfullscreen: true,
+            nav: false,
+            height: 200
+        });
+        var slider_<?php echo $itemIds['ID'];?>_data = slider_<?php echo $itemIds['ID'];?>.data('fotorama');
+
+        $("#list_<?php echo $itemIds['ID'];?>").slick({
+            infinite: true,
+            slidesToShow: <?echo $slidesToShow;?>,
+            slidesToScroll: 1,
+        }).on('afterChange', function(event, slick, currentSlide){
+            currentSlideNumber = currentSlide;
+        });
+
+        $("#list_<?php echo $itemIds['ID'];?> .bx-photo-list-img").click(function () {
+            $('.bx-photo-slider-full').show();
+            slider_<?php echo $itemIds['ID'];?>_data.show($(this).attr('data-key-id'));
+            slider_<?php echo $itemIds['ID'];?>_data.requestFullScreen();
+        });
+    </script>
+    <? endif;?>
 </div>

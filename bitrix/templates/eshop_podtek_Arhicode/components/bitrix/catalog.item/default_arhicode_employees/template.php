@@ -100,7 +100,23 @@ if (isset($arResult['ITEM']))
 
 	$buttonSizeClass = isset($arResult['BIG_BUTTONS']) && $arResult['BIG_BUTTONS'] === 'Y' ? 'btn-md' : 'btn-sm';
 	?>
-
+    <?
+    if(is_array($arResult['ITEM']['PROPERTIES']['PHOTO']['VALUE']))
+        if(count($arResult['ITEM']['PROPERTIES']['PHOTO']['VALUE']) > count($morePhoto))
+        {
+            $morePhoto = [];
+            foreach ($arResult['ITEM']['PROPERTIES']['PHOTO']['VALUE'] as $imgId)
+            {
+                $imgN = CFile::GetFileArray($imgId);
+                $morePhoto[]= [
+                    'ID'=> $imgN['ID'],
+                    'SRC'=>$imgN['SRC'],
+                    'WIDTH'=>$imgN['WIDTH'],
+                    'HEIGHT'=>$imgN['HEIGHT'],
+                ];
+            }
+        }
+    ?>
 	<div class="product-item-container<?=(isset($arResult['SCALABLE']) && $arResult['SCALABLE'] === 'Y' ? ' product-item-scalable-card' : '')?>"
 		id="<?=$areaId?>" data-entity="item">
 		<?
