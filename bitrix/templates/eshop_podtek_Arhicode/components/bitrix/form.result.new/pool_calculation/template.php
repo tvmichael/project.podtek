@@ -49,7 +49,8 @@ if ($arResult["isFormTitle"])
 ?>
 <div class="form-table data-table">
 
-	<?$FIELD_SID_FIND=1;
+	<?
+    $FIELD_SID_FIND = 1;
 	foreach ($arResult["QUESTIONS"] as $FIELD_SID => $arQuestion)
 	{
 
@@ -154,7 +155,14 @@ if ($arResult["isFormTitle"])
 } ?>
 		<?foreach ($arQuestion["STRUCTURE"] as $arLabelImg)
 			{?>
-				<label class="col-xs-12 rb-q"><input class="radio-dot" type="<?=$arLabelImg['FIELD_TYPE']?>" <?if($arLabelImg['FIELD_PARAM']){?> <?=$arLabelImg['FIELD_PARAM']?> selected="" checked="" <?}?>id="<?=$arLabelImg['ID']?>" name="form_<?=$arLabelImg['FIELD_TYPE']?>_<?=$FIELD_SID?>" value="<?=$arLabelImg['ID']?>"><span class="ans"><?=$arLabelImg['MESSAGE']?></span></label>
+				<label class="col-xs-12 rb-q">
+                    <input class="radio-dot" type="<?=$arLabelImg['FIELD_TYPE']?>" data-product-id="<?=$arLabelImg['VALUE'];?>"
+                        <?if($arLabelImg['FIELD_PARAM']){?> <?=$arLabelImg['FIELD_PARAM']?> selected="" checked="" <?}?>id="<?=$arLabelImg['ID']?>" name="form_<?=$arLabelImg['FIELD_TYPE']?>_<?=$FIELD_SID?>" value="<?=$arLabelImg['ID']?>">
+                    <span class="ans"><?=$arLabelImg['MESSAGE']?></span>
+
+                    <pre style="display:none;"><?=print_r($arLabelImg);?></pre>
+
+                </label>
 			<?}?>
 					<?/*=$arQuestion["IS_INPUT_CAPTION_IMAGE"] == "Y" ? "<br />".$arQuestion["IMAGE"]["HTML_CODE"]."<br />" : ""?>
 					<?=$arQuestion["HTML_CODE"]*/?>
@@ -201,3 +209,6 @@ if($arResult["isUseCaptcha"] == "Y")
 <?
 } //endif (isFormNote)
 ?>
+<script>
+    var variablePoolCalculate = new BXPoolCalculationPrise(<?=CUtil::PhpToJSObject($arResult["POOL_PARAMS"])?>);
+</script>
