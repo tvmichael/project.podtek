@@ -7,8 +7,3 @@
 
 $component = $this->getComponent();
 $arParams = $component->applyTemplateModifications();
-
-foreach ($arResult["QUESTIONS"] as $FIELD_SID => $arQuestion)
-{
-
-}
