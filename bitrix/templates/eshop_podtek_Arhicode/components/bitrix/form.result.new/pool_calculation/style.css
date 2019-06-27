@@ -1,124 +1,162 @@
-  @font-face {
+@font-face {
     font-family: 'Qanelas';
     src: url('/fonts/Qanelas-Medium.eot');
     src: local('Qanelas Medium'), local('Qanelas-Medium'),
-        url('/fonts/Qanelas-Medium.eot?#iefix') format('embedded-opentype'),
-        url('/fonts/Qanelas-Medium.woff2') format('woff2'),
-        url('/fonts/Qanelas-Medium.ttf') format('truetype');
+    url('/fonts/Qanelas-Medium.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/Qanelas-Medium.woff2') format('woff2'),
+    url('/fonts/Qanelas-Medium.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Qanelas';
     src: url('/fonts/Qanelas-MediumItalic.eot');
     src: local('Qanelas Medium Italic'), local('Qanelas-MediumItalic'),
-        url('/fonts/Qanelas-MediumItalic.eot?#iefix') format('embedded-opentype'),
-        url('/fonts/Qanelas-MediumItalic.woff2') format('woff2'),
-        url('/fonts/Qanelas-MediumItalic.ttf') format('truetype');
+    url('/fonts/Qanelas-MediumItalic.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/Qanelas-MediumItalic.woff2') format('woff2'),
+    url('/fonts/Qanelas-MediumItalic.ttf') format('truetype');
     font-weight: bold;
     font-style: italic;
 }
+
 @font-face {
     font-family: 'Qanelas';
     src: url('/fonts/Qanelas-Regular.eot');
     src: local('Qanelas Regular'), local('Qanelas-Regular'),
-        url('/fonts/Qanelas-Regular.eot?#iefix') format('embedded-opentype'),
-        url('/fonts/Qanelas-Regular.woff2') format('woff2'),
-        url('/fonts/Qanelas-Regular.ttf') format('truetype');
+    url('/fonts/Qanelas-Regular.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/Qanelas-Regular.woff2') format('woff2'),
+    url('/fonts/Qanelas-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Qanelas';
     src: url('/fonts/Qanelas-RegularItalic.eot');
     src: local('Qanelas Regular Italic'), local('Qanelas-RegularItalic'),
-        url('/fonts/Qanelas-RegularItalic.eot?#iefix') format('embedded-opentype'),
-        url('/fonts/Qanelas-RegularItalic.woff2') format('woff2'),
-        url('/fonts/Qanelas-RegularItalic.ttf') format('truetype');
+    url('/fonts/Qanelas-RegularItalic.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/Qanelas-RegularItalic.woff2') format('woff2'),
+    url('/fonts/Qanelas-RegularItalic.ttf') format('truetype');
     font-weight: normal;
     font-style: italic;
 }
+
 .bx-content form {
-    border: 2px rgb(230,230,230) solid;
+    border: 2px rgb(230, 230, 230) solid;
     border-radius: 10px;
     max-width: 950px;
     margin: 10px auto;
     padding: 0 10px 10px 50px;
 }
-.workarea .container.bx-content-seection
-{
-	font-family: "Qanelas", Arial, sans-serif;
-	color: rgb(40,40,40);
-	margin: 0 4px;
-	padding: 0px;
-	width:100%;
+
+.workarea .container.bx-content-seection {
+    font-family: "Qanelas", Arial, sans-serif;
+    color: rgb(40, 40, 40);
+    margin: 0 4px;
+    padding: 0px;
+    width: 100%;
 }
+
 .form-header h3 {
-	font-size: 27px;
-	font-weight: bold;
+    font-size: 27px;
+    font-weight: bold;
 }
-.el-question .color-question.title-question
-{
-	font-size: 18px;
-	font-weight: bold;
-	margin: 10px 0;
+
+.el-question .color-question.title-question {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
     line-height: 34px;
 }
+
 label.rb-q {
     font-size: 14px;
 }
-div.form-table
-{
-	width:100%;
-	background-color:white;
-	border-collapse:collapse;
-	font-size:100%;
-	font-weight:normal;
-	line-height:160%;
+
+div.form-table {
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+    font-size: 100%;
+    font-weight: normal;
+    line-height: 160%;
 }
-.form-required 
-{
-	color: red;
+
+div.form-table > .row {
+    position: relative;
 }
+
+/* PRICE */
+div.form-table .total-price {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    text-align: right;
+    font-size: 16px;
+}
+
+div.form-table .total-price label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+div.form-table .total-price span {
+    display: inline-block;
+    min-width: 110px;
+    padding-left: 5px;
+}
+div.form-table .total-price .price-title{
+    display: none;
+}
+
+.form-required {
+    color: red;
+}
+
 .error-fld {
-	display: block;
-	float: left;
-	height: 13px;
-	width: 15px;
-	background-repeat: no-repeat;
-	background-image: url(images/icon_warn.gif);
+    display: block;
+    float: left;
+    height: 13px;
+    width: 15px;
+    background-repeat: no-repeat;
+    background-image: url(images/icon_warn.gif);
 }
-    input[type='radio']:after {
-        width: 12px;
-		height: 12px;
-        border-radius: 15px;
-        top: -2px;
-        left: -1px;
-        position: relative;
-        background-color: #d1d3d1;
-        content: '';
-        display: inline-block;
-        visibility: visible;
-        border: 2px solid white;
-    }
-	input[type="radio"] {
+
+input[type='radio']:after {
+    width: 12px;
+    height: 12px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: #d1d3d1;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
+input[type="radio"] {
     margin: 0px 15px;
     width: 1px;
     line-height: unset;
-	}
-    input[type='radio']:checked:after {
-        width: 12px;
-        height: 12px;
-        border-radius: 15px;
-        top: -2px;
-        left: -1px;
-        position: relative;
-        background-color: #337ab7;
-        content: '';
-        display: inline-block;
-        visibility: visible;
-        border: 2px solid white;
-    }
+}
+
+input[type='radio']:checked:after {
+    width: 12px;
+    height: 12px;
+    border-radius: 15px;
+    top: -2px;
+    left: -1px;
+    position: relative;
+    background-color: #337ab7;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    border: 2px solid white;
+}
+
 .question input.inputtext {
     border-left-style: hidden;
     border-right-style: hidden;
@@ -126,65 +164,158 @@ div.form-table
     border-bottom-color: black;
     border-bottom-style: solid;
     text-transform: lowercase;
-	border-bottom-width: 1px;
+    border-bottom-width: 1px;
     border-radius: 0px;
-	padding: 15px;
+    padding: 15px;
     font-size: 16px;
 }
+
 input[type="radio"].hidden-dot, input[type="radio"] + img.checked {
-  display: none; 
+    display: none;
 }
+
 input[type="radio"]:checked + img.checked {
-  display: block;
-  position:absolute;top:0;left:0;
-  width: 26px;
-  margin: 6px;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 26px;
+    margin: 6px;
 }
-input[type="radio"] + span.ans{
-    color: rgb(166,166,166);
+
+input[type="radio"] + span.ans {
+    color: rgb(166, 166, 166);
 }
-input[type="radio"]:checked + span.ans{
-    color: rgb(40,40,40);
+
+input[type="radio"]:checked + span.ans {
+    color: rgb(40, 40, 40);
 }
+
 input[type="radio"] + img + img {
-  width: 100%;
-} 
+    width: 100%;
+}
+
 .color-plenki {
     font-weight: bold;
     margin-bottom: 5px;
 }
+
 label.image-color-rb-q {
-	padding: 5px;
+    padding: 5px;
 }
-	@media (max-width: 767px){
-		.question input.inputtext {
-			padding: 10px 20px;
-			font-size: 14px;
-		}
-		.bx-content form {
-			border: 1px rgb(230,230,230) solid;
-			border-radius: 10px;
-			max-width: 480px;
-			margin: 0px auto;
-			padding: 10px 0;
-		}
-		.workarea .container.bx-content-seection{
-			margin: 0 4px;
-			padding: 0px;
-			width:100%;
-		}
-		.form-header, .form-table{
-			text-align: center;
-		}
-		.el-question .color-question.title-question
-		{
-			background-color: #337ab7;
-			color: white;
-			width: 100%;
-		}
-		input[type="radio"] {
-			margin: 0px 15px 0 -15px;
-			width: 1px;
-			line-height: unset;
-		}
-	}
+
+/* --- FOOTER --- */
+.form-footer > div {
+    padding-top: 15px;
+    text-align: right;
+}
+.form-footer input{
+    background-color: white;
+    border: 1px solid #3799ee;
+    border-radius: 5px;
+    padding: 3px 10px;
+    font-size: 16px;
+    min-width: 170px;
+}
+.form-footer input:hover{
+    font-weight: bold;
+}
+
+/* --- MEDIA --- */
+@media (max-width: 767px) {
+    div.form-table .total-price {
+        position: relative;
+        padding-top: 25px;
+        margin-left: 10px;
+    }
+
+    div.form-table .total-price label {
+        text-align: center;
+        display: block;
+    }
+
+    div.form-table .total-price span {
+        display: block;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    div.form-table .total-price .price-work {
+        padding-top: 20px;
+    }
+
+    div.form-table .total-price .price-full {
+        border-top: 1px solid black;
+        padding-top: 10px;
+        width: 80%;
+        margin: 0px auto;
+        margin-top: 30px;
+    }
+
+    div.form-table .total-price .price-full label{
+        font-size: 22px;
+    }
+
+    .form-footer > div {
+        padding-top: 15px;
+        text-align: center;
+        padding-bottom: 20px;
+    }
+    .form-footer input {
+        padding: 5px 10px;
+        font-size: 18px;
+        min-width: 200px;
+    }
+
+    div.form-table .total-price .price-title {
+        display: block;
+        font-size: 18px;
+        background-color: #337ab7;
+        color: white;
+        width: 100%;
+        text-align: center;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    p.allert {
+        padding: 0px;
+        margin: 0px;
+        text-align: center;
+    }
+
+    .question input.inputtext {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .bx-content form {
+        border: 1px rgb(230, 230, 230) solid;
+        border-radius: 10px;
+        max-width: 480px;
+        margin: 0px auto;
+        padding: 10px 0;
+    }
+
+    .workarea .container.bx-content-seection {
+        margin: 0 4px;
+        padding: 0px;
+        width: 100%;
+    }
+
+    .form-header, .form-table {
+        text-align: center;
+    }
+
+    .el-question .color-question.title-question {
+        background-color: #337ab7;
+        color: white;
+        width: 100%;
+    }
+
+    input[type="radio"] {
+        margin: 0px 15px 0 -15px;
+        width: 1px;
+        line-height: unset;
+    }
+}

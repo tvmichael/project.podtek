@@ -4,7 +4,7 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
 //$GLOBALS['APPLICATION']->RestartBuffer();
 include 'include.php';
 ?>
-<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult["RESULT"]); echo '</pre>';}?>
+<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult); echo '</pre>';};?>
 
 <?
 $usrLogoSCR = "";
@@ -39,7 +39,7 @@ foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion)
 			<?endif;?>
 			<?if ($FIELD_SID == "new_field_0001")://тип бассейна?>			
 			<?$myTypeOfPool = $arAnswer['ANSWER_TEXT'];//echo '<pre>'; print_r($arAnswer); echo '</pre>';?><?endif;?>
-			<?if ($FIELD_SID == "new_field_0003")://Пленка ПВХ?>			
+			<?if ($FIELD_SID == "new_field_0001_0")://Пленка ПВХ?>			
 			<?$myColorOfTheFilm = $arAnswer['ANSWER_VALUE'];?><?endif;?>
 			<?if ($FIELD_SID == "new_field_0004"): //Лестница?>	
 			<?//echo '<pre>'; print_r($arAnswer); echo '</pre>';$myNameofStairs = $arAnswer['ANSWER_TEXT'];?><?$intStairsID = $arAnswer['ANSWER_VALUE'];?><?endif;?>
@@ -69,39 +69,71 @@ $myPerimeterOfTheBasin = GetPerimeterOfTheBasin($myLong, $myWidth, $myDepth);
 ?>
 <?//Пленка ПВХ
 $arSets = CCatalogProductSet::getAllSetsByProduct($myColorOfTheFilm, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
+
+//if($USER->IsAdmin()) {echo '<pre>'; print_r($myColorOfTheFilm); print_r($arSets); echo '</pre>'; die();};
+
 $arSet = array_shift($arSets); // комплект данного товара
 $i=0;
 $ItogSuma = 0;
 $allProdSum = 0;
 $arColTab = '';
-foreach ($arSet['ITEMS'] as $myItems  => $myOllItems){
-	$i++;
-	$ID = $myOllItems['ITEM_ID'];
-	$rest = substr($myOllItems['QUANTITY'], -5);
-	$myQuantityItem = ($myOllItems['QUANTITY']-$rest)/100000;
-//товары
-$db_res  = CCatalogProduct::GetList(array(), array("ID" => $ID ), false, array());
-	while (($ar_res = $db_res->Fetch()))
-	{$myNameItem = $ar_res['ELEMENT_NAME']; /* $i=$i+1; */}
-//цены
-$arPrice = CCatalogProduct::GetOptimalPrice($ID, 1, $USER->GetUserGroupArray(), 'N');
-	if (!$arPrice || count($arPrice) <= 0)
-	{	if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
-			{	$quantity = $nearestQuantity;
-				$arPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);}
-	}
-$myPrice = $arPrice['PRICE']['PRICE'];
-if($rest == 99999){	$myValueItem = $myPrice*$myBasinAreaForFilms; $myQuantityItem = $myBasinAreaForFilms; }
-elseif($rest == 88888){ $drob = ($myPerimeterOfTheBasin / $myQuantityItem) - intval($myPerimeterOfTheBasin/$myQuantityItem);
-	if ($drob > 0){ $myPerimeterOfTwoMeters =intval($myPerimeterOfTheBasin/$myQuantityItem) + 1; }
-		else{ $myPerimeterOfTwoMeters =intval($myPerimeterOfTheBasin/$myQuantityItem); }
-	$myQuantityItem = $myPerimeterOfTwoMeters; $myValueItem = $myPrice*$myPerimeterOfTwoMeters; }
-elseif($rest == 77777){	$PerimeterOfTheBasin = ceil($myPerimeterOfTheBasin); $myQuantityItem = $myQuantityItem*$PerimeterOfTheBasin; $myValueItem = $myPrice*$myQuantityItem; }
-elseif($rest == 55555){	$AreaMirrorsOfWater = ceil($myAreaMirrorsOfWater); $myQuantityItem = $myQuantityItem*$AreaMirrorsOfWater; $myValueItem = $myPrice*$myQuantityItem; }
-else{ $myValueItem = $myPrice*$myQuantityItem; }
-$ItogSuma = $ItogSuma + $myValueItem;
-$arMyNameItem[] = $myNameItem; 	$arMyQuantityItem[] = $myQuantityItem; 	$arMyPrice[] = $myPrice; $arColNum[] = $i; $arMyValueItem[] = $myValueItem;
-$arColTab = $arColTab + "'<tr><td>'".$i."'</td><td>'".$myNameItem."'</td><td  align=center>'".$myQuantityItem."'</td><td>'".$myPrice."'</td><td>'".$myValueItem."'</td></tr><br>'";
+
+/**
+ *
+ *
+ *
+**/
+foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
+{
+    $i++;
+    $ID = $myOllItems['ITEM_ID'];
+    $rest = substr($myOllItems['QUANTITY'], -5);
+    $myQuantityItem = ($myOllItems['QUANTITY'] - $rest) / 100000;
+    //товары
+    $db_res = CCatalogProduct::GetList(array(), array("ID" => $ID), false, array());
+    while (($ar_res = $db_res->Fetch())) {
+        $myNameItem = $ar_res['ELEMENT_NAME']; /* $i=$i+1; */
+    }
+    //цены
+    $arPrice = CCatalogProduct::GetOptimalPrice($ID, 1, $USER->GetUserGroupArray(), 'N');
+    if (!$arPrice || count($arPrice) <= 0) {
+        if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
+            $quantity = $nearestQuantity;
+            $arPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
+        }
+    }
+    $myPrice = $arPrice['PRICE']['PRICE'];
+    if ($rest == 99999) {
+        $myValueItem = $myPrice * $myBasinAreaForFilms;
+        $myQuantityItem = $myBasinAreaForFilms;
+    } elseif ($rest == 88888) {
+        $drob = ($myPerimeterOfTheBasin / $myQuantityItem) - intval($myPerimeterOfTheBasin / $myQuantityItem);
+        if ($drob > 0) {
+            $myPerimeterOfTwoMeters = intval($myPerimeterOfTheBasin / $myQuantityItem) + 1;
+        } else {
+            $myPerimeterOfTwoMeters = intval($myPerimeterOfTheBasin / $myQuantityItem);
+        }
+        $myQuantityItem = $myPerimeterOfTwoMeters;
+        $myValueItem = $myPrice * $myPerimeterOfTwoMeters;
+    } elseif ($rest == 77777) {
+        $PerimeterOfTheBasin = ceil($myPerimeterOfTheBasin);
+        $myQuantityItem = $myQuantityItem * $PerimeterOfTheBasin;
+        $myValueItem = $myPrice * $myQuantityItem;
+    } elseif ($rest == 55555) {
+        $AreaMirrorsOfWater = ceil($myAreaMirrorsOfWater);
+        $myQuantityItem = $myQuantityItem * $AreaMirrorsOfWater;
+        $myValueItem = $myPrice * $myQuantityItem;
+    } else {
+        $myValueItem = $myPrice * $myQuantityItem;
+    }
+
+    $ItogSuma = $ItogSuma + $myValueItem;
+    $arMyNameItem[] = $myNameItem;
+    $arMyQuantityItem[] = $myQuantityItem;
+    $arMyPrice[] = $myPrice;
+    $arColNum[] = $i;
+    $arMyValueItem[] = $myValueItem;
+    $arColTab = $arColTab + "'<tr><td>'" . $i . "'</td><td>'" . $myNameItem . "'</td><td  align=center>'" . $myQuantityItem . "'</td><td>'" . $myPrice . "'</td><td>'" . $myValueItem . "'</td></tr><br>'";
 
 }
 $allProdSum = $allProdSum+$ItogSuma;
@@ -123,6 +155,7 @@ foreach ($arStairSet['ITEMS'] as $myStairItems  => $myOllStairItems){
 
 //цены
 $arStairPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
+	//if($USER->IsAdmin()) {echo '<pre>TEST: '; print_r($productID); print_r($quantity); echo '</pre>'; die();};
 	if (!$arStairPrice || count($arStairPrice) <= 0)
 	{
 		if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
@@ -513,6 +546,36 @@ $html_text .= <<<EOD
     </tr>
 </table>
 EOD;
+/**/
+
+/*
+$html_text = "<table border='0' cellpadding='1' cellspacing='1' style='width: 75%; margin: 15px;'>
+    <tr>
+        <td colspan='3'><img src='$usrNoLogoSCR' alt=''></td>
+    </tr>
+    <tr>
+        <td colspan='3' align='right'><h3>Коммерческое предложение № $myFormID</h3></td>
+    </tr>
+    <tr>
+        <td colspan='3'><b>Параметры Вашего бассейна:</b></td>
+    </tr>
+    <tr>
+        <td>длина, м</td>
+        <td>$myLong</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>ширина, м</td>
+        <td>$myWidth</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>глубина, м</td>
+        <td>$myDepth</td>
+        <td></td>
+    </tr>
+</table>";
+/**/
 
 $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 $pdf->setPrintHeader(false); 
