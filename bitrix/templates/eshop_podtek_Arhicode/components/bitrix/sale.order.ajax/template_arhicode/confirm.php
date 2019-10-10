@@ -1,6 +1,8 @@
 <? if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Application;
+use Bitrix\Main\Web\Cookie;
 
 /**
  * @var array $arParams
@@ -15,7 +17,6 @@ if ($arParams["SET_TITLE"] == "Y")
 ?>
 
 <? if (!empty($arResult["ORDER"])): ?>
-
 	<table class="sale_order_full_table">
 		<tr>
 			<td>
@@ -33,6 +34,28 @@ if ($arParams["SET_TITLE"] == "Y")
 			</td>
 		</tr>
 	</table>
+
+    <?
+    /*$arOrderAdd = false;
+    $window_b24order = $APPLICATION->get_cookie("window_b24order");
+
+    if(!empty($window_b24order)) $window_b24order = json_decode($window_b24order);
+
+    if(is_array($window_b24order))
+    {
+        if(in_array($arResult['ORDER']['ID'], $window_b24order)) $arOrderAdd = true;
+        else array_push($window_b24order, $arResult['ORDER']['ID']);
+    }
+    else $window_b24order = [$arResult['ORDER']['ID']];
+
+    $APPLICATION->set_cookie("window_b24order", json_encode($window_b24order), time()+3600*24*30*12);*/
+    ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            (window.b24order = window.b24order || []).push({id:"<?=$arResult['ORDER']['ID'];?>", sum:"<?=$arResult['ORDER']['PRICE'];?>"});
+            console.log(window.b24order);
+        });
+    </script>
 
 	<?
 	if ($arResult["ORDER"]["IS_ALLOW_PAY"] === 'Y')

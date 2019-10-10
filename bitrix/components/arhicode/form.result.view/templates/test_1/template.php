@@ -1,10 +1,10 @@
 <?
-if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 \Bitrix\Main\Loader::includeModule('catalog');
 //$GLOBALS['APPLICATION']->RestartBuffer();
 include 'include.php';
 ?>
-<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult); echo '</pre>';};?>
+<? //if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult); echo '</pre>';}; die();?>
 
 <?
 $usrLogoSCR = "";
@@ -12,51 +12,63 @@ $usrNoLogoSCR = "https://podtek.ru/include/logo.png";
 $myFormID = $_REQUEST["RESULT_ID"];
 ?>
 <?
-foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion)
-{
-?>
+foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion) {
+    ?>
 
-	<?
-	if (is_array($arQuestion['ANSWER_VALUE'])):
-		foreach ($arQuestion['ANSWER_VALUE'] as $key => $arAnswer)
-		{?>
-			<?if ($arAnswer["ANSWER_IMAGE"]):// LOGO?>
-				<?$usrLogoSCR=$arAnswer["ANSWER_IMAGE"]["URL"]; $usrNoLogoheight = '';?>
-			<?else:?>
-				<?$usrLogoSCR = $usrNoLogoSCR; $usrNoLogoheight = 'style="height: 62px;"';?>
-			<?endif;?>	
-			<?if ($FIELD_SID == "new_field_0002")://Размеры бассейна?>
-				<?switch ($arAnswer['ANSWER_TEXT']) {
-					case "Длинна":
-						$myLong = $arAnswer['USER_TEXT'];
-						break;
-					case "Ширина":
-						$myWidth = $arAnswer['USER_TEXT'];
-						break;
-					case "Глубина":
-						$myDepth = $arAnswer['USER_TEXT'];
-						break;	}	?>
-			<?endif;?>
-			<?if ($FIELD_SID == "new_field_0001")://тип бассейна?>			
-			<?$myTypeOfPool = $arAnswer['ANSWER_TEXT'];//echo '<pre>'; print_r($arAnswer); echo '</pre>';?><?endif;?>
-			<?if ($FIELD_SID == "new_field_0001_0")://Пленка ПВХ?>			
-			<?$myColorOfTheFilm = $arAnswer['ANSWER_VALUE'];?><?endif;?>
-			<?if ($FIELD_SID == "new_field_0004"): //Лестница?>	
-			<?//echo '<pre>'; print_r($arAnswer); echo '</pre>';$myNameofStairs = $arAnswer['ANSWER_TEXT'];?><?$intStairsID = $arAnswer['ANSWER_VALUE'];?><?endif;?>
-			
-			<?if ($FIELD_SID == "new_field_0007"): //Сервисный набор?><?$intServiceID = $arAnswer['ANSWER_VALUE'];?><?endif;?>
-		
-			<?if ($FIELD_SID == "new_field_0008"): //Закладные?><?$intMortgagesID = $arAnswer['ANSWER_VALUE'];?><?endif;?>
-				
-			<?if ($FIELD_SID == "new_field_0009"): //Подогрев?><?$intHeatingID = $arAnswer['ANSWER_VALUE'];?><?endif;?>
-		<?} //foreach ($arQuestions)
-		
-	endif;?>
-	
-		
-<?} //echo '<pre>'; print_r($myTypeOfStairs); echo '</pre>'; // foreach ($arResult["RESULT"])
+    <?
+    if (is_array($arQuestion['ANSWER_VALUE'])):
+        foreach ($arQuestion['ANSWER_VALUE'] as $key => $arAnswer) {
+            ?>
+            <? if ($arAnswer["ANSWER_IMAGE"]):// LOGO
+                ?>
+                <? $usrLogoSCR = $arAnswer["ANSWER_IMAGE"]["URL"];
+                $usrNoLogoheight = ''; ?>
+            <? else:?>
+                <? $usrLogoSCR = $usrNoLogoSCR;
+                $usrNoLogoheight = 'style="height: 62px;"'; ?>
+            <? endif; ?>
+            <? if ($FIELD_SID == "new_field_0002")://Размеры бассейна
+                ?>
+                <? switch ($arAnswer['ANSWER_TEXT']) {
+                case "Длинна":
+                    $myLong = $arAnswer['USER_TEXT'];
+                    break;
+                case "Ширина":
+                    $myWidth = $arAnswer['USER_TEXT'];
+                    break;
+                case "Глубина":
+                    $myDepth = $arAnswer['USER_TEXT'];
+                    break;
+            } ?>
+            <? endif; ?>
+            <? if ($FIELD_SID == "new_field_0001")://тип бассейна
+                ?>
+                <? $myTypeOfPool = $arAnswer['ANSWER_TEXT'];//echo '<pre>'; print_r($arAnswer); echo '</pre>';
+                ?><? endif; ?>
+            <? if ($FIELD_SID == "new_field_0001_0")://Пленка ПВХ
+                ?>
+                <? $myColorOfTheFilm = $arAnswer['ANSWER_VALUE']; ?><? endif; ?>
+            <? if ($FIELD_SID == "new_field_0004"): //Лестница
+                ?>
+                <? //echo '<pre>'; print_r($arAnswer); echo '</pre>';$myNameofStairs = $arAnswer['ANSWER_TEXT'];
+                ?><? $intStairsID = $arAnswer['ANSWER_VALUE']; ?><? endif; ?>
+
+            <? if ($FIELD_SID == "new_field_0007"): //Сервисный набор
+                ?><? $intServiceID = $arAnswer['ANSWER_VALUE']; ?><? endif; ?>
+
+            <? if ($FIELD_SID == "new_field_0008"): //Закладные
+                ?><? $intMortgagesID = $arAnswer['ANSWER_VALUE']; ?><? endif; ?>
+
+            <? if ($FIELD_SID == "new_field_0009"): //Подогрев
+                ?><? $intHeatingID = $arAnswer['ANSWER_VALUE']; ?><? endif; ?>
+        <? } //foreach ($arQuestions)
+
+    endif; ?>
+
+
+<? } //echo '<pre>'; print_r($myTypeOfStairs); echo '</pre>'; // foreach ($arResult["RESULT"])
 ?>
-<?	//Рассчитаем зависимые данные: //Площадь Зеркала Воды //$myAreaMirrorsOfWater =$myLong * $myWidth;
+<? //Рассчитаем зависимые данные: //Площадь Зеркала Воды //$myAreaMirrorsOfWater =$myLong * $myWidth;
 $myAreaMirrorsOfWater = GetAreaMirrorsOfWater($myLong, $myWidth);
 //Площадь Бассейна	//$myAreaOfTheBasin =($myLong + $myWidth)*2*$myDepth + $myAreaMirrorsOfWater;
 $myAreaOfTheBasin = GetAreaOfTheBasin($myLong, $myWidth, $myDepth);
@@ -67,24 +79,18 @@ $myBasinAreaForTile = GetBasinAreaForTile($myLong, $myWidth, $myDepth);
 //Периметр Бассейна	//$myPerimeterOfTheBasin =($myLong + $myWidth)*2;
 $myPerimeterOfTheBasin = GetPerimeterOfTheBasin($myLong, $myWidth, $myDepth);
 ?>
-<?//Пленка ПВХ
+
+<? //Пленка ПВХ
 $arSets = CCatalogProductSet::getAllSetsByProduct($myColorOfTheFilm, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
-
 //if($USER->IsAdmin()) {echo '<pre>'; print_r($myColorOfTheFilm); print_r($arSets); echo '</pre>'; die();};
-
 $arSet = array_shift($arSets); // комплект данного товара
-$i=0;
+usort($arSet['ITEMS'], function($a, $b) {return $a['SORT'] > $b['SORT'];});
+$i = 0;
 $ItogSuma = 0;
 $allProdSum = 0;
 $arColTab = '';
 
-/**
- *
- *
- *
-**/
-foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
-{
+foreach ($arSet['ITEMS'] as $myItems => $myOllItems) {
     $i++;
     $ID = $myOllItems['ITEM_ID'];
     $rest = substr($myOllItems['QUANTITY'], -5);
@@ -126,7 +132,6 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
     } else {
         $myValueItem = $myPrice * $myQuantityItem;
     }
-
     $ItogSuma = $ItogSuma + $myValueItem;
     $arMyNameItem[] = $myNameItem;
     $arMyQuantityItem[] = $myQuantityItem;
@@ -134,45 +139,48 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
     $arColNum[] = $i;
     $arMyValueItem[] = $myValueItem;
     $arColTab = $arColTab + "'<tr><td>'" . $i . "'</td><td>'" . $myNameItem . "'</td><td  align=center>'" . $myQuantityItem . "'</td><td>'" . $myPrice . "'</td><td>'" . $myValueItem . "'</td></tr><br>'";
-
 }
-$allProdSum = $allProdSum+$ItogSuma;
+$allProdSum = $allProdSum + $ItogSuma;
 
 //Лестница
 $ItogStairSuma = 0;
 $arStairSets = CCatalogProductSet::getAllSetsByProduct($intStairsID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
 $arStairSet = array_shift($arStairSets); // комплект данного товара
-$j=0; 
+$j = 0;
 $arStairColTab = '';
-foreach ($arStairSet['ITEMS'] as $myStairItems  => $myOllStairItems){
-	$strID = $myOllStairItems['ITEM_ID'];
-	$myQuantityStairItem = $myOllStairItems['QUANTITY'];
+foreach ($arStairSet['ITEMS'] as $myStairItems => $myOllStairItems) {
+    $strID = $myOllStairItems['ITEM_ID'];
+    $myQuantityStairItem = $myOllStairItems['QUANTITY'];
 //товары
-	$dbStairRes  = CCatalogProduct::GetList(array(),array("ID" => $strID ),false,array());
-	while (($arStairRes = $dbStairRes->Fetch()))
-	{ $myNameStairItem = $arStairRes['ELEMENT_NAME']; $j=$j+1; }
+    $dbStairRes = CCatalogProduct::GetList(array(), array("ID" => $strID), false, array());
+    while (($arStairRes = $dbStairRes->Fetch())) {
+        $myNameStairItem = $arStairRes['ELEMENT_NAME'];
+        $j = $j + 1;
+    }
 
 
 //цены
-$arStairPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
-	//if($USER->IsAdmin()) {echo '<pre>TEST: '; print_r($productID); print_r($quantity); echo '</pre>'; die();};
-	if (!$arStairPrice || count($arStairPrice) <= 0)
-	{
-		if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
-		{
-			$quantity = $nearestQuantity;
-			$arStairPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
-		}
-	}
-$myStairPrice = $arStairPrice['PRICE']['PRICE'];
-$myStairValueItem = $myStairPrice*$myQuantityStairItem;
-$ItogStairSuma = $ItogStairSuma + $myStairValueItem;
+    $arStairPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
+    //if($USER->IsAdmin()) {echo '<pre>TEST: '; print_r($productID); print_r($quantity); echo '</pre>'; die();};
+    if (!$arStairPrice || count($arStairPrice) <= 0) {
+        if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
+            $quantity = $nearestQuantity;
+            $arStairPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
+        }
+    }
+    $myStairPrice = $arStairPrice['PRICE']['PRICE'];
+    $myStairValueItem = $myStairPrice * $myQuantityStairItem;
+    $ItogStairSuma = $ItogStairSuma + $myStairValueItem;
 
-$arStairColNum[] = $j; $arMyNameStairItem[] = $myNameStairItem; $arMyQuantityStairItem[] = $myQuantityItem; $arMyStairPrice[] = $myStairPrice; $arMyStairValueItem[] = $myStairValueItem;
-$arStairColTab = $arStairColTab + '<tr><td>'.$j.'</td><td>'.$myNameStairItem.'</td><td  align="center">'.$myQuantityItem.'</td><td>'.$myStairPrice.'</td><td>'.$myStairValueItem.'</td></tr><br>';
+    $arStairColNum[] = $j;
+    $arMyNameStairItem[] = $myNameStairItem;
+    $arMyQuantityStairItem[] = $myQuantityItem;
+    $arMyStairPrice[] = $myStairPrice;
+    $arMyStairValueItem[] = $myStairValueItem;
+    $arStairColTab = $arStairColTab + '<tr><td>' . $j . '</td><td>' . $myNameStairItem . '</td><td  align="center">' . $myQuantityItem . '</td><td>' . $myStairPrice . '</td><td>' . $myStairValueItem . '</td></tr><br>';
 
 }
-$allProdSum = $allProdSum+$ItogStairSuma;
+$allProdSum = $allProdSum + $ItogStairSuma;
 
 //Фильтровальная уставнока
 $ItogFilterSuma = 0;
@@ -189,45 +197,49 @@ $arFilterSets = CIBlockElement::GetList(Array(), $arFilter, false, false, array(
 $arFilterSet = array_shift($arFilterSets); // комплект данного товара*/
 /*if ($myBasinAreaForTile < 24){$ID = 13529;}elseif($myBasinAreaForTile < 41){$ID = 13329;} */
 /*$arFilterSets = CCatalogProductSet::getAllSetsByProduct($ID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара*/
-if ($myBasinAreaForTile < 24){
-$arFilterSets = CCatalogProductSet::getAllSetsByProduct('13529', CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
-}else{
-$arFilterSets = CCatalogProductSet::getAllSetsByProduct('13530', CCatalogProductSet::TYPE_SET); // массив комплектов данного товара)
+if ($myBasinAreaForTile < 24) {
+    $arFilterSets = CCatalogProductSet::getAllSetsByProduct('13529', CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
+} else {
+    $arFilterSets = CCatalogProductSet::getAllSetsByProduct('13530', CCatalogProductSet::TYPE_SET); // массив комплектов данного товара)
 }
 $arFilterSet = array_shift($arFilterSets); // комплект данного товара
-$k=0; 
+$k = 0;
 
-foreach ($arFilterSet['ITEMS'] as $myFilterItems  => $myOllFilterItems){
-	$strID = $myOllFilterItems['ITEM_ID'];
-	$myQuantityFilterItem = $myOllFilterItems['QUANTITY'];
+foreach ($arFilterSet['ITEMS'] as $myFilterItems => $myOllFilterItems) {
+    $strID = $myOllFilterItems['ITEM_ID'];
+    $myQuantityFilterItem = $myOllFilterItems['QUANTITY'];
 //товары
-	$dbFilterRes  = CCatalogProduct::GetList(array(),array("ID" => $strID ),false,array());
-	while (($arFilterRes = $dbFilterRes->Fetch()))
-	{ $myNameFilterItem = $arFilterRes['ELEMENT_NAME']; $k=$k+1; }
+    $dbFilterRes = CCatalogProduct::GetList(array(), array("ID" => $strID), false, array());
+    while (($arFilterRes = $dbFilterRes->Fetch())) {
+        $myNameFilterItem = $arFilterRes['ELEMENT_NAME'];
+        $k = $k + 1;
+    }
 
 
 //цены
-$arFilterPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
-	if (!$arFilterPrice || count($arFilterPrice) <= 0)
-	{
-		if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
-		{
-			$quantity = $nearestQuantity;
-			$arFilterPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
-		}
-	}
-$myFilterPrice = $arFilterPrice['PRICE']['PRICE'];
+    $arFilterPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
+    if (!$arFilterPrice || count($arFilterPrice) <= 0) {
+        if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
+            $quantity = $nearestQuantity;
+            $arFilterPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
+        }
+    }
+    $myFilterPrice = $arFilterPrice['PRICE']['PRICE'];
 
 
-$myFilterValueItem = $myFilterPrice*$myQuantityFilterItem;
-$ItogFilterSuma = $ItogFilterSuma + $myFilterValueItem;
+    $myFilterValueItem = $myFilterPrice * $myQuantityFilterItem;
+    $ItogFilterSuma = $ItogFilterSuma + $myFilterValueItem;
 
-$arFilterColNum[] = $k; $arMyNameFilterItem[] = $myNameFilterItem; $arMyQuantityFilterItem[] = $myQuantityFilterItem; $arMyFilterPrice[] = $myFilterPrice; $arMyFilterValueItem[] = $myFilterValueItem;
-$arFilterColTab = $arFilterColTab + '<tr><td>'.$k.'</td><td>'.$myNameFilterItem.'</td><td  align="center">'.$myQuantityFilterItem.'</td><td>'.$myFilterPrice.'</td><td>'.$myFilterValueItem.'</td></tr><br>';
+    $arFilterColNum[] = $k;
+    $arMyNameFilterItem[] = $myNameFilterItem;
+    $arMyQuantityFilterItem[] = $myQuantityFilterItem;
+    $arMyFilterPrice[] = $myFilterPrice;
+    $arMyFilterValueItem[] = $myFilterValueItem;
+    $arFilterColTab = $arFilterColTab + '<tr><td>' . $k . '</td><td>' . $myNameFilterItem . '</td><td  align="center">' . $myQuantityFilterItem . '</td><td>' . $myFilterPrice . '</td><td>' . $myFilterValueItem . '</td></tr><br>';
 
 }
 
-$allProdSum = $allProdSum+$ItogFilterSuma;
+$allProdSum = $allProdSum + $ItogFilterSuma;
 
 //Сервисной набор
 $ItogServiceSuma = 0;
@@ -236,38 +248,42 @@ $arServiceColTab = '';
 $arServiceSets = CCatalogProductSet::getAllSetsByProduct($intServiceID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
 
 $arServiceSet = array_shift($arServiceSets); // комплект данного товара
-$s=0; 
+$s = 0;
 
-foreach ($arServiceSet['ITEMS'] as $myServiceItems  => $myOllServiceItems){
-	$strID = $myOllServiceItems['ITEM_ID'];
-	$myQuantityServiceItem = $myOllServiceItems['QUANTITY'];
+foreach ($arServiceSet['ITEMS'] as $myServiceItems => $myOllServiceItems) {
+    $strID = $myOllServiceItems['ITEM_ID'];
+    $myQuantityServiceItem = $myOllServiceItems['QUANTITY'];
 //товары
-	$dbServiceRes  = CCatalogProduct::GetList(array(),array("ID" => $strID ),false,array());
-	while (($arServiceRes = $dbServiceRes->Fetch()))
-	{ $myNameServiceItem = $arServiceRes['ELEMENT_NAME']; $s=$s+1; }
+    $dbServiceRes = CCatalogProduct::GetList(array(), array("ID" => $strID), false, array());
+    while (($arServiceRes = $dbServiceRes->Fetch())) {
+        $myNameServiceItem = $arServiceRes['ELEMENT_NAME'];
+        $s = $s + 1;
+    }
 
 
 //цены
-$arServicePrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
-	if (!$arServicePrice || count($arServicePrice) <= 0)
-	{
-		if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
-		{
-			$quantity = $nearestQuantity;
-			$arFilterPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
-		}
-	}
-$myServicePrice = $arServicePrice['PRICE']['PRICE'];
+    $arServicePrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
+    if (!$arServicePrice || count($arServicePrice) <= 0) {
+        if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
+            $quantity = $nearestQuantity;
+            $arFilterPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
+        }
+    }
+    $myServicePrice = $arServicePrice['PRICE']['PRICE'];
 
-$myServiceValueItem = $myServicePrice*$myQuantityServiceItem;
-$ItogServiceSuma = $ItogServiceSuma + $myServiceValueItem;
+    $myServiceValueItem = $myServicePrice * $myQuantityServiceItem;
+    $ItogServiceSuma = $ItogServiceSuma + $myServiceValueItem;
 
-$arServiceColNum[] = $s; $arMyNameServiceItem[] = $myNameServiceItem; $arMyQuantityServiceItem[] = $myQuantityServiceItem; $arMyServicePrice[] = $myServicePrice; $arMyServiceValueItem[] = $myServiceValueItem;
-$arServiceColTab = $arServiceColTab + '<tr><td>'.$s.'</td><td>'.$myNameServiceItem.'</td><td  align="center">'.$myQuantityServiceItem.'</td><td>'.$myServicePrice.'</td><td>'.$myServiceValueItem.'</td></tr><br>';
+    $arServiceColNum[] = $s;
+    $arMyNameServiceItem[] = $myNameServiceItem;
+    $arMyQuantityServiceItem[] = $myQuantityServiceItem;
+    $arMyServicePrice[] = $myServicePrice;
+    $arMyServiceValueItem[] = $myServiceValueItem;
+    $arServiceColTab = $arServiceColTab + '<tr><td>' . $s . '</td><td>' . $myNameServiceItem . '</td><td  align="center">' . $myQuantityServiceItem . '</td><td>' . $myServicePrice . '</td><td>' . $myServiceValueItem . '</td></tr><br>';
 
 }
 
-$allProdSum = $allProdSum+$ItogServiceSuma;
+$allProdSum = $allProdSum + $ItogServiceSuma;
 
 //Закладные
 $ItogMortgagesSuma = 0;
@@ -276,90 +292,101 @@ $arMortgagesColTab = '';
 $arMortgagesSets = CCatalogProductSet::getAllSetsByProduct($intMortgagesID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
 //$arMortgagesColTab = '<tr>';
 $arMortgagesSet = array_shift($arMortgagesSets); // комплект данного товара
-$m=0; 
+$m = 0;
 
-foreach ($arMortgagesSet['ITEMS'] as $myMortgagesItems  => $myOllMortgagesItems){
-	$strID = $myOllMortgagesItems['ITEM_ID'];
-	$myQuantityMortgagesItem = $myOllMortgagesItems['QUANTITY'];
+foreach ($arMortgagesSet['ITEMS'] as $myMortgagesItems => $myOllMortgagesItems) {
+    $strID = $myOllMortgagesItems['ITEM_ID'];
+    $myQuantityMortgagesItem = $myOllMortgagesItems['QUANTITY'];
 //товары
-	$dbMortgagesRes  = CCatalogProduct::GetList(array(),array("ID" => $strID ),false,array());
-	while (($arMortgagesRes = $dbMortgagesRes->Fetch()))
-	{ $myNameMortgagesItem = $arMortgagesRes['ELEMENT_NAME']; $m=$m+1; }
+    $dbMortgagesRes = CCatalogProduct::GetList(array(), array("ID" => $strID), false, array());
+    while (($arMortgagesRes = $dbMortgagesRes->Fetch())) {
+        $myNameMortgagesItem = $arMortgagesRes['ELEMENT_NAME'];
+        $m = $m + 1;
+    }
 
 
 //цены
-$arMortgagesPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
-	if (!$arMortgagesPrice || count($arMortgagesPrice) <= 0)
-	{
-		if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
-		{
-			$quantity = $nearestQuantity;
-			$arMortgagesPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
-		}
-	}
-$myMortgagesPrice = $arMortgagesPrice['PRICE']['PRICE'];
+    $arMortgagesPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
+    if (!$arMortgagesPrice || count($arMortgagesPrice) <= 0) {
+        if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
+            $quantity = $nearestQuantity;
+            $arMortgagesPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
+        }
+    }
+    $myMortgagesPrice = $arMortgagesPrice['PRICE']['PRICE'];
 
-$myMortgagesValueItem = $myMortgagesPrice*$myQuantityMortgagesItem;
-$ItogMortgagesSuma = $ItogMortgagesSuma + $myMortgagesValueItem;
+    $myMortgagesValueItem = $myMortgagesPrice * $myQuantityMortgagesItem;
+    $ItogMortgagesSuma = $ItogMortgagesSuma + $myMortgagesValueItem;
 
-$arMortgagesColNum[] = $m; $arMyNameMortgagesItem[] = $myNameMortgagesItem; $arMyQuantityMortgagesItem[] = $myQuantityMortgagesItem; $arMyMortgagesPrice[] = $myMortgagesPrice; $arMyMortgagesValueItem[] = $myMortgagesValueItem;
-$arMortgagesColTab = $arMortgagesColTab + '<tr><td>'.$m.'</td><td>'.$myNameMortgagesItem.'</td><td  align="center">'.$myQuantityMortgagesItem.'</td><td>'.$myMortgagesPrice.'</td><td>'.$myMortgagesValueItem.'</td></tr><br>';
+    $arMortgagesColNum[] = $m;
+    $arMyNameMortgagesItem[] = $myNameMortgagesItem;
+    $arMyQuantityMortgagesItem[] = $myQuantityMortgagesItem;
+    $arMyMortgagesPrice[] = $myMortgagesPrice;
+    $arMyMortgagesValueItem[] = $myMortgagesValueItem;
+    $arMortgagesColTab = $arMortgagesColTab + '<tr><td>' . $m . '</td><td>' . $myNameMortgagesItem . '</td><td  align="center">' . $myQuantityMortgagesItem . '</td><td>' . $myMortgagesPrice . '</td><td>' . $myMortgagesValueItem . '</td></tr><br>';
 }
 
-$allProdSum = $allProdSum+$ItogMortgagesSuma;
+$allProdSum = $allProdSum + $ItogMortgagesSuma;
 
 //Подогрев
-if ($intHeatingID!='00000'){
-$ItogHeatingSuma = 0;
-$ItogHeatingSuma = '';
-$arHeatingSets = CCatalogProductSet::getAllSetsByProduct($intHeatingID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
+if ($intHeatingID != '00000') {
+    $ItogHeatingSuma = 0;
+    $ItogHeatingSuma = '';
+    $arHeatingSets = CCatalogProductSet::getAllSetsByProduct($intHeatingID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
 
-$arHeatingSet = array_shift($arHeatingSets); // комплект данного товара
-$h=0; 
+    $arHeatingSet = array_shift($arHeatingSets); // комплект данного товара
+    $h = 0;
 
-foreach ($arHeatingSet['ITEMS'] as $myHeatingItems  => $myOllHeatingItems){
-	$strID = $myOllHeatingItems['ITEM_ID'];
-	$myQuantityHeatingItem = $myOllHeatingItems['QUANTITY'];
+    foreach ($arHeatingSet['ITEMS'] as $myHeatingItems => $myOllHeatingItems) {
+        $strID = $myOllHeatingItems['ITEM_ID'];
+        $myQuantityHeatingItem = $myOllHeatingItems['QUANTITY'];
 //товары
-	$dbHeatingRes  = CCatalogProduct::GetList(array(),array("ID" => $strID ),false,array());
-	while (($arHeatingRes = $dbHeatingRes->Fetch()))
-	{ $myNameHeatingItem = $arHeatingRes['ELEMENT_NAME']; $h=$h+1; }
+        $dbHeatingRes = CCatalogProduct::GetList(array(), array("ID" => $strID), false, array());
+        while (($arHeatingRes = $dbHeatingRes->Fetch())) {
+            $myNameHeatingItem = $arHeatingRes['ELEMENT_NAME'];
+            $h = $h + 1;
+        }
 
 
 //цены
-$arHeatingPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
-	if (!$arHeatingPrice || count($arHeatingPrice) <= 0)
-	{
-		if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
-		{
-			$quantity = $nearestQuantity;
-			$arHeatingPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
-		}
-	}
-$myHeatingPrice = $arHeatingPrice['PRICE']['PRICE'];
+        $arHeatingPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
+        if (!$arHeatingPrice || count($arHeatingPrice) <= 0) {
+            if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
+                $quantity = $nearestQuantity;
+                $arHeatingPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
+            }
+        }
+        $myHeatingPrice = $arHeatingPrice['PRICE']['PRICE'];
 
-$myHeatingValueItem = $myHeatingPrice*$myQuantityHeatingItem;
-$ItogHeatingSuma = $ItogHeatingSuma + $myHeatingValueItem;
+        $myHeatingValueItem = $myHeatingPrice * $myQuantityHeatingItem;
+        $ItogHeatingSuma = $ItogHeatingSuma + $myHeatingValueItem;
 
-$arHeatingColNum[] = $h; $arMyNameHeatingItem[] = $myNameHeatingItem; $arMyQuantityHeatingItem[] = $myQuantityHeatingItem; $arMyHeatingPrice[] = $myHeatingPrice; $arMyHeatingValueItem[] = $myHeatingValueItem;
-$arHeatingColTab = $arHeatingColTab + '<tr><td>'.$h.'</td><td>'.$myNameHeatingItem.'</td><td  align="center">'.$myQuantityHeatingItem.'</td><td>'.$myHeatingPrice.'</td><td>'.$myHeatingValueItem.'</td></tr><br>';
+        $arHeatingColNum[] = $h;
+        $arMyNameHeatingItem[] = $myNameHeatingItem;
+        $arMyQuantityHeatingItem[] = $myQuantityHeatingItem;
+        $arMyHeatingPrice[] = $myHeatingPrice;
+        $arMyHeatingValueItem[] = $myHeatingValueItem;
+        $arHeatingColTab = $arHeatingColTab + '<tr><td>' . $h . '</td><td>' . $myNameHeatingItem . '</td><td  align="center">' . $myQuantityHeatingItem . '</td><td>' . $myHeatingPrice . '</td><td>' . $myHeatingValueItem . '</td></tr><br>';
 
-}
+    }
 
-$allProdSum = $allProdSum+$ItogHeatingSuma;
-}
-else{
-	$arHeatingColTab = '<tr><td>1</td><td>отсутствует</td><td></td><td></td><td></td></tr><br>';
-$arHeatingColNum[] = 1; $arMyNameHeatingItem[] = 'отсутствует'; $arMyQuantityHeatingItem[] = ''; $arMyHeatingPrice[] = ''; $arMyHeatingValueItem[] = '';
-	
-	
+    $allProdSum = $allProdSum + $ItogHeatingSuma;
+} else {
+    $arHeatingColTab = '<tr><td>1</td><td>отсутствует</td><td></td><td></td><td></td></tr><br>';
+    $arHeatingColNum[] = 1;
+    $arMyNameHeatingItem[] = 'отсутствует';
+    $arMyQuantityHeatingItem[] = '';
+    $arMyHeatingPrice[] = '';
+    $arMyHeatingValueItem[] = '';
+
+
 }
 ?>
-<!--img src='{$usrLogoSCR}' style='height: 62px;' alt=''-->
+    <!--img src='{$usrLogoSCR}' style='height: 62px;' alt=''-->
 <?
 $GLOBALS['APPLICATION']->RestartBuffer();
 ob_end_clean();
-require_once $_SERVER['DOCUMENT_ROOT']."/tcpdf/tcpdf.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/tcpdf/tcpdf.php";
 
 $html_text = <<<EOD
 <table border="0" cellpadding="1" cellspacing="1" style="width: 75%; margin: 15px;">
@@ -437,6 +464,20 @@ $html_text .= <<<EOD
         <td align="center">{$arMyQuantityItem[4]}</td>
         <td>{$arMyPrice[4]}</td>
         <td>{$arMyValueItem[4]}</td>
+    </tr>
+	<tr>
+        <td>{$arColNum[5]}</td>
+        <td>{$arMyNameItem[5]}</td>
+        <td align="center">{$arMyQuantityItem[5]}</td>
+        <td>{$arMyPrice[5]}</td>
+        <td>{$arMyValueItem[5]}</td>
+    </tr>
+	<tr>
+        <td>{$arColNum[6]}</td>
+        <td>{$arMyNameItem[6]}</td>
+        <td align="center">{$arMyQuantityItem[6]}</td>
+        <td>{$arMyPrice[6]}</td>
+        <td>{$arMyValueItem[6]}</td>
     </tr>
 	
 	
@@ -578,7 +619,7 @@ $html_text = "<table border='0' cellpadding='1' cellspacing='1' style='width: 75
 /**/
 
 $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-$pdf->setPrintHeader(false); 
+$pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
 $pdf->SetMargins(20, 25, 25);
 $pdf->AddPage();
