@@ -199,3 +199,25 @@ tabsection,
 	color: #0083d1;
 }
 
+
+@media (max-width: 767px) {
+.bx_search_container{
+	height: 25px;
+	line-height: 30px;
+	padding: 0 10px;
+}
+
+.bx_search_container .bx_field{
+	position: relative;
+	margin-top: 0px;
+	height: 30px;
+	border-top:    1px solid #8ca3ae;
+	border-right:  1px solid #a0b4be;
+	border-bottom: 1px solid #b6c8d1;
+	border-left:   1px solid #a0b4be;
+	border-radius: 3px;
+	background: #fff;
+	box-shadow: inset 0 2px 3px 0 rgba(0,0,0,0.1);
+	line-height: 30px;
+}
+}

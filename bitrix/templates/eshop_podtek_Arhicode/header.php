@@ -7,6 +7,24 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
 <!DOCTYPE html>
 <html xml:lang="<?= LANGUAGE_ID ?>" lang="<?= LANGUAGE_ID ?>">
 <head>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-28168734-9"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-28168734-9');
+</script>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W6TKM2Z');</script>
+<!-- End Google Tag Manager -->
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
     <link rel="shortcut icon" type="image/x-icon" href="<?= SITE_DIR ?>favicon.ico"/>
@@ -19,28 +37,11 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
     $APPLICATION->AddHeadScript('/bitrix/templates/eshop_podtek_Arhicode/js/bootstrap-dropdown.js');
     ?>
     <title><? $APPLICATION->ShowTitle() ?></title>
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            });
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src =
-                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-W6TKM2Z');</script>
-    <!-- End Google Tag Manager -->
 </head>
 <body class="bx-background-image bx-theme-<?= $theme ?>" <?= $APPLICATION->ShowProperty("backgroundImage") ?>>
 <!-- Google Tag Manager (noscript) -->
-<noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W6TKM2Z"
-            height="0" width="0" style="display:none;visibility:hidden"></iframe>
-</noscript>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W6TKM2Z"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <div id="panel"><? $APPLICATION->ShowPanel(); ?></div>
 <div class="bx-wrapper" id="bx_eshop_wrap">
@@ -77,6 +78,7 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
             </div>
         </div>
         <div class="bx-header-section container">
+		
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
                     <div class="bx-logo">
@@ -90,44 +92,46 @@ $theme = COption::GetOptionString("main", "wizard_eshop_bootstrap_theme_id", "bl
                 </div>
                 <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
                     <? $APPLICATION->IncludeComponent(
-                        "bitrix:search.title",
-                        "visual_old",
-                        array(
-                            "NUM_CATEGORIES" => "1",
-                            "TOP_COUNT" => "5",
-                            "CHECK_DATES" => "N",
-                            "SHOW_OTHERS" => "N",
-                            "PAGE" => SITE_DIR . "catalog/",
-                            "CATEGORY_0_TITLE" => GetMessage("SEARCH_GOODS"),
-                            "CATEGORY_0" => array(
-                                0 => "iblock_1c_catalog",
-                            ),
-                            "CATEGORY_0_iblock_catalog" => array(
-                                0 => "all",
-                            ),
-                            "CATEGORY_OTHERS_TITLE" => GetMessage("SEARCH_OTHER"),
-                            "SHOW_INPUT" => "Y",
-                            "INPUT_ID" => "title-search-input",
-                            "CONTAINER_ID" => "search",
-                            "PRICE_CODE" => array(
-                                0 => "Интернет-магазин",
-                            ),
-                            "SHOW_PREVIEW" => "Y",
-                            "PREVIEW_WIDTH" => "75",
-                            "PREVIEW_HEIGHT" => "75",
-                            "CONVERT_CURRENCY" => "Y",
-                            "COMPONENT_TEMPLATE" => "visual_old",
-                            "ORDER" => "date",
-                            "USE_LANGUAGE_GUESS" => "Y",
-                            "PRICE_VAT_INCLUDE" => "Y",
-                            "PREVIEW_TRUNCATE_LEN" => "",
-                            "CURRENCY_ID" => "RUB",
-                            "CATEGORY_0_iblock_1c_catalog" => array(
-                                0 => "all",
-                            )
-                        ),
-                        false
-                    ); ?>
+	"bitrix:search.title", 
+	"visual_old", 
+	array(
+		"NUM_CATEGORIES" => "1",
+		"TOP_COUNT" => "5",
+		"CHECK_DATES" => "N",
+		"SHOW_OTHERS" => "N",
+		"PAGE" => SITE_DIR."search/",
+		"CATEGORY_0_TITLE" => GetMessage("SEARCH_GOODS"),
+		"CATEGORY_0" => array(
+			0 => "iblock_1c_catalog",
+		),
+		"CATEGORY_0_iblock_catalog" => array(
+			0 => "all",
+		),
+		"CATEGORY_OTHERS_TITLE" => GetMessage("SEARCH_OTHER"),
+		"SHOW_INPUT" => "Y",
+		"INPUT_ID" => "title-search-input",
+		"CONTAINER_ID" => "search",
+		"PRICE_CODE" => array(
+			0 => "Интернет-магазин",
+		),
+		"SHOW_PREVIEW" => "Y",
+		"PREVIEW_WIDTH" => "75",
+		"PREVIEW_HEIGHT" => "75",
+		"CONVERT_CURRENCY" => "Y",
+		"COMPONENT_TEMPLATE" => "visual_old",
+		"ORDER" => "date",
+		"USE_LANGUAGE_GUESS" => "Y",
+		"PRICE_VAT_INCLUDE" => "Y",
+		"PREVIEW_TRUNCATE_LEN" => "",
+		"CURRENCY_ID" => "RUB",
+		"CATEGORY_0_iblock_1c_catalog" => array(
+			0 => "7",
+		),
+		"COMPOSITE_FRAME_MODE" => "A",
+		"COMPOSITE_FRAME_TYPE" => "AUTO"
+	),
+	false
+); ?>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden-xs">
                     <? $APPLICATION->IncludeComponent(

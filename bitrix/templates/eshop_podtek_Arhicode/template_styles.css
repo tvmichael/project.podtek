@@ -97,12 +97,12 @@ img {
 
 .bx-logo {
 	/*padding-left: 17px;*/
-	padding-bottom: 19px;
+	/*padding-bottom: 19px;*/
 }
 
 .bx-logo .bx-logo-block {
 	display: block;
-	height: 50px;
+	height: 65px;
 	border-bottom: none;
 }
 .bx-logo .bx-logo-block img{
@@ -235,6 +235,15 @@ img {
 }
 
 @media (max-width: 767px) {
+	.bx-inc-orginfo {
+		text-align: center;
+		padding-bottom: 0px;
+		margin-top: 10%;
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 467px) {
 	.bx-inc-orginfo {
 		text-align: center;
 		padding-bottom: 10px;
@@ -405,7 +414,7 @@ textarea {
 }
 
 .bx-inclinksfooter-container {
-	margin-top: 15px;
+	margin-top: /*15*/0px;
 	padding: 0;
 	color: #fff;
 	border-radius: 2px;
@@ -581,14 +590,14 @@ float: right;
 
 .bx-footer a {
 	color: #c8cece;
-font-size: 16px;
+font-size: 15px;
 }
 
 .bx-footer a:hover {
 	color: #fff;
 	border-bottom: 1px solid;
 	text-decoration: none;
-font-size: 16px;
+font-size: 15px;
 }
 
 .bx-footer-line {
@@ -900,4 +909,23 @@ font-size:24px;}*/
 @media (max-width: 767px) {
 	
 .bx-inclogofooter-worktime{font-size:12px;float: none;}
+
+.bx-header {
+    min-height: 155px;
+}
 	}
+
+.composition_catalog_title{
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+font-size: 18px;
+margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.bx-footer p1{
+border-bottom: 1px solid;}
+
+.product-item-detail-tab-content h2{font-size: 15px;} 
+.bx-code {font-size: 14px;}
+h1.bx-title{font-size: 18px;}

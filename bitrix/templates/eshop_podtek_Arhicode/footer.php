@@ -18,7 +18,7 @@
 		<footer class="bx-footer <?if($page=='/personal/cart/' || $page=='/personal/order/make/') echo 'no_link_bascet';?>">
 			<!--div class="bx-footer-section container bx-center-section">
 				<div class="col-sm-5 col-md-3 col-md-push-6">
-					<h4 class="bx-block-title"><!--?$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/about_title.php"), false);?></h4>
+					
 					<!--?$APPLICATION->IncludeComponent("bitrix:menu", "bottom_menu", array(
 							"ROOT_MENU_TYPE" => "bottom",
 							"MAX_LEVEL" => "1",
@@ -33,7 +33,7 @@
 					);?>
 				</div>
 				<div class="col-sm-5 col-md-3">
-					<h4 class="bx-block-title"><!--?$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/catalog_title.php"), false);?></h4>
+					
 					<!--?$APPLICATION->IncludeComponent("bitrix:menu", "bottom_menu", array(
 							"ROOT_MENU_TYPE" => "left",
 							"MENU_CACHE_TYPE" => "A",
@@ -87,27 +87,55 @@
 			<div class="bx-footer-bottomline">
 				<div class="bx-footer-section container">
 
-					<div class="hidden-xs hidden-sm col-md-6  col-lg-6">
-						<div class="bx-inclogofooter-block col-xs-12 col-sm-6 col-md-8 col-lg-8">
+					<div class="hidden-xs hidden-sm col-md-4  col-lg-3">
+						<div class="bx-inclogofooter-block col-xs-12">
 							<div class="bx-inclogofooter-tel"><?$APPLICATION->IncludeComponent("bitrix:main.include", "", array(
-	"AREA_FILE_SHOW" => "file",
-		"PATH" => SITE_DIR."include/telephone_footer.php"
-	),
-	false,
-	array(
-	"ACTIVE_COMPONENT" => "Y"
-	)
-);?></div>
-							<!--div class="bx-inclogofooter-worktime"><!--?$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/schedule.php"), false);?></div-->
+								"AREA_FILE_SHOW" => "file",
+								"PATH" => SITE_DIR."include/telephone_footer.php"
+								),
+								false,
+								array("ACTIVE_COMPONENT" => "Y")
+								);?>
+							</div>
+							
 						</div>
-						<!--div class="mail col-sm-6 col-md-34">
-							<a href="mailto: sale@podtek.ru">sale@podtek.ru</a>
-						</div-->
+						
 					</div>
-					<div class="col-sm-6">
+					<div class="hidden-xs hidden-sm col-md-4  col-lg-3">
+					<!--div class="col-xs-12 col-md-4  col-lg-3"-->
+						<?$APPLICATION->IncludeComponent("bitrix:menu", "bottom_menu", array(
+							"ROOT_MENU_TYPE" => "bottom",
+								"MENU_CACHE_TYPE" => "A",
+								"MENU_CACHE_TIME" => "36000000",
+								"MENU_CACHE_USE_GROUPS" => "Y",
+								"MENU_CACHE_GET_VARS" => "",
+								"CACHE_SELECTED_ITEMS" => "N",
+								"MAX_LEVEL" => "1",
+								"USE_EXT" => "Y",
+								"DELAY" => "N",
+								"ALLOW_MULTI_SELECT" => "N",
+								"COMPONENT_TEMPLATE" => "bottom_menu",
+								"CHILD_MENU_TYPE" => "left",
+								"COMPOSITE_FRAME_MODE" => "A",
+								"COMPOSITE_FRAME_TYPE" => "AUTO"
+							),
+							false,
+							array(
+							"ACTIVE_COMPONENT" => "Y"
+							)
+						);?>
+					</div>
+					
+					<div class="col-sm-6 col-md-4  col-lg-6">
+					<div class="col-xs-12 col-sm-12 hidden-md  hidden-lg">
+						<ul class="bx-inclinksfooter-list">
+							<li class="bx-inclinksfooter-item"><a href="/about/delivery/"><p1>Доставка</p1></a></li>
+							<li class="bx-inclinksfooter-item"><a href="/paying/"><p1>Оплата</p1></a></li>
+							<li class="bx-inclinksfooter-item"><a href="/about/contacts/"><p1>Контакты</p1></a></li>
+						</ul>
+					</div>
 							<div class="bx-inclogofooter-worktime"><?$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/schedule.php"), false);?></div>
-							<!--?$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/copyright.php"), false);?--></div>
-					<!--div class="col-sm-6 bx-up"><a href="javascript:void(0)" data-role="eshopUpButton"><i class="fa fa-caret-up"></i> <!--?=GetMessage("FOOTER_UP_BUTTON")?></a></div-->
+							
 				</div>
 			</div>
 		</footer>
@@ -163,19 +191,11 @@
         clickmap:true,
         trackLinks:true,
         accurateTrackBounce:true,
-        webvisor:true
+        webvisor:true,
+        ecommerce:"dataLayer"
    });
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/51713657" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-28168734-9"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-28168734-9');
-</script>
 </body>
 </html>
