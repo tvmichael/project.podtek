@@ -285,6 +285,163 @@ if (!empty($arParams['LABEL_PROP_POSITION'])) {
 }
 
 ?>
+
+<?php
+//if($USER->IsAdmin() && $USER->GetID()==8)
+{
+    echo "<pre style='display:none;' data-x='xxx-000'>INFO:<br>";
+    // -----------------------------------------------
+    echo 'TEST:<br>';
+    //  список всіх наявних скидок (з бази)
+//    $db_res = CSaleDiscount::GetList(
+//        array("SORT" => "ASC"),
+//        array(
+//            "LID" => SITE_ID,
+//            "ACTIVE" => "Y",
+//        ),
+//        false,
+//        false,
+//        array()
+//    );
+//    while ($ar_res = $db_res->Fetch())
+//    {
+//        print_r($ar_res);
+//    }
+
+
+    // скидка по ІД (з бази)
+//    $discount = CSaleDiscount::GetByID(65);
+//    print_r($discount);
+//    print_r(unserialize($discount['CONDITIONS']));
+//    print_r(unserialize($discount['ACTIONS']));
+
+    // +
+
+    // ціна з наявними скидками (виводить ті скидки що застосовані)
+    //echo '<p>CCatalogProduct::GetOptimalPrice</p>';
+//    $arPrice = CCatalogProduct::GetOptimalPrice($arResult['ID'], 1, $USER->GetUserGroupArray());
+//    print_r($arPrice);
+    // виводить наявні скидки дя товару
+//    echo '<p>CCatalogDiscount::GetDiscountByProduct</p>';
+//    $arDiscounts = CCatalogDiscount::GetDiscountByProduct($arResult['ID'],$USER->GetUserGroupArray());
+//    print_r($arDiscounts);
+
+
+
+//    $dbPrice = CPrice::GetList(
+//        array("QUANTITY_FROM" => "ASC", "QUANTITY_TO" => "ASC",
+//            "SORT" => "ASC"),
+//        array("PRODUCT_ID" => 12129),
+//        false,
+//        false,
+//        array(
+////            "ID", "CATALOG_GROUP_ID", "PRICE", "CURRENCY",
+////            "QUANTITY_FROM", "QUANTITY_TO"
+//        )
+//    );
+//    while($arPrice = $dbPrice->Fetch())
+//    {
+//        $arDiscounts = CCatalogDiscount::GetDiscountByPrice(
+//            $arPrice["ID"],
+//            $USER->GetUserGroupArray(),
+//            "N",
+//            SITE_ID
+//        );
+//        $discountPrice = CCatalogProduct::CountPriceWithDiscount(
+//            $arPrice["PRICE"],
+//            $arPrice["CURRENCY"],
+//            $arDiscounts
+//        );
+//        print_r($arPrice);
+//        print_r($arDiscounts);
+//        print_r($discountPrice);
+//    }
+
+
+//    $discount = CCatalogDiscount::GetDiscount(
+//            12129,
+//            7
+//        );
+//
+//    print_r($discount);
+
+
+    print_r($arResult['ITEM_PRICES']);
+    print_r($price);
+
+    // echo '<p>DISCOUNT:</p>';
+if($USER->IsAdmin() || true) {
+    $getDiscountArray = [64, 65, 66, 67];
+    $getDeliveriId = 64;
+    $maxPrice = 30000;
+
+    $showDiscountList = false;
+    $discountList = [];
+    $arProductPrice = CCatalogProduct::GetOptimalPrice($arResult['ID'], 1, $USER->GetUserGroupArray());
+
+    if (isset($arProductPrice['DISCOUNT_LIST'])) {
+        $percentOn = 0;
+        $percentOff = 0;
+        foreach ($arProductPrice['DISCOUNT_LIST'] as $discount)
+        {
+            if (in_array($discount['ID'], $getDiscountArray))
+            {
+                $showDiscountList = true;
+                $discountList[$discount['ID']] = $discount;
+                $percentOff += $discount['VALUE'];
+            } else $percentOn += $discount['VALUE'];
+        }
+
+        echo "<p>percentOn = $percentOn</p>";
+        if ($showDiscountList) {
+            if ($percentOn == 0) {
+                $arParams['SHOW_DISCOUNT_PERCENT'] = 'N';
+                $showDiscount = false;
+            }
+
+
+            $reDiscount = $arProductPrice['PRICE']['PRICE'] * ($percentOn / 100);
+            $reCalculatePrice = $arProductPrice['PRICE']['PRICE'] - $reDiscount;
+
+            $price['PRINT_RATIO_PRICE'] = CCurrencyLang::CurrencyFormat($reCalculatePrice, 'RUB');
+            $price['PRINT_RATIO_DISCOUNT'] = CCurrencyLang::CurrencyFormat($reDiscount, 'RUB');
+            $price['PERCENT'] = $percentOn;
+
+        }
+    }
+
+    if(isset($arProductPrice['PRICE']['PRICE']))
+        if($arProductPrice['PRICE']['PRICE'] > $maxPrice)
+        {
+            if(!isset($discountList[$getDeliveriId]))
+            {
+                $showDiscountList = true;
+                $discountList[$getDeliveriId] = [
+                    'ID'=>64,
+                    'NAME'=>'Бесплатная доставка',
+                ];
+            }
+        }
+}
+
+    echo '<br>$discountList:::';
+    print_r($discountList);
+//    echo '<br>';
+//    print_r($percentOff);
+//    echo '<br>';
+//    print_r($percentOn);
+//    echo '<br>';
+//    print_r($reCalculatePrice);
+//    echo CCurrencyLang::CurrencyFormat($reCalculatePrice, 'RUB');
+
+    // $arResult['RAZMER_SKIDKI']
+    //print_r($arResult['ITEM_PRICES']);
+    // print_r($arResult);
+    //-------------------------------------------------
+    echo '</pre>';
+}
+?>
+
     <div class="bx-catalog-element bx-<?= $arParams['TEMPLATE_THEME'] ?>" id="<?= $itemIds['ID'] ?>"
          itemscope itemtype="http://schema.org/Product">
         <div class="container-fluid">
@@ -302,6 +459,23 @@ if (!empty($arParams['LABEL_PROP_POSITION'])) {
             <div class="row">
                 <div class="col-md-4 col-sm-12">
                     <div class="product-item-detail-slider-container" id="<?= $itemIds['BIG_SLIDER_ID'] ?>">
+                        <div class="product-item-discount">
+                            <? if($showDiscountList):
+                                foreach ($discountList as $discountItem):
+                                    if(isset($discountItem['NAME'])):?>
+                                        <div class="product-item-discount-text"><?=$discountItem['NAME'];?>
+                                            <div class="product-item-discount-file">
+                                                <? $APPLICATION->IncludeFile(
+                                                    "/include/discounts_".$discountItem['ID'].".php",
+                                                    Array(),
+                                                    Array("MODE"=>"php")
+                                                );?>
+                                            </div>
+                                        </div>
+                                    <? endif;?>
+                                <? endforeach;?>
+                            <? endif;?>
+                        </div>
                         <span class="product-item-detail-slider-close" data-entity="close-popup"></span>
                         <div class="product-item-detail-slider-block
 						<?= ($arParams['IMAGE_RESOLUTION'] === '1by1' ? 'product-item-detail-slider-block-square' : '') ?>"
@@ -2348,99 +2522,6 @@ if (!empty($arParams['LABEL_PROP_POSITION'])) {
         }
         ?>
     </div>
-
-<?php
-if($USER->IsAdmin() && $USER->GetID()==8)
-{
-    echo "<pre style='display:;' data-x='xxx-000'>INFO:<br>";
-    // -----------------------------------------------
-
-    //  список всіх наявних скидок
-//    $db_res = CSaleDiscount::GetList(
-//        array("SORT" => "ASC"),
-//        array(
-//            "LID" => SITE_ID,
-//            "ACTIVE" => "Y",
-//        ),
-//        false,
-//        false,
-//        array()
-//    );
-//    while ($ar_res = $db_res->Fetch())
-//    {
-//        print_r($ar_res);
-//    }
-
-
-    // скидка по ІД
-//    $discount = CSaleDiscount::GetByID(65);
-//    print_r($discount);
-//    print_r(unserialize($discount['CONDITIONS']));
-//    print_r(unserialize($discount['ACTIONS']));
-
-
-
-
-
-    // +
-
-        // ціна з наявними скидками
-    //$arPrice = CCatalogProduct::GetOptimalPrice(12129, 1, $USER->GetUserGroupArray());
-    //print_r($arPrice);
-
-    //$arDiscounts = CCatalogDiscount::GetDiscountByProduct(12129,$USER->GetUserGroupArray());
-    //print_r($arDiscounts);
-
-
-
-//    $dbPrice = CPrice::GetList(
-//        array("QUANTITY_FROM" => "ASC", "QUANTITY_TO" => "ASC",
-//            "SORT" => "ASC"),
-//        array("PRODUCT_ID" => 12129),
-//        false,
-//        false,
-//        array(
-////            "ID", "CATALOG_GROUP_ID", "PRICE", "CURRENCY",
-////            "QUANTITY_FROM", "QUANTITY_TO"
-//        )
-//    );
-//    while($arPrice = $dbPrice->Fetch())
-//    {
-//        $arDiscounts = CCatalogDiscount::GetDiscountByPrice(
-//            $arPrice["ID"],
-//            $USER->GetUserGroupArray(),
-//            "N",
-//            SITE_ID
-//        );
-//        $discountPrice = CCatalogProduct::CountPriceWithDiscount(
-//            $arPrice["PRICE"],
-//            $arPrice["CURRENCY"],
-//            $arDiscounts
-//        );
-//        print_r($arPrice);
-//        print_r($arDiscounts);
-//        print_r($discountPrice);
-//    }
-
-
-//    $discount = CCatalogDiscount::GetDiscount(
-//            12129,
-//            7
-//        );
-//
-//    print_r($discount);
-
-
-
-    // $arResult['RAZMER_SKIDKI']
-    // [ITEM_PRICES]
-
-    print_r($arResult['ITEM_PRICES']);
-    //-------------------------------------------------
-    echo '</pre>';
-}
-?>
-
 
 <?
 if ($haveOffers) {
