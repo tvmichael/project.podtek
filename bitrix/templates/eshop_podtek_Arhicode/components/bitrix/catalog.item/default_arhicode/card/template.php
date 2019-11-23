@@ -23,86 +23,80 @@ use \Bitrix\Main\Localization\Loc;
 ?>
 
 <?
-//echo "<pre style='display:none;' data-x='xxx-111'>INFO:<br>";
+$getDiscountArray = [64, 65, 66, 67];
+$getDeliveriId = 64;
+$maxPrice = 30000;
 
-//print_r($item);
+$showDiscountList = false;
+$discountList = [];
+$arProductPrice = CCatalogProduct::GetOptimalPrice($item['ID'], 1, $USER->GetUserGroupArray());
 
-if($USER->IsAdmin() || true) {
-    $getDiscountArray = [64, 65, 66, 67];
-    $getDeliveriId = 64;
-    $maxPrice = 30000;
-
-    $showDiscountList = false;
-    $discountList = [];
-    $arProductPrice = CCatalogProduct::GetOptimalPrice($item['ID'], 1, $USER->GetUserGroupArray());
-
-    if (isset($arProductPrice['DISCOUNT_LIST'])) {
-        $percentOn = 0;
-        $percentOff = 0;
-        foreach ($arProductPrice['DISCOUNT_LIST'] as $discount)
+if (isset($arProductPrice['DISCOUNT_LIST']))
+{
+    $percentOn = 0;
+    $percentOff = 0;
+    foreach ($arProductPrice['DISCOUNT_LIST'] as $discount)
+    {
+        if (in_array($discount['ID'], $getDiscountArray))
         {
-            if (in_array($discount['ID'], $getDiscountArray))
-            {
-                $showDiscountList = true;
-                $discountList[$discount['ID']] = $discount;
-                $percentOff += $discount['VALUE'];
-            } else $percentOn += $discount['VALUE'];
-        }
-
-        echo "<p>percentOn = $percentOn</p>";
-        if ($showDiscountList) {
-            if ($percentOn == 0) {
-                $arParams['SHOW_DISCOUNT_PERCENT'] = 'N';
-                $showDiscount = false;
-
-            }
-
-
-            $reDiscount = $arProductPrice['PRICE']['PRICE'] * ($percentOn / 100);
-            $reCalculatePrice = $arProductPrice['PRICE']['PRICE'] - $reDiscount;
-
-            $price['PRINT_RATIO_PRICE'] = CCurrencyLang::CurrencyFormat($reCalculatePrice, 'RUB');
-            $price['PRINT_RATIO_DISCOUNT'] = CCurrencyLang::CurrencyFormat($reDiscount, 'RUB');
-            $price['PERCENT'] = $percentOn;
-
-            if ($percentOn == 0)
-                $price['RATIO_PRICE'] = $price['RATIO_BASE_PRICE'];
-        }
+            $showDiscountList = true;
+            $discountList[$discount['ID']] = $discount;
+            $percentOff += $discount['VALUE'];
+        } else $percentOn += $discount['VALUE'];
     }
 
-    if(isset($arProductPrice['PRICE']['PRICE']))
-        if($arProductPrice['PRICE']['PRICE'] > $maxPrice)
-        {
-            if(!isset($discountList[$getDeliveriId]))
-            {
-                $showDiscountList = true;
-                $discountList[$getDeliveriId] = [
-                    'ID'=>64,
-                    'NAME'=>'Бесплатная доставка',
-                ];
-            }
+    if ($showDiscountList) {
+        if ($percentOn == 0) {
+            $arParams['SHOW_DISCOUNT_PERCENT'] = 'N';
+            $showDiscount = false;
         }
+
+        $reDiscount = $arProductPrice['PRICE']['PRICE'] * ($percentOn / 100);
+        $reCalculatePrice = $arProductPrice['PRICE']['PRICE'] - $reDiscount;
+
+        $price['PRINT_RATIO_PRICE'] = CCurrencyLang::CurrencyFormat($reCalculatePrice, 'RUB');
+        $price['PRINT_RATIO_DISCOUNT'] = CCurrencyLang::CurrencyFormat($reDiscount, 'RUB');
+        $price['PERCENT'] = $percentOn;
+
+        if ($percentOn == 0)
+            $price['RATIO_PRICE'] = $price['RATIO_BASE_PRICE'];
+    }
 }
 
-//echo '</pre>';
+if(isset($arProductPrice['PRICE']['PRICE']))
+    if($arProductPrice['PRICE']['PRICE'] > $maxPrice)
+    {
+        if(!isset($discountList[$getDeliveriId]))
+        {
+            $showDiscountList = true;
+            $discountList[$getDeliveriId] = [
+                'ID'=>$getDeliveriId,
+                'NAME'=>'Бесплатная доставка',
+            ];
+        }
+    }
 ?>
 
 <div class="product-item">
     <? if($showDiscountList):?>
-        <div class="product-item-discount-card">
-            <?foreach ($discountList as $discountItem):
-                if(isset($discountItem['NAME'])):?>
-                    <div class="product-item-discount-text"><?=$discountItem['NAME'];?>
-                        <div class="product-item-discount-file">
-                            <? $APPLICATION->IncludeFile(
-                                "/include/discounts_".$discountItem['ID'].".php",
-                                Array(),
-                                Array("MODE"=>"php")
-                            );?>
-                        </div>
-                    </div>
-                <? endif;?>
-            <? endforeach;?>
+        <div class="product-item-discount">
+            <div class="product-item-discount-title">Скидка</div>
+            <ul class="product-item-discount-text">
+                <?foreach ($discountList as $discountItem):
+                    if(isset($discountItem['NAME'])):?>
+                        <li>
+                            <span><?=$discountItem['NAME'];?></span>
+                            <div class="product-item-discount-file">
+                                <? $APPLICATION->IncludeFile(
+                                    "/include/discounts_".$discountItem['ID'].".php",
+                                    Array(),
+                                    Array("MODE"=>"php")
+                                );?>
+                            </div>
+                        </li>
+                    <? endif;?>
+                <? endforeach;?>
+            </ul>
         </div>
     <? endif;?>
 	<a class="product-item-image-wrapper" href="<?=$item['DETAIL_PAGE_URL']?>" title="<?=$imgTitle?>"
