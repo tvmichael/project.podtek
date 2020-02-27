@@ -9,7 +9,7 @@ $APPLICATION->SetTitle("Подбор оборудования");
     <script>var acUrlAjax = '<?=$APPLICATION->GetCurPage() . 'volume_ajax.php';?>';</script>
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="col-xs-12 col-md-9">Подбор оборудования для басейна</h3>
+            <h1 class="col-xs-12 col-md-9" style="font-size: 27px;padding: 0;margin: 0;">Подбор оборудования для басейна</h1>
             <div class="ac-panel-default col-md-3 hidden-xs hidden-sm">
                 <div class="ac-volume-poll-number">0</div>
                 м<span>3</span>
@@ -69,8 +69,8 @@ $APPLICATION->SetTitle("Подбор оборудования");
                         </label>
                     </div>
                 </div>
-                <div class="col-md-12"></div>
-                <div class="col-md-4">
+                <div style="clear:both;"></div>
+                <div class="col-md-12">
                     <div class="form-group">
                         <label class="form-group" for="select-volume"></label>
                         <input class="form-control inputtext" type="number" maxlength="20" min="0" id="select-volume"

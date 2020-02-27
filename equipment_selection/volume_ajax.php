@@ -50,10 +50,13 @@ if($valueAction=='equipment')
                 $arProps = $arrProductList[$volumeKey]['arProps'];
                 if(is_array($arProps['composition_catalog']['VALUE']) && count($arProps['composition_catalog']['VALUE']) > 0):?>
                     <div class="row">
+					<div class="panel-heading h3">
+					Подобранное оборудование для Вашего бассейна согласно габаритным параметрам
+					</div>
                         <?
                         foreach ($arProps['composition_catalog']['VALUE'] as $id):
                             ?>
-                            <div class="col-xs-6 col-sm-4 col-md-2">
+                            <div class="col-xs-6 col-sm-4 col-md-2" style="padding-bottom: 30px;">
                                 <div class="product-item-container">
                                     <?
                                     $acText = true;
@@ -72,7 +75,7 @@ if($valueAction=='equipment')
                                                 <div class="product-item-discount">-<?=$arPrice['RESULT_PRICE']['PERCENT'];?>%</div>
                                             <? endif;?>
                                         </div>
-                                        <div class="product-item-title">
+                                        <div class="product-item-title"  style="color: black;text-align: center;">
                                             <?=$ar_res['NAME'];?>
                                         </div>
                                     </a>
