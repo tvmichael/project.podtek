@@ -23,58 +23,57 @@ use \Bitrix\Main\Localization\Loc;
 ?>
 
 <?
-$getDiscountArray = [64, 65, 66, 67];
-$getDeliveriId = 64;
-$maxPrice = 30000;
-
 $showDiscountList = false;
-$discountList = [];
-$arProductPrice = CCatalogProduct::GetOptimalPrice($item['ID'], 1, $USER->GetUserGroupArray());
-
-if (isset($arProductPrice['DISCOUNT_LIST']))
+if(isset($arParams['DISCOUNT_LIST_ID']['discount'])) // from - $arFileDiscount
 {
-    $percentOn = 0;
-    $percentOff = 0;
-    foreach ($arProductPrice['DISCOUNT_LIST'] as $discount)
-    {
-        if (in_array($discount['ID'], $getDiscountArray))
-        {
-            $showDiscountList = true;
-            $discountList[$discount['ID']] = $discount;
-            $percentOff += $discount['VALUE'];
-        } else $percentOn += $discount['VALUE'];
-    }
+    $getDiscountArray = $arParams['DISCOUNT_LIST_ID']['discount'];
+    $getDeliveriId = $arParams['DISCOUNT_LIST_ID']['delivery'];
+    $maxPrice = $arParams['DISCOUNT_LIST_ID']['maxPrice'];
 
-    if ($showDiscountList) {
-        if ($percentOn == 0) {
-            $arParams['SHOW_DISCOUNT_PERCENT'] = 'N';
-            $showDiscount = false;
+    $showDiscountList = false;
+    $discountList = [];
+    $arProductPrice = CCatalogProduct::GetOptimalPrice($item['ID'], 1, $USER->GetUserGroupArray());
+
+    if (isset($arProductPrice['DISCOUNT_LIST'])) {
+        $percentOn = 0;
+        $percentOff = 0;
+        foreach ($arProductPrice['DISCOUNT_LIST'] as $discount) {
+            if (in_array($discount['ID'], $getDiscountArray)) {
+                $showDiscountList = true;
+                $discountList[$discount['ID']] = $discount;
+                $percentOff += $discount['VALUE'];
+            } else $percentOn += $discount['VALUE'];
         }
 
-        $reDiscount = $arProductPrice['PRICE']['PRICE'] * ($percentOn / 100);
-        $reCalculatePrice = $arProductPrice['PRICE']['PRICE'] - $reDiscount;
+        if ($showDiscountList) {
+            if ($percentOn == 0) {
+                $arParams['SHOW_DISCOUNT_PERCENT'] = 'N';
+                $showDiscount = false;
+            }
 
-        $price['PRINT_RATIO_PRICE'] = CCurrencyLang::CurrencyFormat($reCalculatePrice, 'RUB');
-        $price['PRINT_RATIO_DISCOUNT'] = CCurrencyLang::CurrencyFormat($reDiscount, 'RUB');
-        $price['PERCENT'] = $percentOn;
+            $reDiscount = $arProductPrice['PRICE']['PRICE'] * ($percentOn / 100);
+            $reCalculatePrice = $arProductPrice['PRICE']['PRICE'] - $reDiscount;
 
-        if ($percentOn == 0)
-            $price['RATIO_PRICE'] = $price['RATIO_BASE_PRICE'];
+            $price['PRINT_RATIO_PRICE'] = CCurrencyLang::CurrencyFormat($reCalculatePrice, 'RUB');
+            $price['PRINT_RATIO_DISCOUNT'] = CCurrencyLang::CurrencyFormat($reDiscount, 'RUB');
+            $price['PERCENT'] = $percentOn;
+
+            if ($percentOn == 0)
+                $price['RATIO_PRICE'] = $price['RATIO_BASE_PRICE'];
+        }
     }
+
+    if (isset($arProductPrice['PRICE']['PRICE']))
+        if ($arProductPrice['PRICE']['PRICE'] > $maxPrice) {
+            if (!isset($discountList[$getDeliveriId])) {
+                $showDiscountList = true;
+                $discountList[$getDeliveriId] = [
+                    'ID' => $getDeliveriId,
+                    'NAME' => 'Бесплатная доставка',
+                ];
+            }
+        }
 }
-
-if(isset($arProductPrice['PRICE']['PRICE']))
-    if($arProductPrice['PRICE']['PRICE'] > $maxPrice)
-    {
-        if(!isset($discountList[$getDeliveriId]))
-        {
-            $showDiscountList = true;
-            $discountList[$getDeliveriId] = [
-                'ID'=>$getDeliveriId,
-                'NAME'=>'Бесплатная доставка',
-            ];
-        }
-    }
 ?>
 
 <div class="product-item">

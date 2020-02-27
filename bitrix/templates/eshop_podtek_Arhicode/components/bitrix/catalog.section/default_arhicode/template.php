@@ -102,6 +102,10 @@ $arParams['~MESS_RELATIVE_QUANTITY_FEW'] = $arParams['~MESS_RELATIVE_QUANTITY_FE
 
 $arParams['MESS_BTN_LAZY_LOAD'] = $arParams['MESS_BTN_LAZY_LOAD'] ?: Loc::getMessage('CT_BCS_CATALOG_MESS_BTN_LAZY_LOAD');
 
+$arFileDiscount = [];
+$fileDiscount = CFile::MakeFileArray($_SERVER["DOCUMENT_ROOT"]."/include/discount_config.php");
+if(isset($fileDiscount['name'])) $arFileDiscount = require($_SERVER["DOCUMENT_ROOT"] . "/include/discount_config.php");
+
 $generalParams = array(
 	'SHOW_DISCOUNT_PERCENT' => $arParams['SHOW_DISCOUNT_PERCENT'],
 	'PRODUCT_DISPLAY_MODE' => $arParams['PRODUCT_DISPLAY_MODE'],
@@ -140,7 +144,8 @@ $generalParams = array(
 	'MESS_BTN_COMPARE' => $arParams['~MESS_BTN_COMPARE'],
 	'MESS_BTN_SUBSCRIBE' => $arParams['~MESS_BTN_SUBSCRIBE'],
 	'MESS_BTN_ADD_TO_BASKET' => $arParams['~MESS_BTN_ADD_TO_BASKET'],
-	'MESS_NOT_AVAILABLE' => $arParams['~MESS_NOT_AVAILABLE']
+	'MESS_NOT_AVAILABLE' => $arParams['~MESS_NOT_AVAILABLE'],
+    'DISCOUNT_LIST_ID' => $arFileDiscount,
 );
 
 $obName = 'ob'.preg_replace('/[^a-zA-Z0-9_]/', 'x', $this->GetEditAreaId($navParams['NavNum']));
