@@ -121,7 +121,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="hidden-xs hidden-sm col-md-4  col-lg-3">
+                    <div class="hidden-xs hidden-sm col-md-3  col-lg-3">
                         <!--div class="col-xs-12 col-md-4  col-lg-3"-->
                         <? $APPLICATION->IncludeComponent("bitrix:menu", "bottom_menu", array(
                             "ROOT_MENU_TYPE" => "bottom",
@@ -146,8 +146,8 @@
                         ); ?>
                     </div>
 
-                    <div class="col-sm-6 col-md-4  col-lg-6">
-                        <div class="col-xs-12 col-sm-12 hidden-md  hidden-lg">
+                    <div class="col-sm-10 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-6 hidden-md  hidden-lg">
                             <ul class="bx-inclinksfooter-list">
                                 <li class="bx-inclinksfooter-item"><a href="/about/delivery/">
                                         <p1>Доставка</p1>
