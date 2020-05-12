@@ -377,6 +377,23 @@ if(isset($arFileDiscount['type']))
                                     <? endif;?>
                                 <? endforeach;?>
                             <? endif;?>
+                            <?if(isset($arResult['PROPERTIES']['BESPLATNAYA_USTANOVKA']) && $arResult['PROPERTIES']['BESPLATNAYA_USTANOVKA']['VALUE']):?>
+                                <div class="product-item-discount-text">
+                                    <?=$arResult['PROPERTIES']['BESPLATNAYA_USTANOVKA']['NAME'];?>
+                                    <? $fileName = $_SERVER["DOCUMENT_ROOT"]."/include/discounts_BESPLATNAYA_USTANOVKA.php";
+                                    if(file_exists($fileName)):
+                                        if(filesize($fileName) > 1):?>
+                                            <div class="product-item-discount-file">
+                                                <?$APPLICATION->IncludeFile(
+                                                    "/include/discounts_BESPLATNAYA_USTANOVKA.php",
+                                                    Array(),
+                                                    Array("MODE" => "php")
+                                                );?>
+                                            </div>
+                                        <? endif;
+                                    endif;?>
+                                </div>
+                            <?endif;?>
                         </div>
                         <span class="product-item-detail-slider-close" data-entity="close-popup"></span>
                         <div class="product-item-detail-slider-block
