@@ -551,7 +551,7 @@ if(isset($arFileDiscount['type']))
                                                             'VALUES_COUNT' => $skuProperty['VALUES_COUNT']
                                                         );
                                                         ?>
-                                                        <div class="product-item-detail-info-container"
+                                                        <div class="product-item-detail-info-container 1"
                                                              data-entity="sku-line-block">
                                                             <div class="product-item-detail-info-container-title"><?= htmlspecialcharsEx($skuProperty['NAME']) ?></div>
                                                             <div class="product-item-scu-container">
@@ -608,7 +608,7 @@ if(isset($arFileDiscount['type']))
                                         case 'props':
                                             if (!empty($arResult['DISPLAY_PROPERTIES']) || $arResult['SHOW_OFFERS_PROPS']) {
                                                 ?>
-                                                <div class="product-item-detail-info-container">
+                                                <div class="product-item-detail-info-container 2">
                                                     <?
                                                     if (!empty($arResult['DISPLAY_PROPERTIES'])) {
                                                         ?>
@@ -655,7 +655,7 @@ if(isset($arFileDiscount['type']))
                                         case 'rating':
                                             if ($arParams['USE_VOTE_RATING'] === 'Y') {
                                                 ?>
-                                                <div class="product-item-detail-info-container">
+                                                <div class="product-item-detail-info-container 3">
                                                     <?
                                                     $APPLICATION->IncludeComponent(
                                                         'bitrix:iblock.vote',
@@ -685,7 +685,7 @@ if(isset($arFileDiscount['type']))
 
                                         case 'price':
                                             ?>
-                                            <div class="product-item-detail-info-container col-xs-12 col-sm-5">
+                                            <div class="product-item-detail-info-container 4 col-xs-8 col-sm-5">
                                                 <?
                                                 if ($arParams['SHOW_OLD_PRICE'] === 'Y') {
                                                     ?>
@@ -726,7 +726,7 @@ if(isset($arFileDiscount['type']))
                                                 $showRanges = !$haveOffers && count($actualItem['ITEM_QUANTITY_RANGES']) > 1;
                                                 $useRatio = $arParams['USE_RATIO_IN_RANGES'] === 'Y';
                                                 ?>
-                                                <div class="product-item-detail-info-container"
+                                                <div class="product-item-detail-info-container 5"
                                                     <?= $showRanges ? '' : 'style="display: none;"' ?>
                                                      data-entity="price-ranges-block">
                                                     <div class="product-item-detail-info-container-title">
@@ -808,7 +808,7 @@ if(isset($arFileDiscount['type']))
                                 <!----------------------------------->
 
                                 <!-------------quantity--------------->
-                                <div class="col-xs-6 col-sm-4 product-item-detail-pay-block_1">
+                                <div class="col-xs-4 col-sm-4 product-item-detail-pay-block_1">
                                     <?
                                     foreach ($arParams['PRODUCT_PAY_BLOCK_ORDER'] as $blockName) {
                                         switch ($blockName) {
@@ -816,7 +816,7 @@ if(isset($arFileDiscount['type']))
                                                 if ($arParams['SHOW_MAX_QUANTITY'] !== 'N') {
                                                     if ($haveOffers) {
                                                         ?>
-                                                        <div class="product-item-detail-info-container"
+                                                        <div class="product-item-detail-info-container 6"
                                                              id="<?= $itemIds['QUANTITY_LIMIT'] ?>"
                                                              style="display: none;">
                                                             <div class="product-item-detail-info-container-title">
@@ -834,7 +834,7 @@ if(isset($arFileDiscount['type']))
                                                             && $actualItem['CATALOG_CAN_BUY_ZERO'] === 'N'
                                                         ) {
                                                             ?>
-                                                            <div class="product-item-detail-info-container"
+                                                            <div class="product-item-detail-info-container 7"
                                                                  id="<?= $itemIds['QUANTITY_LIMIT'] ?>">
                                                                 <div class="product-item-detail-info-container-title">
                                                                     <?= $arParams['MESS_SHOW_MAX_QUANTITY'] ?>:
@@ -864,7 +864,7 @@ if(isset($arFileDiscount['type']))
                                             case 'quantity':
                                                 if ($arParams['USE_PRODUCT_QUANTITY']) {
                                                     ?>
-                                                    <div class="product-item-detail-info-container"
+                                                    <div class="product-item-detail-info-container 8"
                                                          style="<?= (!$actualItem['CAN_BUY'] ? 'display: none;' : '') ?>"
                                                          data-entity="quantity-block">
                                                         <div class="product-item-detail-info-container-title"><?= Loc::getMessage('CATALOG_QUANTITY') ?></div>
@@ -910,7 +910,7 @@ if(isset($arFileDiscount['type']))
                                     ?>
                                 </div>
                                 <!-------------buttons--------------->
-                                <div class="col-xs-6 col-sm-3 product-item-detail-pay-block_1">
+                                <div class="col-xs-12 col-sm-3 product-item-detail-pay-block_1">
                                     <?
                                     foreach ($arParams['PRODUCT_PAY_BLOCK_ORDER'] as $blockName) {
                                         switch ($blockName) {
@@ -922,7 +922,8 @@ if(isset($arFileDiscount['type']))
                                                         <?
                                                         if ($showAddBtn) {
                                                             ?>
-                                                            <div class="product-item-detail-info-container">
+                                                            <div class="product-item-detail-info-container 9">
+
                                                                 <a class="btn <?= $showButtonClassName ?> product-item-detail-buy-button"
                                                                    id="<?= $itemIds['ADD_BASKET_LINK'] ?>"
                                                                    href="javascript:void(0);">
@@ -934,21 +935,46 @@ if(isset($arFileDiscount['type']))
 
                                                         if ($showBuyBtn) {
                                                             ?>
-                                                            <div class="product-item-detail-info-container">
+															<div class="product-item-detail-info-container 110">
                                                                 <a class="btn <?= $buyButtonClassName ?> product-item-detail-buy-button"
                                                                    id="<?= $itemIds['BUY_LINK'] ?>"
                                                                    href="javascript:void(0);">
                                                                     <span><?= $arParams['MESS_BTN_BUY'] ?></span>
                                                                 </a>
                                                             </div>
-                                                            <?
+															<?
                                                         }
                                                         ?>
+															<!--?if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии') || ($arResult['PROPERTIES']['NALICHIE']['VALUE'] == '')) {?>
+                                                            <div class="product-item-detail-info-container 110">
+                                                                <a class="btn <!--?= $buyButtonClassName ?> product-item-detail-buy-button"
+                                                                   id="<!--?= $itemIds['BUY_LINK'] ?>"
+                                                                   href="javascript:void(0);">
+                                                                    <span><!--?= $arParams['MESS_BTN_BUY'] ?></span>
+                                                                </a>
+                                                            </div>
+                                                            <!--?
+															} else {
+															?>
+															<div class="product-item-detail-info-container 112">
+                                                        <a class="btn btn-link product-item-detail-buy-button"
+                                                           id="<!--?= $itemIds['NOT_AVAILABLE_MESS'] ?>"
+                                                           href="javascript:void(0)"
+                                                           rel="nofollow"
+                                                           style="display: <!--?= (!$actualItem['CAN_BUY'] ? '' : ';padding: 6px 12px 6px 1px;"') ?>;">
+                                                            <!--?= $arParams['MESS_NOT_AVAILABLE'] ?>
+                                                        </a>
+                                                    </div>
+															<!--?
+															}
+															
+                                                        }
+                                                        ?-->
                                                     </div>
                                                     <?
                                                     if ($showSubscribe) {
                                                         ?>
-                                                        <div class="product-item-detail-info-container">
+                                                        <div class="product-item-detail-info-container 11">
                                                             <?
                                                             $APPLICATION->IncludeComponent(
                                                                 'bitrix:catalog.product.subscribe',
@@ -969,7 +995,7 @@ if(isset($arFileDiscount['type']))
                                                         <?
                                                     }
                                                     ?>
-                                                    <div class="product-item-detail-info-container">
+                                                    <div class="product-item-detail-info-container 12">
                                                         <a class="btn btn-link product-item-detail-buy-button"
                                                            id="<?= $itemIds['NOT_AVAILABLE_MESS'] ?>"
                                                            href="javascript:void(0)"

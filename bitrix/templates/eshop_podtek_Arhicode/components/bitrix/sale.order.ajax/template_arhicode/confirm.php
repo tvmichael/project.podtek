@@ -25,10 +25,14 @@ if ($arParams["SET_TITLE"] == "Y")
 					"#ORDER_ID#" => $arResult["ORDER"]["ACCOUNT_NUMBER"]
 				))?>
 				<? if (!empty($arResult['ORDER']["PAYMENT_ID"])): ?>
-					<?=Loc::getMessage("SOA_PAYMENT_SUC", array(
+					<!--?=Loc::getMessage("SOA_PAYMENT_SUC", array(
 						"#PAYMENT_ID#" => $arResult['PAYMENT'][$arResult['ORDER']["PAYMENT_ID"]]['ACCOUNT_NUMBER']
-					))?>
+					))?-->
 				<? endif ?>
+				<br /><br />
+				<?=Loc::getMessage("SOA_ORDER_SUC2", array("#LINK#" => $arParams["PATH_TO_PERSONAL"]))?>
+				<br />
+				<?=Loc::getMessage("SOA_ORDER_SUC3", array("#LINK#" => $arParams["PATH_TO_PERSONAL"]))?>
 				<br /><br />
 				<?=Loc::getMessage("SOA_ORDER_SUC1", array("#LINK#" => $arParams["PATH_TO_PERSONAL"]))?>
 			</td>
