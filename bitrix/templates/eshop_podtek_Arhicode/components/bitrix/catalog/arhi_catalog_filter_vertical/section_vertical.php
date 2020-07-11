@@ -18,9 +18,11 @@ if (isset($arParams['USE_COMMON_SETTINGS_BASKET_POPUP']) && $arParams['USE_COMMO
 }
 
 if ($isFilter || $isSidebar): ?>
+    <!-- section.vertical -->
     <!--div class="col-md-3 col-sm-4 col-sm-push-8 col-md-push-9<?= (isset($arParams['FILTER_HIDE_ON_MOBILE']) && $arParams['FILTER_HIDE_ON_MOBILE'] === 'Y' ? ' hidden-xs' : '') ?>"-->
     <div class="col-md-3 col-sm-4<?= (isset($arParams['FILTER_HIDE_ON_MOBILE']) && $arParams['FILTER_HIDE_ON_MOBILE'] === 'Y' ? ' hidden-xs' : '') ?>">
         <? if ($isFilter): ?>
+            <!-- catalog.smart.filter -->
             <div class="bx-sidebar-block">
                 <?
                 $APPLICATION->IncludeComponent(
