@@ -307,6 +307,42 @@ else
 {
 	$hideDelivery = empty($arResult['DELIVERY']);
 	?>
+    <?
+    if(!empty($arResult['BASKET_ITEMS']))
+    {
+        $arParams['AR_PROPS'] = [];
+        $IBLOCK_ID = 7;
+        foreach($arResult['BASKET_ITEMS'] as $item)
+        {
+            if(isset($item['PRODUCT_ID']))
+            {
+                $res = CIBlockElement::GetProperty(
+                    $IBLOCK_ID,
+                    $item['PRODUCT_ID'],
+                    array("sort" => "asc"),
+                    Array("CODE" => "NALICHIE")
+                );
+
+                while ($ob = $res->GetNext()) {
+                    $src = "";
+                    if($ob['VALUE_ENUM'] == 'В наличии' || $ob['VALUE_ENUM'] == '')
+                    {
+                        $src = "/upload/iblock/icons/checkmark_green.png";
+                    }
+                    else
+                    {
+                        $src = "/upload/iblock/icons/checkmark_gray.png";
+                    }
+
+                    $arParams['AR_PROPS'][$item['PRODUCT_ID']] = [
+                        'VALUE_ENUM' => $ob['VALUE_ENUM'],
+                        'SRC' => $src,
+                    ];
+                }
+            }
+        }
+    }
+    ?>
 	<form action="<?=POST_FORM_ACTION_URI?>" method="POST" name="ORDER_FORM" id="bx-soa-order-form" enctype="multipart/form-data">
 		<?
 		echo bitrix_sessid_post();

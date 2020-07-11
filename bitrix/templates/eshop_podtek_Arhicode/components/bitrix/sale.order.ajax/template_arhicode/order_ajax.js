@@ -163,6 +163,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
                 };
                 this.phoneMask = new IMask(this.obPhoneMask, maskOptions);
             }
+
+            //console.log('BX.Sale.OrderAjaxComponent');
+            //console.log(this);
 		},
 
 		/**
@@ -3224,7 +3227,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			var headers = [
 					BX.create('DIV', {
-						props: {className: 'bx-soa-item-td'},
+						props: {className: 'bx-soa-item-td bx-p1'},
 						style: {paddingBottom: '5px'},
 						children: [
 							BX.create('DIV', {
@@ -3249,7 +3252,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 				toRight = BX.util.in_array(column.id, ["QUANTITY", "PRICE_FORMATED", "DISCOUNT_PRICE_PERCENT_FORMATED", "SUM"]);
 				headers.push(
 					BX.create('DIV', {
-						props: {className: 'bx-soa-item-td bx-soa-item-properties' + (toRight ? ' bx-text-right' : '')},
+						props: {className: 'bx-soa-item-td bx-p5 bx-soa-item-properties' + (toRight ? ' bx-text-right' : '')},
 						style: {paddingBottom: '5px'},
 						children: [
 							BX.create('DIV', {
@@ -3270,7 +3273,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			basketItemsNode.appendChild(
 				BX.create('DIV', {
-					props: {className: 'bx-soa-item-tr hidden-sm hidden-xs'},
+					props: {className: 'bx-soa-item-tr bx-s0 hidden-sm hidden-xs'},
 					children: headers
 				})
 			);
@@ -3323,7 +3326,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			cols = [
 				BX.create('DIV', {
-					props: {className: 'bx-soa-item-td'},
+					props: {className: 'bx-soa-item-td bx-p2'},
 					style: {minWidth: '300px'},
 					children: [
 						BX.create('DIV', {
@@ -3336,7 +3339,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			basketItemsNode.appendChild(
 				BX.create('DIV', {
-					props: {className: 'bx-soa-item-tr bx-soa-basket-info' + (index == 0 ? ' bx-soa-item-tr-first' : '')},
+					props: {className: 'bx-soa-item-tr bx-s1 bx-soa-basket-info' + (index == 0 ? ' bx-soa-item-tr-first' : '')},
 					children: cols
 				})
 			);
@@ -3345,10 +3348,10 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 			{
 				basketItemsNode.appendChild(
 					BX.create('DIV', {
-						props: {className: 'bx-soa-item-tr bx-soa-item-info-container'},
+						props: {className: 'bx-soa-item-tr bx-s2 bx-soa-item-info-container'},
 						children: [
 							BX.create('DIV', {
-								props: {className: 'bx-soa-item-td'},
+								props: {className: 'bx-soa-item-td bx-p3'},
 								children: [
 									BX.create('A', {
 										props: {href: '', className: 'bx-soa-info-shower'},
@@ -3378,7 +3381,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 		{
 			var target = event.target || event.srcElement,
 				infoContainer = target.nextSibling,
-				parentContainer = BX.findParent(target, {className: 'bx-soa-item-tr bx-soa-item-info-container'}),
+				parentContainer = BX.findParent(target, {className: 'bx-soa-item-tr bx-s3 bx-soa-item-info-container'}),
 				parentHeight = parentContainer.offsetHeight;
 
 			if (BX.hasClass(infoContainer, 'bx-active'))
@@ -3476,6 +3479,16 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			if (data.DETAIL_PAGE_URL && data.DETAIL_PAGE_URL.length)
 				titleHtml = '<a href="' + data.DETAIL_PAGE_URL + '">' + titleHtml + '</a>';
+
+			try {
+				if(this.params.AR_PROPS[data.PRODUCT_ID])
+				{
+					titleHtml += '<div class="bx-soa-item-td-title-props"><img src="' + this.params.AR_PROPS[data.PRODUCT_ID].SRC + '">' + this.params.AR_PROPS[data.PRODUCT_ID].VALUE_ENUM + '</div>';
+				}
+			}
+			catch (e) {
+				console.log(e);
+			}
 
 			if (this.options.showPropsInBasket && props.length)
 			{
@@ -3627,7 +3640,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 			}
 
 			return BX.create('DIV', {
-				props: {className: 'bx-soa-item-td bx-soa-item-properties' + (toRight ? ' bx-text-right' : '')},
+				props: {className: 'bx-soa-item-td bx-p4 bx-soa-item-properties' + (toRight ? ' bx-text-right' : '')},
 				children: [
 					BX.create('DIV', {
 						props: {className: 'bx-soa-item-td-title visible-xs visible-sm'},

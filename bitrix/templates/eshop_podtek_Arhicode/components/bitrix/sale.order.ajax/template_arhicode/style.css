@@ -224,6 +224,15 @@
     line-height: 25px;
     vertical-align: middle;
 }
+.bx-soa-item-td-title-props{
+    margin-top: 5px;
+	font-size: 11px;
+}
+.bx-soa-item-td-title-props > img {
+    width: 17px;
+    height: 17px;
+    margin: 0px 5px 0px 0px;
+}
 .bx-soa-item-properties .bx-soa-item-td-title,
 .bx-soa-item-properties .bx-soa-item-td-text{ text-align:center;}
 .bx-soa-item-properties.bx-text-right .bx-soa-item-td-title,

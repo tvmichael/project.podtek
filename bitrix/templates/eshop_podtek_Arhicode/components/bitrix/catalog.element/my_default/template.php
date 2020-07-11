@@ -1032,11 +1032,17 @@ if(isset($arFileDiscount['type']))
                                             наличии
                                         </div><?
                                     } else {
+										if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, до 45 дней'){
+										?>
+                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_gray.png">Под заказ
+                                        </div><?	
+										}else {
                                         ?>
                                         <div class="nalichie"><img
                                                 src="/upload/iblock/icons/checkmark_gray.png"><?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
                                         </div><?
                                     }
+									}
                                     ?>
                                 </div>
 
@@ -1271,7 +1277,7 @@ if(isset($arFileDiscount['type']))
                                             </div>
 
                                             <?
-                                        } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ')) {
+                                        } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, до 45 дней')) {
                                             //$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/element_info_pod_zakaz.php"), false);
                                             ?>
 
@@ -1752,7 +1758,7 @@ if(isset($arFileDiscount['type']))
                                             "BROWSER_TITLE" => "-",
                                             "CACHE_FILTER" => "N",
                                             "CACHE_GROUPS" => "Y",
-                                            "CACHE_TIME" => "36000000",
+                                            "CACHE_TIME" => "3600",
                                             "CACHE_TYPE" => "A",
                                             "COMPATIBLE_MODE" => "Y",
                                             "COMPOSITE_FRAME_MODE" => "A",
