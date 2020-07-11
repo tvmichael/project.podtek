@@ -77,4 +77,8 @@ if ($isVerticalFilter)
 else
 	include($_SERVER["DOCUMENT_ROOT"]."/".$this->GetFolder()."/section_horizontal.php");
 ?>
-</div>
+
+<?
+// гдето есть лишний
+// </div>
+?>
