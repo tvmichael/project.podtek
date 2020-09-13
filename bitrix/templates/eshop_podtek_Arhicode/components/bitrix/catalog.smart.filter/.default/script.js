@@ -7,6 +7,7 @@ function JCSmartFilter(ajaxURL, viewMode, params)
 	this.cache = [];
 	this.popups = [];
 	this.viewMode = viewMode;
+	this.params = params;
 	if (params && params.SEF_SET_FILTER_URL)
 	{
 		this.bindUrlToButton('set_filter', params.SEF_SET_FILTER_URL);
@@ -16,6 +17,9 @@ function JCSmartFilter(ajaxURL, viewMode, params)
 	{
 		this.bindUrlToButton('del_filter', params.SEF_DEL_FILTER_URL);
 	}
+
+	//console.log('>>> JCSmartFilter');
+	//console.log(this);
 }
 
 JCSmartFilter.prototype.keyup = function(input)
@@ -43,6 +47,9 @@ JCSmartFilter.prototype.click = function(checkbox)
 
 JCSmartFilter.prototype.reload = function(input)
 {
+	//console.log('JCSmartFilter.prototype.reload');
+	//console.log(this);
+
 	if (this.cacheKey !== '')
 	{
 		//Postprone backend query
@@ -82,6 +89,7 @@ JCSmartFilter.prototype.reload = function(input)
 			}
 
 			this.curFilterinput = input;
+			//console.log(values);
 			BX.ajax.loadJSON(
 				this.ajaxURL,
 				this.values2post(values),
@@ -93,6 +101,7 @@ JCSmartFilter.prototype.reload = function(input)
 
 JCSmartFilter.prototype.updateItem = function (PID, arItem)
 {
+	//console.log('JCSmartFilter.prototype.updateItem');
 	if (arItem.PROPERTY_TYPE === 'N' || arItem.PRICE)
 	{
 		var trackBar = window['trackBar' + PID];
@@ -159,6 +168,10 @@ JCSmartFilter.prototype.updateItem = function (PID, arItem)
 
 JCSmartFilter.prototype.postHandler = function (result, fromCache)
 {
+	//console.log('JCSmartFilter.prototype.postHandler');
+	//console.log(result);
+	//console.log(fromCache);
+
 	var hrefFILTER, url, curProp;
 	var modef = BX('modef');
 	var modef_num = BX('modef_num');
@@ -244,6 +257,7 @@ JCSmartFilter.prototype.postHandler = function (result, fromCache)
 
 JCSmartFilter.prototype.bindUrlToButton = function (buttonId, url)
 {
+	//console.log('JCSmartFilter.prototype.bindUrlToButton');
 	var button = BX(buttonId);
 	if (button)
 	{
@@ -268,6 +282,7 @@ JCSmartFilter.prototype.bindUrlToButton = function (buttonId, url)
 
 JCSmartFilter.prototype.gatherInputsValues = function (values, elements)
 {
+	//console.log('JCSmartFilter.prototype.gatherInputsValues');
 	if(elements)
 	{
 		for(var i = 0; i < elements.length; i++)
@@ -289,7 +304,20 @@ JCSmartFilter.prototype.gatherInputsValues = function (values, elements)
 				case 'radio':
 				case 'checkbox':
 					if(el.checked)
-						values[values.length] = {name : el.name, value : el.value};
+					{
+						if(el.name == this.params.VALUES_PARAMS.CONTROL_ID_Y)
+						{
+                            values[values.length] = {name : el.name, value : el.value};
+                            for (let v in this.params.VALUES_PARAMS.VALUES)
+                            {
+                               values[values.length] = {name : this.params.VALUES_PARAMS.VALUES[v].CONTROL_ID, value : el.value};
+                            }
+						}
+						else
+						{
+							values[values.length] = {name : el.name, value : el.value};
+						}
+					}
 					break;
 				case 'select-multiple':
 					for (var j = 0; j < el.options.length; j++)
@@ -307,6 +335,7 @@ JCSmartFilter.prototype.gatherInputsValues = function (values, elements)
 
 JCSmartFilter.prototype.values2post = function (values)
 {
+	//console.log('JCSmartFilter.prototype.values2post');
 	var post = [];
 	var current = post;
 	var i = 0;
@@ -353,6 +382,7 @@ JCSmartFilter.prototype.values2post = function (values)
 
 JCSmartFilter.prototype.hideFilterProps = function(element)
 {
+	//console.log('JCSmartFilter.prototype.hideFilterProps');
 	var obj = element.parentNode,
 		filterBlock = obj.querySelector("[data-role='bx_filter_block']"),
 		propAngle = obj.querySelector("[data-role='prop_angle']");
@@ -407,6 +437,7 @@ JCSmartFilter.prototype.hideFilterProps = function(element)
 
 JCSmartFilter.prototype.showDropDownPopup = function(element, popupId)
 {
+	//console.log('JCSmartFilter.prototype.showDropDownPopup');
 	var contentNode = element.querySelector('[data-role="dropdownContent"]');
 	this.popups["smartFilterDropDown"+popupId] = BX.PopupWindowManager.create("smartFilterDropDown"+popupId, element, {
 		autoHide: true,
@@ -422,6 +453,7 @@ JCSmartFilter.prototype.showDropDownPopup = function(element, popupId)
 
 JCSmartFilter.prototype.selectDropDownItem = function(element, controlId)
 {
+	//console.log('JCSmartFilter.prototype.selectDropDownItem');
 	this.keyup(BX(controlId));
 
 	var wrapContainer = BX.findParent(BX(controlId), {className:"bx-filter-select-container"}, false);
@@ -523,6 +555,9 @@ BX.Iblock.SmartFilter = (function()
 				this.onInputChange();
 			}, this));
 		}
+		//console.log('::: SmartFilter');
+		//console.log(arParams);
+		//console.log(this);
 	};
 
 	SmartFilter.prototype.init = function()

@@ -37,3 +37,40 @@ else
 
 $arParams["FILTER_VIEW_MODE"] = (isset($arParams["FILTER_VIEW_MODE"]) && toUpper($arParams["FILTER_VIEW_MODE"]) == "HORIZONTAL") ? "HORIZONTAL" : "VERTICAL";
 $arParams["POPUP_POSITION"] = (isset($arParams["POPUP_POSITION"]) && in_array($arParams["POPUP_POSITION"], array("left", "right"))) ? $arParams["POPUP_POSITION"] : "left";
+
+if(isset($arResult['ITEMS']) && is_array($arResult['ITEMS']))
+{
+    foreach ($arResult['ITEMS'] as $k => $items)
+    {
+        if($items['CODE'] == 'NALICHIE')
+        {
+            $arResult["JS_FILTER_PARAMS"]['VALUES_PARAMS'] = [];
+            $arResult["JS_FILTER_PARAMS"]['VALUES_PARAMS']['VALUES'] = [];
+
+            if(is_array($items['VALUES']))
+            {
+                foreach ($items['VALUES'] as $i => $item)
+                {
+                    if($item['VALUE'] == 'В наличии')
+                    {
+                        $arResult["JS_FILTER_PARAMS"]['VALUES_PARAMS']['CONTROL_ID_Y'] = $item['CONTROL_ID'];
+                    }
+
+                    if($item['VALUE'] == 'Под заказ, 1-2 дня' || $item['VALUE'] == 'Под заказ, 3-5 дней')
+                    {
+                        $arResult["JS_FILTER_PARAMS"]['VALUES_PARAMS']['VALUES'][$i] = $item;
+
+                        unset($arResult['ITEMS'][$k]['VALUES'][$i]);
+                    }
+
+                    if($item['VALUE'] == 'Под заказ, до 45 дней') {
+                        $arResult["JS_FILTER_PARAMS"]['VALUES_PARAMS']['CONTROL_ID_N'] = $item['CONTROL_ID'];
+                        $arResult['ITEMS'][$k]['VALUES'][$i]['VALUE'] = 'Под заказ';
+                        $arResult['ITEMS'][$k]['VALUES'][$i]['UPPER'] = strtoupper('Под заказ');
+                    }
+                }
+            }
+            break;
+        }
+    }
+}

@@ -98,7 +98,8 @@ if ($isFilter || $isSidebar): ?>
                     $obCache->EndDataCache($arRecomData);
                 }
 
-                if (!empty($arRecomData) && $arParams['USE_GIFTS_SECTION'] === 'Y') {
+                if (!empty($arRecomData) && $arParams['USE_GIFTS_SECTION'] === 'Y')
+                {
                     ?>
                     <div data-entity="parent-container">
                     <?
@@ -112,7 +113,8 @@ if ($isFilter || $isSidebar): ?>
                     }
 
                     CBitrixComponent::includeComponentClass('bitrix:sale.products.gift.section');
-                    $APPLICATION->IncludeComponent(
+                    ?>
+                    <?$APPLICATION->IncludeComponent(
                         'bitrix:sale.products.gift.section',
                         '.default',
                         array(
@@ -189,7 +191,8 @@ if ($isFilter || $isSidebar): ?>
                         ),
                         $component,
                         array("HIDE_ICONS" => "Y")
-                    );
+                    );?>
+                <?
                 }
                 ?>
                 </div>
@@ -356,7 +359,7 @@ if ($isFilter || $isSidebar): ?>
                 <? endif; ?>
             </div>
 
-            <? //if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["ELEMENT_SORT_FIELD"]); echo '</pre>';}
+            <? // if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams); echo '</pre>';}
             //if($USER->IsAdmin()) {echo '<pre>'; print_r($arParams["PAGER_TITLE"]); echo '</pre>';}
             /*---------------------------------------------*/ ?>
             <? $intSectionID = $APPLICATION->IncludeComponent(
