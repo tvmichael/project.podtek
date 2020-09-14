@@ -21,8 +21,8 @@ html, body {
 	position: relative;
 	min-height: 100%;
 	height: auto;
-	/*margin: 0 auto -145px;
-	padding: 0 0 145px;*/
+	margin: 0 auto -145px;
+	padding: 0 0 145px;
 }
 
 /* body.bx-background-image{
@@ -585,11 +585,11 @@ float: right;
 .bx-footer {
 	background: #164c4c;
 	color: #c8cece;
-	/*
+
 	position: absolute;
     width: 100%;
     bottom: 0;
-    */
+
 }
 
 .bx-footer-section.bx-center-section {

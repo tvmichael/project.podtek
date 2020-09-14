@@ -210,7 +210,7 @@
             });
         </script>
         <noscript>
-            <div><img src="https://mc.yandex.ru/watch/51713657" style="position:absolute; left:-9999px;" alt=""/></div>
+            <div><img src="https://mc.yandex.ru/watch/51713657" style="position:absolute; left:-9999px;" alt="yandex"/></div>
         </noscript>
         <!-- /Yandex.Metrika counter -->
     </body>
