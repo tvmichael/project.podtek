@@ -174,28 +174,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="row bx-header-BottomRow">
                 <div class="col-md-3 hidden-xs">
                     <? $APPLICATION->IncludeComponent(
-	"bitrix:menu", 
-	"gopro", 
-	array(
-		"ROOT_MENU_TYPE" => "left",
-		"MENU_CACHE_TYPE" => "N",
-		"MENU_CACHE_TIME" => "3600",
-		"MENU_CACHE_USE_GROUPS" => "Y",
-		"MENU_THEME" => "site",
-		"MENU_CACHE_GET_VARS" => array(
-		),
-		"MAX_LEVEL" => "2",
-		"CHILD_MENU_TYPE" => "left",
-		"USE_EXT" => "Y",
-		"DELAY" => "N",
-		"COMPONENT_TEMPLATE" => "gopro",
-		"ALLOW_MULTI_SELECT" => "N",
-		"COMPOSITE_FRAME_MODE" => "A",
-		"COMPOSITE_FRAME_TYPE" => "AUTO"
-	),
-	false
-); ?>
-
+                        "bitrix:menu",
+                        "gopro",
+                        array(
+                            "ROOT_MENU_TYPE" => "left",
+                            "MENU_CACHE_TYPE" => "N",
+                            "MENU_CACHE_TIME" => "3600",
+                            "MENU_CACHE_USE_GROUPS" => "Y",
+                            "MENU_THEME" => "site",
+                            "MENU_CACHE_GET_VARS" => array(
+                            ),
+                            "MAX_LEVEL" => "2",
+                            "CHILD_MENU_TYPE" => "left",
+                            "USE_EXT" => "Y",
+                            "DELAY" => "N",
+                            "COMPONENT_TEMPLATE" => "gopro",
+                            "ALLOW_MULTI_SELECT" => "N",
+                            "COMPOSITE_FRAME_MODE" => "A",
+                            "COMPOSITE_FRAME_TYPE" => "AUTO"
+                        ),
+                        false
+                    ); ?>
                     <!-- MOBILE -->
                     <div style="display:none;">
                         <? $APPLICATION->IncludeComponent(
