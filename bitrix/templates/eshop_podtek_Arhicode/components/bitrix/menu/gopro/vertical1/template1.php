@@ -2,16 +2,9 @@
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	die();
 
-//if($USER->IsAdmin() && $USER->GetID() == 8 && $_SESSION['SESS_IP'] == '188.163.120.85'):
-//    echo '<pre style="position:absolute;top:100px;width:900px;">';
-//    print_r($arResult);
-//    echo '</pre>';
-//endif;
-
 $this->setFrameMode(true);
 $arParams['RSGOPRO_CATALOG_PATH'] = (empty($arParams['RSGOPRO_CATALOG_PATH']) ? SITE_DIR.'catalog/' : $arParams['RSGOPRO_CATALOG_PATH']);
 ?>
-
 <?if(is_array($arResult) && count($arResult)>0) :?>
     <div class="catalogmenucolumn">
         <ul class="catalogmenu list-unstyled clearfix">
@@ -33,7 +26,7 @@ $arParams['RSGOPRO_CATALOG_PATH'] = (empty($arParams['RSGOPRO_CATALOG_PATH']) ? 
                     {
                         if($arParams['MAX_LEVEL'] == 2)
                         {
-                            if($arItem['DEPTH_LEVEL'] > 2)
+                            if ($arItem['DEPTH_LEVEL'] > 2)
                             {
                                 unset($arResult[$key]);
                                 continue;
@@ -46,7 +39,7 @@ $arParams['RSGOPRO_CATALOG_PATH'] = (empty($arParams['RSGOPRO_CATALOG_PATH']) ? 
                             }
                         }
 
-                        if($arItem['DEPTH_LEVEL'] == 1)
+                        if ($arItem['DEPTH_LEVEL'] == 1)
                         {
                             $max++;
                         }
@@ -68,9 +61,9 @@ $arParams['RSGOPRO_CATALOG_PATH'] = (empty($arParams['RSGOPRO_CATALOG_PATH']) ? 
                         {
                             if ($arItem['DEPTH_LEVEL'] == 1)
                             {?>
-                                <li class="x1 first<?if ($index>$max):?> more<?endif;?><?if($arItem['IS_LAST_LVL1']=='Y'):?> lastchild<?endif;?><?=(!empty($arItem['DETAIL_PICTURE']) ? ' catalogmenu-icon' : '')?>">
+                                <li class="first<?if ($index>$max):?> more<?endif;?><?if($arItem['IS_LAST_LVL1']=='Y'):?> lastchild<?endif;?><?=(!empty($arItem['DETAIL_PICTURE']) ? ' catalogmenu-icon' : '')?>">
                                     <a href="<?=$arItem['LINK']?>" class="first<?if($arItem['SELECTED']):?> selected<?endif?>" title="<?=$arItem['TEXT']?>">
-                                        <?/* if (!empty($arItem['DETAIL_PICTURE']))
+                                        <?/*if (!empty($arItem['DETAIL_PICTURE']))
                                         {?>
                                             <img class="catalogmenu__icon" src="<?=$arItem['DETAIL_PICTURE']?>" alt="catalogmenu__icon" title=""><?
                                         }*/?>
@@ -78,34 +71,29 @@ $arParams['RSGOPRO_CATALOG_PATH'] = (empty($arParams['RSGOPRO_CATALOG_PATH']) ? 
                                         <img class="svg-icon arrow" src="../../images/right-arrow.svg" alt="arrow">
                                         <!--svg class="svg-icon arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-arrow-linear-right"></use></svg-->
                                     </a>
-                                    <ul class="x1 list-unstyled lvl<?if($arItem['DEPTH_LEVEL']>3):?>4<?else:?><?=($arItem['DEPTH_LEVEL']+1)?><?endif;?>">
-                                        <?if(isset($arItem['MENU_ADDITIONAL_PICTURE']['UF_IMG_ADDITIONAL_PAGE'])):?>
-                                        <li class="sub-img lvl<?if($arItem['DEPTH_LEVEL']>3):?>4<?else:?><?=($arItem['DEPTH_LEVEL']+1)?><?endif;?>">
-                                            <a href="<?=$arItem['MENU_ADDITIONAL_PICTURE']['UF_ADDITIONAL_PAGE'] ?? '/';?>" title="<?=$arItem['MENU_ADDITIONAL_PICTURE']['UF_DESCRIPTION_ADDITIONAL_PAGE']??'';?>">
-                                                <img class="catalog-menu-img" src="<?=$arItem['MENU_ADDITIONAL_PICTURE']['UF_IMG_ADDITIONAL_PAGE']?>" alt="catalog-menu-icon" title="">
-                                                <div class="catalog-menu-description">
-                                                    <?=$arItem['MENU_ADDITIONAL_PICTURE']['UF_DESCRIPTION_ADDITIONAL_PAGE'] ?? '';?>
-                                                </div>
+                                    <ul class="list-unstyled lvl<?if($arItem['DEPTH_LEVEL']>3):?>4<?else:?><?=($arItem['DEPTH_LEVEL']+1)?><?endif;?>">
+                                        <li class="sub-img">
+                                            <a href="<?=$arItem['LINK']?>" title="<?=$arItem['TEXT']?>">
+                                                <img class="catalog-menu-img" src="<?=$arItem['DETAIL_PICTURE']?>" alt="catalog-menu-icon" title="">
                                             </a>
                                         </li>
-                                        <?endif;?>
                                 <?$index++;
                             }
                             else
                             {?>
-                                <li class="x2 sub <?if ($arItem['SELECTED']):?> selected<?endif?>">
+                                <li class="sub <?if ($arItem['SELECTED']):?> selected<?endif?>">
                                     <a href="<?=$arItem['LINK']?>" class="sub" title="<?=$arItem['TEXT']?>">
                                         <?=$arItem['TEXT']?>
                                         <!--svg class="svg-icon arrow"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#svg-arrow-linear-right"></use></svg-->
                                     </a>
-                                    <ul class="x2 list-unstyled lvl<?if($arItem['DEPTH_LEVEL']>3):?>4<?else:?><?=($arItem['DEPTH_LEVEL']+1)?><?endif;?>">
+                                    <ul class="list-unstyled lvl<?if($arItem['DEPTH_LEVEL']>3):?>4<?else:?><?=($arItem['DEPTH_LEVEL']+1)?><?endif;?>">
                             <?}
                         }
                         else
                         {
                             if ($arItem['DEPTH_LEVEL'] == 1)
                             {?>
-                                <li class="x3 first<?if($index>$max):?> more<?endif;?><?if($arItem['IS_LAST_LVL1']=='Y'):?> lastchild<?endif;?><?=(!empty($arItem['DETAIL_PICTURE']) ? ' catalogmenu-icon' : '')?>">
+                                <li class="first<?if($index>$max):?> more<?endif;?><?if($arItem['IS_LAST_LVL1']=='Y'):?> lastchild<?endif;?><?=(!empty($arItem['DETAIL_PICTURE']) ? ' catalogmenu-icon' : '')?>">
                                     <a href="<?=$arItem['LINK']?>" class="first<?if($arItem['SELECTED']):?> selected<?endif?>" title="<?=$arItem['TEXT']?>">
                                         <?/* if (!empty($arItem['DETAIL_PICTURE']))
                                         {?>
@@ -118,7 +106,7 @@ $arParams['RSGOPRO_CATALOG_PATH'] = (empty($arParams['RSGOPRO_CATALOG_PATH']) ? 
                             }
                             else
                             {?>
-                                <li class="x4 sub <?if($arItem['SELECTED']):?> selected<?endif?>">
+                                <li class="sub <?if($arItem['SELECTED']):?> selected<?endif?>">
                                     <a href="<?=$arItem['LINK']?>" class="sub" title="<?=$arItem['TEXT']?>">
                                         <?=$arItem['TEXT']?>
                                     </a>
@@ -171,3 +159,16 @@ $arParams['RSGOPRO_CATALOG_PATH'] = (empty($arParams['RSGOPRO_CATALOG_PATH']) ? 
         </ul>
     </div>
 <?endif;?>
+<pre style="width:900px;position:absolute;top:100px;z-index:20;">
+    <?
+    //print_r($arResult);
+    print_r($arParams);
+    foreach ($arResult as $item)
+    {
+        echo $item['TEXT'];
+        echo '<br>';
+        echo '- '.$item['DEPTH_LEVEL'].'_____'. $item['IS_PARENT'];
+        echo '<br>';
+    }
+    ?>
+</pre>

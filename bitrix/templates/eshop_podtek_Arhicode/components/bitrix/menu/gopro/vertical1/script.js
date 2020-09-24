@@ -107,4 +107,19 @@ $(document).ready(function(){
 			$(this).find('ul').addClass('noned');
 		});
 	}
+	function setMenuWidth()
+	{
+		var i, container, menuLevel2, width;
+		if(window.innerWidth > 768)
+		{
+			container = document.querySelector('.workarea > .bx-content-seection');
+			width = container.offsetWidth;
+			menuLevel2 = document.querySelectorAll('.catalogmenu .list-unstyled.lvl2');
+			for (i = 0; i < menuLevel2.length; i++ ){
+				menuLevel2[i].style.width = (width - 310) + 'px';
+			}
+		}
+	}
+	setMenuWidth();
+	window.addEventListener('resize', setMenuWidth);
 });

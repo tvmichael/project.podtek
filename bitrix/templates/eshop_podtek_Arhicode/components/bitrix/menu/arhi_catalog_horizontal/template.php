@@ -39,18 +39,23 @@ $menuBlockId = "catalog_menu_".$this->randString();
 				onclick="if (BX.hasClass(document.documentElement, 'bx-touch')) obj_<?=$menuBlockId?>.clickInMobile(this, event);"
 			>
 				<a
-					href="<?=$arResult["ALL_ITEMS"][$itemID]["LINK"]?>"
+					href="javascript:void(0);" onclick="obj_<?=$menuBlockId?>.toggleInMobile(this)"
 					<?if (is_array($arColumns) && count($arColumns) > 0 && $existPictureDescColomn):?>
 						onmouseover="window.obj_<?=$menuBlockId?> && obj_<?=$menuBlockId?>.changeSectionPicure(this, '<?=$itemID?>');"
 					<?endif?>
 				>
 					<span>
 						<?=$arResult["ALL_ITEMS"][$itemID]["TEXT"]?>
-						<?if (is_array($arColumns) && count($arColumns) > 0):?><i class="fa fa-angle-down"></i><?endif?>
+						<?if (is_array($arColumns) && count($arColumns) > 0):?>
+                            <i class="fa fa-angle-down"></i>
+                        <?endif?>
 					</span>
 				</a>
 			<?if (is_array($arColumns) && count($arColumns) > 0):?>
-				<span class="bx-nav-parent-arrow" onclick="obj_<?=$menuBlockId?>.toggleInMobile(this)"><i class="fa fa-angle-left"></i></span> <!-- for mobile -->
+				<span class="bx-nav-parent-arrow" onclick="obj_<?=$menuBlockId?>.toggleInMobile(this)">
+                    <i class="fa fa-angle-left fa-nav-arrow"></i>
+                </span>
+                <!-- for mobile -->
 				<div class="bx-nav-2-lvl-container">
 					<?foreach($arColumns as $key=>$arRow):?>
 						<ul class="bx-nav-list-2-lvl">

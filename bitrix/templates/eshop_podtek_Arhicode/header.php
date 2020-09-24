@@ -207,7 +207,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 "MENU_CACHE_USE_GROUPS" => "Y",
                                 "MENU_THEME" => "site",
                                 "MENU_CACHE_GET_VARS" => array(),
-                                "MAX_LEVEL" => "3",
+                                "MAX_LEVEL" => "2",
                                 "CHILD_MENU_TYPE" => "left",
                                 "USE_EXT" => "Y",
                                 "DELAY" => "N",

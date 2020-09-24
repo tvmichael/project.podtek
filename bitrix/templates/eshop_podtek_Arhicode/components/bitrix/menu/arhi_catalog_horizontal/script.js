@@ -150,7 +150,12 @@ BX.Main.Menu.CatalogHorizontal = (function()
 	CatalogHorizontal.prototype.toggleInMobile = function(element)
 	{
 		var parentObj = BX.findParent(element, {className: "bx-nav-parent"});
-		var arrow = element.firstChild;
+		var arrow = BX.findChild(parentObj, {
+				"tag" : "i",
+				"class" : "fa-nav-arrow"
+			},
+			true
+		);
 		if (BX.hasClass(parentObj, "bx-opened"))
 		{
 			BX.removeClass(parentObj, "bx-opened");

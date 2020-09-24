@@ -8,10 +8,14 @@ if (!CModule::IncludeModule('iblock'))
 if ($arParams['RSGOPRO_MAX_ITEM'] == '')
 	$arParams['RSGOPRO_MAX_ITEM'] = 9;
 
-if (is_array($arResult) && count($arResult) > 0) {
+if (is_array($arResult) && count($arResult) > 0)
+{
+    //if($USER->IsAdmin() && $USER->GetID() == 8 && $_SESSION['SESS_IP'] == '188.163.120.85')
+        $arParams["IBLOCK_ID"] = 7;
 
 	////////////////////////////////// get section detail pictures //////////////////////////////////
-	if (intval($arParams["IBLOCK_ID"]) > 0) {
+	if (intval($arParams["IBLOCK_ID"]) > 0)
+	{
 		$arTmpSections = array();
 		$arFilter = array(
 			"IBLOCK_ID" => $arParams["IBLOCK_ID"],
@@ -28,6 +32,8 @@ if (is_array($arResult) && count($arResult) > 0) {
 			"NAME",
 			"SECTION_PAGE_URL",
 			"DETAIL_PICTURE",
+            "PICTURE",
+            "UF_*",
 		);
 
 		$rsSections = CIBlockSection::GetList($arOrder, $arFilter, false, $arSelect);
@@ -42,19 +48,38 @@ if (is_array($arResult) && count($arResult) > 0) {
 
 	////////////////////////////////// base //////////////////////////////////
 	$last_key_lvl1 = 0;
-	foreach ($arResult as $key => $arItem){
+	foreach ($arResult as $key => $arItem)
+	{
+        $arResult[$key]['MENU_ADDITIONAL_PICTURE'] = [];
+
 		$arResult[$key]['IS_LAST_LVL1'] = 'N';
 		if ($arItem['DEPTH_LEVEL'] == 1){
 			$last_key_lvl1 = $key;
 		}
-		if (!empty($arTmpSections[$arItem['LINK']])) {
-			$arResult[$key]['DETAIL_PICTURE'] = CFile::GetPath($arTmpSections[$arItem['LINK']]['DETAIL_PICTURE']);
+
+		if (!empty($arTmpSections[$arItem['LINK']]))
+		{
+		    if(!empty($arTmpSections[$arItem['LINK']]['DETAIL_PICTURE']))
+			    $arResult[$key]['DETAIL_PICTURE'] = CFile::GetPath($arTmpSections[$arItem['LINK']]['DETAIL_PICTURE']);
+		    elseif(!empty($arTmpSections[$arItem['LINK']]['PICTURE']))
+                $arResult[$key]['DETAIL_PICTURE'] = CFile::GetPath($arTmpSections[$arItem['LINK']]['PICTURE']);
+
+            $arResult[$key]['MENU_ADDITIONAL_PICTURE'] = [
+                'UF_ADDITIONAL_PAGE' => $arTmpSections[$arItem['LINK']]['UF_ADDITIONAL_PAGE'] ?? '',
+                'UF_DESCRIPTION_ADDITIONAL_PAGE' => $arTmpSections[$arItem['LINK']]['UF_DESCRIPTION_ADDITIONAL_PAGE'] ?? '',
+                'UF_IMG_ADDITIONAL_PAGE' => null,
+            ];
+            if(!empty($arTmpSections[$arItem['LINK']]['UF_IMG_ADDITIONAL_PAGE']))
+            {
+                $arResult[$key]['MENU_ADDITIONAL_PICTURE']['UF_IMG_ADDITIONAL_PAGE'] = CFile::GetPath($arTmpSections[$arItem['LINK']]['UF_IMG_ADDITIONAL_PAGE']);
+            }
 		}
 	}
 	$arResult[$last_key_lvl1]['IS_LAST_LVL1'] = 'Y';
 
 	////////////////////////////////// element in menu //////////////////////////////////
-	if (IntVal($arParams['IBLOCK_ID']) > 0 && $arParams['RSGOPRO_PROPCODE_ELEMENT_IN_MENU'] != '') {
+	if (IntVal($arParams['IBLOCK_ID']) > 0 && $arParams['RSGOPRO_PROPCODE_ELEMENT_IN_MENU'] != '')
+	{
 		foreach ($arResult as $key1 => $arItem1){
 			if ($arItem1['DEPTH_LEVEL'] == 1 && $arItem1['LINK'] != '') {	
 				$arResult[$key1]['PARAMS']['ELEMENT'] = 'N';

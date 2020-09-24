@@ -190,7 +190,7 @@ foreach($arResult as $key=>$arItem)
 	$arItem["PARAMS"]["picture_src"] = $arSectionsInfo[$arItem["PARAMS"]["item_id"]]["PICTURE"];
 	$arItem["PARAMS"]["description"] = $arSectionsInfo[$arItem["PARAMS"]["item_id"]]["DESCRIPTION"];
 
-	if ($arItem["DEPTH_LEVEL"] == "1")
+	if ($arItem["DEPTH_LEVEL"] == "1" && $arParams['MAX_LEVEL'] >= 1)
 	{
 		$arMenuItemsIDs[$arItem["PARAMS"]["item_id"]] = array();
 		if ($arItem["IS_PARENT"])
@@ -199,7 +199,7 @@ foreach($arResult as $key=>$arItem)
 		}
 		$arAllItems[$arItem["PARAMS"]["item_id"]] = $arItem;
 	}
-	elseif($arItem["DEPTH_LEVEL"] == "2")
+	elseif($arItem["DEPTH_LEVEL"] == "2" && $arParams['MAX_LEVEL'] >= 2)
 	{
 		$arMenuItemsIDs[$curItemLevel_1][$arItem["PARAMS"]["item_id"]] = array();
 		if ($arItem["IS_PARENT"])
@@ -208,7 +208,7 @@ foreach($arResult as $key=>$arItem)
 		}
 		$arAllItems[$arItem["PARAMS"]["item_id"]] = $arItem;
 	}
-	elseif($arItem["DEPTH_LEVEL"] == "3")
+	elseif($arItem["DEPTH_LEVEL"] == "3" && $arParams['MAX_LEVEL'] >= 3)
 	{
 		$arMenuItemsIDs[$curItemLevel_1][$curItemLevel_2][] = $arItem["PARAMS"]["item_id"];
 		$arAllItems[$arItem["PARAMS"]["item_id"]] = $arItem;
