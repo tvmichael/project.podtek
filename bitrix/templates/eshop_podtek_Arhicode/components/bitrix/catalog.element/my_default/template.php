@@ -82,6 +82,7 @@ $alt = !empty($arResult['IPROPERTY_VALUES']['ELEMENT_DETAIL_PICTURE_FILE_ALT'])
     ? $arResult['IPROPERTY_VALUES']['ELEMENT_DETAIL_PICTURE_FILE_ALT']
     : $arResult['NAME'];
 
+
 $haveOffers = !empty($arResult['OFFERS']);
 if ($haveOffers) {
     $actualItem = isset($arResult['OFFERS'][$arResult['OFFERS_SELECTED']])
@@ -187,10 +188,12 @@ while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
 
 /***************20_08_2019***************/
 $isRELATEDPRODUCTS = false;
+//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['ID']); echo '</pre>';}
 $resRELATEDPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "RELATED_PRODUCTS"));
 while ($obRELATEDPRODUCTS = $resRELATEDPRODUCTS->GetNext()) {
     if (!empty($obRELATEDPRODUCTS['VALUE'])) {
         $isRELATEDPRODUCTS = true;
+		//if($USER->IsAdmin()) {echo '<pre>'; print_r($obRELATEDPRODUCTS['VALUE']); echo '</pre>';}
     };
 }
 
@@ -442,6 +445,7 @@ if(isset($arFileDiscount['type']))
                             ?>
                             <div class="product-item-detail-slider-images-container" data-entity="images-container">
                                 <?
+								
                                 if (!empty($actualItem['MORE_PHOTO'])) {
                                     foreach ($actualItem['MORE_PHOTO'] as $key => $photo) {
                                         ?>
@@ -481,7 +485,7 @@ if(isset($arFileDiscount['type']))
                                             <div class="product-item-detail-slider-controls-image<?= ($keyPhoto == 0 ? ' active' : '') ?>"
                                                  data-entity="slider-control"
                                                  data-value="<?= $offer['ID'] . '_' . $photo['ID'] ?>">
-                                                <img src="<?= $photo['SRC'] ?>">
+                                                <img src="<?= $photo['SRC'] ?>" alt="<?= $alt ?>">
                                             </div>
                                             <?
                                         }
@@ -499,7 +503,7 @@ if(isset($arFileDiscount['type']))
                                             ?>
                                             <div class="product-item-detail-slider-controls-image<?= ($key == 0 ? ' active' : '') ?>"
                                                  data-entity="slider-control" data-value="<?= $photo['ID'] ?>">
-                                                <img src="<?= $photo['SRC'] ?>">
+                                                <img src="<?= $photo['SRC'] ?>" alt="<?= $alt ?>">
                                             </div>
                                             <?
                                         }
@@ -1028,19 +1032,31 @@ if(isset($arFileDiscount['type']))
                                     <?
                                     if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии') || ($arResult['PROPERTIES']['NALICHIE']['VALUE'] == '')) {
                                         ?>
-                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_green.png">В
+                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_green.png" alt="В наличии">В
                                             наличии
                                         </div><?
                                     } else {
 										if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, до 45 дней'){
 										?>
-                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_gray.png">Под заказ
+                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_gray.png" alt="Под заказ">Под заказ
                                         </div><?	
 										}else {
                                         ?>
-                                        <div class="nalichie"><img
-                                                src="/upload/iblock/icons/checkmark_gray.png"><?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
-                                        </div><?
+                                        <!--div class="nalichie"><img
+                                                src="/upload/iblock/icons/checkmark_gray.png"><!--?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
+                                        </div--><?
+										/////////////////////2020_07_14//////////////////////////
+											if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, 1-2 дня'){
+											?>
+											<div class="nalichie"><img src="/upload/iblock/icons/checkmark_green_2.png" alt="Под заказ">Под заказ, 1-2 дня
+											</div><?	
+											}else {
+											?>
+											<div class="nalichie"><img
+													src="/upload/iblock/icons/checkmark_gray.png" alt="Под заказ"><?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
+											</div><?
+										}
+									/////////////////////2020_07_14//////////////////////////
                                     }
 									}
                                     ?>
@@ -1108,17 +1124,18 @@ if(isset($arFileDiscount['type']))
 
                                             <div class="feature feature-icon-hover indent first">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/delivery_1.png"></span>
+                                                            src="/upload/iblock/icons/delivery_1.png" alt="delivery"></span>
                                                 <p class="no-margin ">
-                                                    <a href="/about/delivery/" target="_blank"><?
+                                                    <!--a href="/about/delivery/" target="_blank"><!--?
                                                         echo "Доставим " . $share;
-                                                        echo $deliveryFree; ?></a>
-                                                    <!--a href="/about/delivery/" target="_blank">Максимально быстрая доставка</a-->
+                                                        echo $deliveryFree; ?></a-->
+                                                    <a href="/about/delivery/" target="_blank">Максимально быстрая доставка</a>
                                                 </p>
                                             </div>
+											<!--?if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['PROPERTIES']['NALICHIE']['VALUE']); echo '</pre>';}?-->
                                             <div class="feature feature-icon-hover indent indent">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/credit-card-payment.png"></span>
+                                                            src="/upload/iblock/icons/credit-card-payment.png" alt="paying"></span>
                                                 <p class="no-margin ">
                                                     <a href="/paying/" target="_blank">Удобные способы оплаты</a>
                                                 </p>
@@ -1177,17 +1194,18 @@ if(isset($arFileDiscount['type']))
 
                                             <div class="feature feature-icon-hover indent first">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/delivery_1.png"></span>
+                                                            src="/upload/iblock/icons/delivery_1.png" alt="delivery"></span>
                                                 <p class="no-margin ">
-                                                    <a href="/about/delivery/" target="_blank"><?
+                                                    <!--a href="/about/delivery/" target="_blank"><!--?
                                                         echo "Доставим " . $share;
-                                                        echo $deliveryFree; ?></a>
+                                                        echo $deliveryFree; ?></a-->
+													<a href="/about/delivery/" target="_blank">Условия доставки</a>
 
                                                 </p>
                                             </div>
                                             <div class="feature feature-icon-hover indent indent">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/credit-card-payment.png"></span>
+                                                            src="/upload/iblock/icons/credit-card-payment.png" alt="paying"></span>
                                                 <p class="no-margin ">
                                                     <a href="/paying/" target="_blank">Удобные способы оплаты</a>
                                                 </p>
@@ -1245,17 +1263,18 @@ if(isset($arFileDiscount['type']))
 
                                             <div class="feature feature-icon-hover indent first">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/delivery_1.png"></span>
+                                                            src="/upload/iblock/icons/delivery_1.png" alt="delivery"></span>
                                                 <p class="no-margin ">
-                                                    <a href="/about/delivery/" target="_blank"><?
+                                                    <!--a href="/about/delivery/" target="_blank"><!--?
                                                         echo "Доставим " . $share;
-                                                        echo $deliveryFree; ?></a>
+                                                        echo $deliveryFree; ?></a-->
+													<a href="/about/delivery/" target="_blank">Условия доставки</a>
                                                     <!--a href="/about/delivery/" target="_blank">Максимально быстрая доставка</a-->
                                                 </p>
                                             </div>
                                             <div class="feature feature-icon-hover indent indent">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/credit-card-payment.png"></span>
+                                                            src="/upload/iblock/icons/credit-card-payment.png" alt="paying"></span>
                                                 <p class="no-margin ">
                                                     <a href="/paying/" target="_blank">Удобные способы оплаты</a>
                                                 </p>
@@ -1284,16 +1303,16 @@ if(isset($arFileDiscount['type']))
 
                                             <div class="feature feature-icon-hover indent first">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/delivery_1.png"></span>
+                                                            src="/upload/iblock/icons/delivery_1.png" alt="delivery"></span>
                                                 <p class="no-margin ">
-                                                    <a href="/about/delivery/"
-                                                       target="_blank"><? echo "Срок поставки уточняйте."; ?></a>
-
+                                                    <!--a href="/about/delivery/"
+                                                       target="_blank"><!--? echo "Срок поставки уточняйте."; ?></a-->
+													<a href="/about/delivery/" target="_blank">Условия доставки</a>
                                                 </p>
                                             </div>
                                             <div class="feature feature-icon-hover indent indent">
                                                 <span class="icon"><img
-                                                            src="/upload/iblock/icons/credit-card-payment.png"></span>
+                                                            src="/upload/iblock/icons/credit-card-payment.png" alt="paying"></span>
                                                 <p class="no-margin ">
                                                     <a href="/paying/" target="_blank">Удобные способы оплаты</a>
                                                 </p>
@@ -1572,7 +1591,7 @@ if(isset($arFileDiscount['type']))
                                             $tegs[] = $obPHOTO_ACCESSORIES['VALUE'];
                                             //if($USER->IsAdmin()) {echo '<pre>'; print_r($obPHOTO_ACCESSORIES['VALUE']); echo '</pre>';}
                                             $pic = CFile::GetFileArray($obPHOTO_ACCESSORIES['VALUE']);
-                                            echo '<img src="' . $pic['SRC'] . '">';
+                                            echo '<img src="' . $pic['SRC'] . '"alt="'.$alt . '">';
                                             echo $arProperty["DISPLAY_VALUE"];
                                         }
                                         ?>
@@ -1707,7 +1726,7 @@ if(isset($arFileDiscount['type']))
                                     <? $resDIMENSIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "DIMENSIONS"));
                                     while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
                                         $picDIMENSIONS = CFile::GetFileArray($obDIMENSIONS['VALUE']);
-                                        echo '<img src="' . $picDIMENSIONS['SRC'] . '"style="margin-left: 10%; max-width: 75%;">';
+                                        echo '<img src="' . $picDIMENSIONS['SRC'] . '" alt="'.$alt . '" style="margin-left: 10%; max-width: 75%;">';
                                     }
                                     ?>
                                 </div>
@@ -1726,7 +1745,8 @@ if(isset($arFileDiscount['type']))
                                     }
                                     /***************************************/ ?>
                                     <? $arSelect = array('ID', 'IBLOCK_ID', 'NAME', 'CODE', 'PROPERTY_*');
-                                    $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]), 'ACTIVE' => 'Y', "!PROPERTY_RELATED_PRODUCTS" => false);
+                                    $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]),'ID' => $arResult['ID'], 'ACTIVE' => 'Y', "!PROPERTY_RELATED_PRODUCTS" => false);
+									//if($USER->IsAdmin()) {echo '<pre>'; print_r($arFilter); echo '</pre>';}
                                     $res = CIBlockElement::GetList(
                                         array("PROPERTY_RELATED_PRODUCTS" => "ASC"),
                                         $arFilter,
@@ -1738,6 +1758,7 @@ if(isset($arFileDiscount['type']))
                                         $arProps = $ob->GetProperties();
                                         $arRelatID = $arProps['RELATED_PRODUCTS']['VALUE'];
                                         $GLOBALS['arRelatFilter'] = array('ID' => $arRelatID);
+										//if($USER->IsAdmin()) {echo '<pre>'; print_r($arProps['RELATED_PRODUCTS']['VALUE']); echo '</pre>';}
                                     } ?>
                                     <? $APPLICATION->IncludeComponent(
                                         "bitrix:catalog.section",
@@ -2242,7 +2263,7 @@ if(isset($arFileDiscount['type']))
                 <table>
                     <tr>
                         <td rowspan="2" class="product-item-detail-short-card-image">
-                            <img src="" style="height: 65px;" data-entity="panel-picture">
+                            <img src="" style="height: 65px;" data-entity="panel-picture" alt="<?= $alt ?>">
                         </td>
                         <td class="product-item-detail-short-title-container" data-entity="panel-title">
                             <span class="product-item-detail-short-title-text"><?= $name ?></span>
