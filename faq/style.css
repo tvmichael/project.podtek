@@ -1,0 +1,40 @@
+.bx-header .bx-breadcrumb {
+    display: none;
+}
+/* --- FAQ --- */
+.faq-page {
+    padding-bottom: 50px;
+}
+/* --- menu --- */
+.faq-page .faq-menu {
+    margin: 0px -15px;
+}
+.faq-page .faq-menu .faq-menu-item {
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 10px;
+}
+.faq-page .faq-menu .faq-menu-item:hover {
+    color: #256aa3;
+    background-color: #e8e8e8;
+}
+.faq-page .faq-menu .faq-menu-item.selected {
+    color: #256aa3;
+}
+/* --- contain --- */
+.faq-page .faq-contain .faq-contain-item {
+    display: none;
+}
+.faq-page .faq-contain .faq-contain-item-detail h4 {
+    cursor: pointer;
+}
+.faq-page .faq-contain .faq-contain-item.selected {
+    display: block;
+}
+.faq-page .faq-contain .faq-contain-item-text {
+    display: none;
+    padding: 10px;
+}
+.faq-page .faq-contain .faq-contain-item-text.open {
+    display: block;
+}
