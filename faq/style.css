@@ -22,19 +22,12 @@
     color: #256aa3;
 }
 /* --- contain --- */
+.faq-page .faq-contain {
+    padding: 5px 10px;
+}
 .faq-page .faq-contain .faq-contain-item {
     display: none;
 }
-.faq-page .faq-contain .faq-contain-item-detail h4 {
-    cursor: pointer;
-}
 .faq-page .faq-contain .faq-contain-item.selected {
-    display: block;
-}
-.faq-page .faq-contain .faq-contain-item-text {
-    display: none;
-    padding: 10px;
-}
-.faq-page .faq-contain .faq-contain-item-text.open {
     display: block;
 }
