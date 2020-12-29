@@ -345,6 +345,12 @@ if(isset($arFileDiscount['type']))
             }
     }
 }
+
+if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
+{
+    $arResult['META_TAGS']['DESCRIPTION'] = preg_replace("/([\d\s\.,]+руб. )|(((€)|(&euro;))[\d\s\.,]+)/", ' ' . $price['PRINT_RATIO_PRICE'] . ' ', $arResult['META_TAGS']['DESCRIPTION']);
+}
+//if($USER->IsAdmin()) {echo '<pre style="display:none;">'; print_r($arResult['META_TAGS']['DESCRIPTION']); print_r($price); echo '</pre>';}
 ?>
 
     <div class="bx-catalog-element bx-<?= $arParams['TEMPLATE_THEME'] ?>" id="<?= $itemIds['ID'] ?>"
@@ -368,6 +374,7 @@ if(isset($arFileDiscount['type']))
                             <? if($showDiscountList):
                                 foreach ($discountList as $discountItem):
                                     if(isset($discountItem['NAME'])):?>
+									
                                         <div class="product-item-discount-text"><?=$discountItem['NAME'];?>
                                             <div class="product-item-discount-file">
                                                 <? $APPLICATION->IncludeFile(
@@ -377,7 +384,9 @@ if(isset($arFileDiscount['type']))
                                                 );?>
                                             </div>
                                         </div>
-                                    <? endif;?>
+                                    <? 
+									//if($USER->IsAdmin()) {echo '<pre>'; print_r($discountItem); echo '</pre>';}
+									endif;?>
                                 <? endforeach;?>
                             <? endif;?>
                             <?if(isset($arResult['PROPERTIES']['BESPLATNAYA_USTANOVKA']) && $arResult['PROPERTIES']['BESPLATNAYA_USTANOVKA']['VALUE']):?>
@@ -689,7 +698,7 @@ if(isset($arFileDiscount['type']))
 
                                         case 'price':
                                             ?>
-                                            <div class="product-item-detail-info-container 4 col-xs-8 col-sm-5">
+                                            <div class="product-item-detail-info-container 4 col-xs-12 col-sm-5">
                                                 <?
                                                 if ($arParams['SHOW_OLD_PRICE'] === 'Y') {
                                                     ?>
@@ -701,8 +710,7 @@ if(isset($arFileDiscount['type']))
                                                     <?
                                                 }
                                                 ?>
-                                                <div class="product-item-detail-price-current"
-                                                     id="<?= $itemIds['PRICE_ID'] ?>">
+                                                <div class="product-item-detail-price-current" id="<?= $itemIds['PRICE_ID'] ?>">
                                                     <?= $price['PRINT_RATIO_PRICE'] ?>
                                                 </div>
                                                 <?
@@ -920,7 +928,12 @@ if(isset($arFileDiscount['type']))
                                         switch ($blockName) {
                                             case 'buttons':
                                                 ?>
-                                                <div data-entity="main-button-container">
+												<?
+												$textstyle = '';
+												if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии')) {
+													$textstyle = 'none';
+												}?>
+                                                <div data-entity="main-button-container" style="display: <?= ($textstyle) ?>;">
                                                     <div id="<?= $itemIds['BASKET_ACTIONS_ID'] ?>"
                                                          style="display: <?= ($actualItem['CAN_BUY'] ? '' : 'none') ?>;">
                                                         <?
@@ -1036,9 +1049,9 @@ if(isset($arFileDiscount['type']))
                                             наличии
                                         </div><?
                                     } else {
-										if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, до 45 дней'){
+										if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии'){
 										?>
-                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_gray.png" alt="Под заказ">Под заказ
+                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_gray.png" alt="Нет в наличии">Нет в наличии
                                         </div><?	
 										}else {
                                         ?>
@@ -1296,7 +1309,7 @@ if(isset($arFileDiscount['type']))
                                             </div>
 
                                             <?
-                                        } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, до 45 дней')) {
+                                        } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии')) {
                                             //$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/element_info_pod_zakaz.php"), false);
                                             ?>
 
