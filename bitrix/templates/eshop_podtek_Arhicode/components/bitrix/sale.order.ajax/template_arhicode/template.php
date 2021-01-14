@@ -329,6 +329,11 @@ else
                     {
                         $src = "/upload/iblock/icons/checkmark_green.png";
                     }
+                    elseif($ob['VALUE_ENUM'] == 'В наличии (мало)')
+                    {
+						$ob['VALUE_ENUM'] = 'В наличии ';
+                        $src = "/upload/iblock/icons/checkmark_green_2.png";
+                    }
                     else
                     {
                         $src = "/upload/iblock/icons/checkmark_gray.png";

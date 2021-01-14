@@ -69,6 +69,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 		isHttps: window.location.protocol === "https:",
 		orderSaveAllowed: false,
 		socServiceHiddenNode: false,
+		additionalParameters: {},
 
 		/**
 		 * Initialization of sale.order.ajax component js
@@ -164,8 +165,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
                 this.phoneMask = new IMask(this.obPhoneMask, maskOptions);
             }
 
-            //console.log('BX.Sale.OrderAjaxComponent');
-            //console.log(this);
+            // console.log('BX.Sale.OrderAjaxComponent');
+            // console.log(this);
 		},
 
 		/**
@@ -5321,10 +5322,12 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 				});
 			}
 
+			this.additionalParameters.deliveryTime = BX.create('DIV', {props: {className: 'bx-soa-pp-company-time'}, html: ""});
+
 			deliveryInfoContainer.appendChild(
 				BX.create('DIV', {
 					props: {className: 'bx-soa-pp-company'},
-					children: [subTitle, label, title, clear, extraServicesNode, infoList]
+					children: [subTitle, label, title, this.additionalParameters.deliveryTime, clear, extraServicesNode, infoList]
 				})
 			);
 			deliveryNode.appendChild(deliveryInfoContainer);
@@ -6557,7 +6560,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 				textHtml = '',
 				propertyType = property.getType() || '',
 				propertyDesc = property.getDescription() || '',
-				label;
+				label, deliveryId = 20;
 
 			if (disabled)
 			{
@@ -6607,7 +6610,19 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 					this.insertNumberProperty(property, propsItemNode, disabled);
 			}
 
-			propsItemsContainer.appendChild(propsItemNode);
+			// modification for delivery
+			if(property.getId() == deliveryId)
+			{
+				if(propsItemNode.querySelector("select option:first-child").textContent == 'Не выбрано')
+					propsItemNode.querySelector("select option:first-child").remove();
+
+				if(typeof this.additionalParameters.deliveryTime == 'object')
+					this.additionalParameters.deliveryTime.appendChild(propsItemNode);
+			}
+			else
+			{
+				propsItemsContainer.appendChild(propsItemNode);
+			}
 		},
 
 		insertLocationProperty: function(property, propsItemNode, disabled)

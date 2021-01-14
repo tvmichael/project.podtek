@@ -1020,6 +1020,18 @@ input[type=checkbox].bx-soa-pp-company-checkbox {
     padding-top: 10px;
     line-height: 17px;
 }
+.bx-soa-pp-company-time {
+    font-size: 14px;
+}
+.bx-soa-pp .bx-soa-pp-company .bx-soa-pp-company-time .bx-soa-custom-label {
+    font-size: 13px;
+    color: #535c69;
+}
+.bx-soa-pp-company-time .soa-property-container select {
+    min-width: 150px;
+    border: 1px solid #d5dadc;
+}
+
 .bx-soa-pp-company-selected{padding:4px 0;}
 .bx-soa-pp-company-selected strong{margin-left:10px;}
 ul.bx-soa-pp-list {
@@ -1105,9 +1117,6 @@ ul.bx-soa-pp-list li {
 
     .bx-soa-pp-desc-container .bx-soa-pp-company-smalltitle {display: none;}
     .bx-soa-pp-list-termin {width: 40%;}
-    /*	.bx-soa-pp-list-description {
-            margin-left: 45%;
-        }*/
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
@@ -1555,6 +1564,11 @@ label[data-bx-user-consent] input{
 textarea{min-height: 35px; max-height: 35px;}
 .bx-soa-pp-company-subTitle{display: none;}
 .bx-soa-pp-list{}
+
+@media (max-width: 767px)
+.bx-content-seection {
+    padding: 0 15px 70px;
+}
 
 
 
