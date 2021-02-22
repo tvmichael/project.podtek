@@ -1,12 +1,11 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?if ($arResult["isFormErrors"] == "Y"):?><?=$arResult["FORM_ERRORS_TEXT"];?><?endif;?>
+<?
+//Bitrix\Main\Diag\Debug::writeToFile(array('Form:'.date('H:i:s') => $arResult['arForm']['TIMESTAMP_X'], 'FORM_NOTE' => $arResult["FORM_NOTE"], $arResult["isFormNote"]),"","/test/log.txt");
+//Bitrix\Main\Diag\Debug::writeToFile(array('Form:'.date('H:i:s') => $arResult, $_REQUEST),"","/test/log.txt");
+?>
 
-<?=$arResult["FORM_NOTE"];?>
-
-<?if ($arResult["isFormNote"] != "Y")
-{
-    ?>
-    <?=$arResult["FORM_HEADER"]?>
+<?=$arResult["FORM_HEADER"]?>
 
     <div class="form-header">
         <?
@@ -100,7 +99,8 @@
                                         <?foreach ($arQuestion["STRUCTURE"] as $arLabelImg)
                                         {?>
                                             <label class="col-xs-12 rb-q">
-                                                <input class="radio-dot" type="<?=$arLabelImg['FIELD_TYPE']?>"
+                                                <input class="radio-dot"
+                                                       type="<?=$arLabelImg['FIELD_TYPE']?>"
                                                        data-product-id="<?=$arLabelImg['VALUE'];?>"
                                                        <?if(!empty($arLabelImg['FIELD_PARAM'])) { echo $arLabelImg['FIELD_PARAM'];?> checked="" selected="" <?};?>
                                                        id="<?=$arLabelImg['ID']?>"
@@ -195,9 +195,10 @@
                                             <?foreach ($q_data["STRUCTURE"] as $arLabelImg)
                                             {?>
                                                 <label class="col-xs-4 col-sm-3 rb-q">
-                                                    <input class="hidden-dot" type="<?=$arLabelImg['FIELD_TYPE']?>" data-product-id="<?=$arLabelImg['VALUE'];?>"
-                                                        <?if($arLabelImg['FIELD_PARAM']){?> <?=$arLabelImg['FIELD_PARAM']?> selected="" checked="" <?}?>id="<?=$arLabelImg['ID']?>"
+                                                    <input class="hidden-dot"
+                                                        type="<?=$arLabelImg['FIELD_TYPE']?>"
                                                         data-product-id="<?=$arLabelImg['VALUE'];?>"
+                                                        <?if($arLabelImg['FIELD_PARAM']){?> <?=$arLabelImg['FIELD_PARAM']?> selected="" checked="" <?}?>id="<?=$arLabelImg['ID']?>"
                                                         name="form_radio_<?=$FIELD_SID.'_'.$i;?>"
                                                         value="<?=$arLabelImg['ID']?>">
                                                     <img class="checked" src="/upload/iblock/icons/checkmark_green.png"><?=$arLabelImg['MESSAGE']?>
@@ -278,8 +279,23 @@
         <?=$arResult["REQUIRED_SIGN"];?> - <?=GetMessage("FORM_REQUIRED_FIELDS")?>
     </p>
     <?=$arResult["FORM_FOOTER"]?>
-    <?
-} //endif (isFormNote)
+<?
+if($arResult["isFormNote"] == 'Y')
+{
+    if(isset($_REQUEST['WEB_FORM_ID']))
+    {
+        $arResult["POOL_PARAMS"]['isOpenPdf']['formId'] = $_REQUEST['WEB_FORM_ID'];
+    }
+    if(isset($_REQUEST['RESULT_ID']))
+    {
+        $arResult["POOL_PARAMS"]['isOpenPdf']['resultId'] = $_REQUEST['RESULT_ID'];
+    }
+    if(isset($_REQUEST['formresult']))
+    {
+        $arResult["POOL_PARAMS"]['isOpenPdf']['formResult'] = $_REQUEST['formresult'];
+    }
+    $arResult["POOL_PARAMS"]['isOpenPdf']['pdf'] = 'Y';
+}
 ?>
 
 <script>
@@ -290,8 +306,8 @@
 
 
 <?/*
-<pre>
-    <?
+<pre style="display:none;">
+    <?php
     if($USER->IsAdmin() && $USER->GetID() == 8)
     {
         print_r($arResult);

@@ -11,9 +11,6 @@ BX.namespace('BX.PoolCalculationPrise');
             this.productPrice = 0;
             this.arPrice = [];
             this.workCatalogID = parameters.workCatalogID;
-            this.isOpenPdf = parameters.isOpenPdf;
-
-            this.form = document.querySelector("form[name='POOL_CALCULATION']");
 
             this.pollSize = {
                 width: 0,
@@ -67,6 +64,9 @@ BX.namespace('BX.PoolCalculationPrise');
             this.initDependentBlock();
             this.calculatePrice();
 
+            //console.log('BXPoolCalculationPrise::');
+            //console.log(parameters);
+            //console.log(this);
         },
 
         initDependentBlock: function()
@@ -96,6 +96,7 @@ BX.namespace('BX.PoolCalculationPrise');
             var i, value, v, input,
                 e = e.target;
 
+            //console.log(e);
             value = $(e).attr(this.dpId);
             if (value)
             {
@@ -113,6 +114,7 @@ BX.namespace('BX.PoolCalculationPrise');
                 }
 
                 this.calculatePrice();
+                //console.log(this);
             }
 
         },
@@ -131,7 +133,8 @@ BX.namespace('BX.PoolCalculationPrise');
 
         calculatePrice: function ()
         {
-            this.arPrice = [];
+            //console.log('1: calculatePrice:');
+            this.arPrice = []; // головний масив з цінами для (товарів і робіт)
             var i, j,
                 value = 0;
             var valueSize = 0;
@@ -143,6 +146,7 @@ BX.namespace('BX.PoolCalculationPrise');
                 {
                     value = $(this.inputInnerLevel[i]).attr(this.dpId);
                     this.arPrice.push(parseInt(value));
+                    //console.log(this.inputInnerLevel[i]);
                 }
             }
 
@@ -159,6 +163,8 @@ BX.namespace('BX.PoolCalculationPrise');
                         value = parseInt(value);
                         if (value > 0 )
                             this.arPrice.push(parseInt(value));
+
+                        //console.log(value);
                     }
                     else
                     {
@@ -168,22 +174,25 @@ BX.namespace('BX.PoolCalculationPrise');
                             value = this.tryParseJSON(value);
                             var arrValue = 0;
 
-                            if(value && !value.off)
-                            {
+                            //console.log('#');
+                            if(value) {
                                 for (j in value) {
+                                    //console.log('#');
+                                    //console.log(j);
+                                    //console.log(value[j]);
+                                    //console.log(this.pollSize.volume());
+
                                     if (this.pollSize.volume() <= parseInt(j)) {
                                         arrValue = value[j];
                                         break;
                                     }
                                 }
-
-                                if(arrValue)
-                                {
-                                    this.arPrice.push(arrValue);
-                                }
                             }
+                            this.arPrice.push(arrValue);
+                            //console.log(this.arPrice);
                         }
                     }
+                    //console.log(this.inputTopLevel[i]);
                 }
                 else if(value == 'width' || value == 'length' || value == 'deep') // якщо input з розмірами для басайна
                 {
@@ -201,6 +210,10 @@ BX.namespace('BX.PoolCalculationPrise');
                 }
 
             }
+            //console.log('--->>');
+            //console.log(this.arPrice);
+            //console.log(this.pollSize);
+            //console.log('--->>');
             this.getPrice();
         },
 
@@ -216,10 +229,13 @@ BX.namespace('BX.PoolCalculationPrise');
                 action,
                 perimeterNew;
 
+            //console.log('2: getPrice:');
+            //console.log('AP:'+this.pollSize.poolArea() +' -- ' + this.pollSize.perimeter());
             for(i = 0; i < this.arPrice.length; i++)
             {
                 if(this.arProductPrice[this.arPrice[i]]) // шукаємо в списку продуктів наш продукт по ІД
                 {
+                    //console.log(this.arProductPrice[this.arPrice[i]]);
                     price = this.arProductPrice[this.arPrice[i]];
                     for (j in price)
                     {
@@ -232,7 +248,8 @@ BX.namespace('BX.PoolCalculationPrise');
 
                             switch (action)
                             {
-                                case '00000':
+                                case '00000': // кількість товару множимо на ціну
+                                    //console.log(j + ' #price: ' + parseFloat(price[j].BASE_PRICE) + ' * ' + quantity + ' = ' + (parseFloat(price[j].BASE_PRICE) * quantity));
                                     if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += (parseFloat(price[j].BASE_PRICE) * quantity);
                                         else this.productPrice += (parseFloat(price[j].BASE_PRICE) * quantity);
                                     break;
@@ -240,31 +257,40 @@ BX.namespace('BX.PoolCalculationPrise');
                                     break;
                                 case '66666':
                                     break;
-                                case '77777':
+                                case '77777': // ціну (штук на 1м) множимо на периметер басейна
+                                    //console.log(j + ' #price: ' + parseFloat(price[j].BASE_PRICE) + ' * ' + quantity +' * '+ this.pollSize.perimeter() +' = ' + (parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.perimeter()));
                                     if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.perimeter() );
                                         else this.productPrice += Math.ceil(parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.perimeter());
                                     break;
-                                case '88888':
+                                case '88888': // (1шт 2 поточних метра)
                                     if( (this.pollSize.perimeter() % quantity) > 0) perimeterNew =  (this.pollSize.perimeter() / quantity) + 1;
                                     else perimeterNew = this.pollSize.perimeter() / quantity;
 
+                                    //console.log(j + ' #price: ' + parseFloat(price[j].BASE_PRICE) + ' * ' +  perimeterNew +' = ' + (Math.ceil( parseFloat(price[j].BASE_PRICE) *  perimeterNew )));
                                     if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(price[j].BASE_PRICE) *  perimeterNew );
                                         else this.productPrice += Math.ceil(parseFloat(price[j].BASE_PRICE) * perimeterNew );
                                     break;
                                 case '99999':
+                                    //console.log(j + ' #price: ' + parseFloat(price[j].BASE_PRICE) + ' * ' + quantity + ' * '+ this.pollSize.poolArea() +' = ' + (Math.ceil( parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.poolArea() )));
                                     if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.poolArea() );
                                         else this.productPrice += Math.ceil(parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.poolArea() );
                                     break;
                             }
+
+                            //console.log('1 >> '+ j +' | ' + price[j].BLOCK_ID+' .. ' + price[j].BASE_PRICE+' : '+quantity +' : '+action);
                         }
-                        else
+                        else // якщо звичайний товар
                         {
-                            if(price[j].BLOCK_ID == this.workCatalogID)
+                            //console.log('2 >>' + j +' | ' + price[j].BLOCK_ID );
+                            //console.log(price[j]);
+                            if(price[j].BLOCK_ID == this.workCatalogID) // 11 - каталог для розрахунку вартості робіт
                             {
+                                //console.log(j + ' price: ' + parseFloat(price[j].BASE_PRICE) + ' * ' +  parseInt(price[j].QUANTITY) + ' = ' + (parseFloat(price[j].BASE_PRICE) *  parseInt(price[j].QUANTITY)));
                                 this.workPrice += (parseFloat(price[j].BASE_PRICE) * parseInt(price[j].QUANTITY));
                             }
                             else
                             {
+                                //console.log(j + ' price: ' + parseFloat(price[j].BASE_PRICE) + ' * ' +  parseInt(price[j].QUANTITY) + ' = ' + (parseFloat(price[j].BASE_PRICE) *  parseInt(price[j].QUANTITY)));
                                 this.productPrice += (parseFloat(price[j].BASE_PRICE) * parseInt(price[j].QUANTITY));
                             }
                         }
@@ -272,6 +298,9 @@ BX.namespace('BX.PoolCalculationPrise');
                 }
             }
 
+            //console.log('this.productPrice=');
+            //console.log(this.productPrice);
+            // ЦІНА
             $('#pool-price-material').html(this.bxFormatPrice(parseFloat(this.productPrice).toFixed(2)) + ' руб.');
             $('#pool-price-work').html(this.bxFormatPrice(parseFloat(this.workPrice).toFixed(2)) + ' руб.');
             $('#pool-price-all').html(this.bxFormatPrice(parseFloat(this.workPrice + this.productPrice).toFixed(2)) + ' руб.');

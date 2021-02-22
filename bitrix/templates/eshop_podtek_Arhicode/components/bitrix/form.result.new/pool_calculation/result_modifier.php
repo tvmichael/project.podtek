@@ -114,8 +114,8 @@ foreach ($arName as $name)
 $arResult["POOL_PARAMS"] = [
     'dpId' => 'data-product-id', // name for data parameters
     'arProductPrice' => $arProductPrice,
-    'arProductPrice' => $arProductPrice,
     'workCatalogID' => '11', // каталог цін за роботу
+    'isOpenPdf' => [],
 ];
 
 ?>
