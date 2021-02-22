@@ -11,6 +11,7 @@ use Bitrix\Main\Loader;
 
 global $APPLICATION;
 
+
 if (isset($templateData['TEMPLATE_THEME']))
 {
 	$APPLICATION->SetAdditionalCSS($templateFolder.'/themes/'.$templateData['TEMPLATE_THEME'].'/style.css');

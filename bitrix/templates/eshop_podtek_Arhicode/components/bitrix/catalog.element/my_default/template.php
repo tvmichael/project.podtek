@@ -350,7 +350,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 {
     $arResult['META_TAGS']['DESCRIPTION'] = preg_replace("/([\d\s\.,]+руб. )|(((€)|(&euro;))[\d\s\.,]+)/", ' ' . $price['PRINT_RATIO_PRICE'] . ' ', $arResult['META_TAGS']['DESCRIPTION']);
 }
-//if($USER->IsAdmin()) {echo '<pre style="display:none;">'; print_r($arResult['META_TAGS']['DESCRIPTION']); print_r($price); echo '</pre>';}
+// if($USER->IsAdmin()) {echo '<pre data-mv="0" style="display:none;">'; print_r($arResult); echo '</pre>';}
 ?>
 
     <div class="bx-catalog-element bx-<?= $arParams['TEMPLATE_THEME'] ?>" id="<?= $itemIds['ID'] ?>"
@@ -933,9 +933,47 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 												if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии')) {
 													$textstyle = 'none';
 												}?>
+												<?
+														 /*if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['ID']); echo '</pre>';}*/
+														 $mNALICHIE = "";
+														 $arFilter = Array("PRODUCT_ID"=>$arResult['ID'],"ID"=>3);
+														$arSelectFields = Array("PRODUCT_AMOUNT");
+														$res = CCatalogStore::GetList(Array(),$arFilter,false,false,$arSelectFields);
+														if ($arRes = $res->GetNext()) 
+															$mNALICHIE = $arRes['PRODUCT_AMOUNT'];
+														/*if($USER->IsAdmin()) {echo '<pre>'; print_r($arRes ); echo '</pre>';}*/?>
+														 <?
+														 /////////////////////2020_12_19//////////////////////////
+														if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии') || ($arResult['PROPERTIES']['NALICHIE']['VALUE'] == '')) {
+															?>
+															<div class="nalichie_y"><div class="col-xs-6 col-sm-7 nalichie_y_e">В наличии</div> <div class="col-xs-6 col-sm-5 nalichie_y_e"><p><?=$mNALICHIE?> шт.</p></div></div>
+															<?
+														} else {
+															if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии'){
+															?>
+															<div class="nalichie_n"><b>Нет в наличии</b></div>
+															<?	
+															}else {
+																if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии (мало)'){
+																	?>
+																	<div class="nalichie_y"><div class="col-xs-6 col-sm-7 nalichie_y_m">В наличии</div> <div class="col-xs-6 col-sm-5 nalichie_y_m"><p>мало</p></div></div>
+																	
+																	<?	
+																	}
+																else {
+																	?>
+																	<div class="nalichie_n"><b><?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?></b>
+																	</div><?
+																}
+															}
+														}
+														/////////////////////2020_12_19//////////////////////////
+														?>
                                                 <div data-entity="main-button-container" style="display: <?= ($textstyle) ?>;">
+												
                                                     <div id="<?= $itemIds['BASKET_ACTIONS_ID'] ?>"
                                                          style="display: <?= ($actualItem['CAN_BUY'] ? '' : 'none') ?>;">
+														 
                                                         <?
                                                         if ($showAddBtn) {
                                                             ?>
@@ -1042,37 +1080,37 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                         <?
                                     }
                                     ?>
-                                    <?
+                                    <!--?
                                     if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии') || ($arResult['PROPERTIES']['NALICHIE']['VALUE'] == '')) {
                                         ?>
                                         <div class="nalichie"><img src="/upload/iblock/icons/checkmark_green.png" alt="В наличии">В
                                             наличии
-                                        </div><?
+                                        </div><!--?
                                     } else {
 										if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии'){
 										?>
                                         <div class="nalichie"><img src="/upload/iblock/icons/checkmark_gray.png" alt="Нет в наличии">Нет в наличии
-                                        </div><?	
+                                        </div><!--?	
 										}else {
                                         ?>
                                         <!--div class="nalichie"><img
                                                 src="/upload/iblock/icons/checkmark_gray.png"><!--?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
-                                        </div--><?
+                                        </div--><!--?
 										/////////////////////2020_07_14//////////////////////////
 											if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, 1-2 дня'){
 											?>
 											<div class="nalichie"><img src="/upload/iblock/icons/checkmark_green_2.png" alt="Под заказ">Под заказ, 1-2 дня
-											</div><?	
+											</div><!--?	
 											}else {
 											?>
 											<div class="nalichie"><img
-													src="/upload/iblock/icons/checkmark_gray.png" alt="Под заказ"><?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
-											</div><?
+													src="/upload/iblock/icons/checkmark_gray.png" alt="Под заказ"><!--?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
+											</div><!--?
 										}
 									/////////////////////2020_07_14//////////////////////////
                                     }
 									}
-                                    ?>
+                                    ?-->
                                 </div>
 
                                 <!----------------------------------->
@@ -1147,12 +1185,23 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                             </div>
 											<!--?if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['PROPERTIES']['NALICHIE']['VALUE']); echo '</pre>';}?-->
                                             <div class="feature feature-icon-hover indent indent">
-                                                <span class="icon"><img
-                                                            src="/upload/iblock/icons/credit-card-payment.png" alt="paying"></span>
+                                                <span class="icon">
+                                                    <img src="/upload/iblock/icons/credit-card-payment.png" alt="paying">
+                                                </span>
                                                 <p class="no-margin ">
                                                     <a href="/paying/" target="_blank">Удобные способы оплаты</a>
                                                 </p>
                                             </div>
+                                            <?if($arResult["COUNT_PRODUCT"] > 0):?>
+                                                <div class="feature feature-icon-hover indent indent">
+                                                    <span class="icon">
+                                                        <img src="/upload/iblock/icons/buy-1.png" alt="buy">
+                                                    </span>
+                                                    <p class="no-margin">
+                                                        Купили более <?=$arResult["COUNT_PRODUCT"];?> раз<?=($arResult["COUNT_PRODUCT"]==1?'а':'')?>
+                                                    </p>
+                                                </div>
+                                            <?endif;?>
                                             <?
                                             if ($arResult['PROPERTIES']['description_action']['VALUE'] != '') {
                                                 ?>
@@ -1170,7 +1219,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                             </div>
 
                                         <?
-                                        } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] === 'Под заказ, 1-2 дня')) {
+                                        } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] === 'В наличии (мало)')) {
                                             //$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/element_info_pod_zakaz_1_2.php"), false);
                                             ?>
                                             <?
