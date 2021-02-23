@@ -25,7 +25,7 @@ function GetAreaOfTheBasin($myLong, $myWidth, $myDepth)
 
 function GetBasinAreaForFilms($myLong, $myWidth, $myDepth)
 {
-    $BasinAreaForFilms = (($myLong + $myWidth) * 2 * $myDepth + $myLong * $myWidth) * 1.2;
+    $BasinAreaForFilms = (($myLong + $myWidth) * 2 * $myDepth + $myLong * $myWidth) * 1.1; // 1.2
     $myBasinAreaForFilms = ceil($BasinAreaForFilms);
     return $myBasinAreaForFilms;
 }
@@ -138,13 +138,13 @@ function getTrTableListAndPriceSum($intID)
 
     foreach ($arProductSet['ITEMS'] as $myItems)
     {
-        //товары
+        // product
         $dbRes = CCatalogProduct::GetList(array(), array("ID" => $myItems['ITEM_ID']), false, array());
         while (($arRes = $dbRes->Fetch())) {
             $myNameItem = $arRes['ELEMENT_NAME'];
         }
 
-        //цены
+        // price
         $arPrice = CCatalogProduct::GetOptimalPrice($myItems['ITEM_ID'], 1, $USER->GetUserGroupArray(), 'N');
 
         if (!$arPrice || count($arPrice) <= 0) {
@@ -157,14 +157,15 @@ function getTrTableListAndPriceSum($intID)
             // ....
         }
 
-        $myValueItem = $arPrice['RESULT_PRICE']['BASE_PRICE'] * $myItems['QUANTITY'];
+        $resultPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'] ?? $arPrice['RESULT_PRICE']['BASE_PRICE'];
+        $myValueItem = $resultPrice * $myItems['QUANTITY'];
         $priceSum += $myValueItem;
 
         $arTrTable .= MakeInnerTrForTable([
             $k,
             $myNameItem,
             $myItems['QUANTITY'],
-            $arPrice['RESULT_PRICE']['BASE_PRICE'],
+            $resultPrice,
             $myValueItem,
         ]);
 

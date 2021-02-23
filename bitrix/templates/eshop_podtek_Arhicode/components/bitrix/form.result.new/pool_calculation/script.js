@@ -43,7 +43,7 @@ BX.namespace('BX.PoolCalculationPrise');
                 },
                 poolArea: function () {
                     this.validate();
-                    return Math.ceil(((this.width * this.length) + 2 * this.deep * (this.width  + this.length)) * 1.2 );
+                    return Math.ceil(((this.width * this.length) + 2 * this.deep * (this.width  + this.length)) * 1.1 );
                 },
             };
 
@@ -64,9 +64,48 @@ BX.namespace('BX.PoolCalculationPrise');
             this.currentDependentBlock = false;
             this.dependentInput = [];
 
+            this.formSubmit(this.form);
+
             this.initDependentBlock();
             this.calculatePrice();
 
+            console.log(this);
+        },
+
+        openPdf: function(data)
+        {
+            if(typeof data == 'object')
+            {
+                if(data.RESULT_ID && data.WEB_FORM_ID && data.formresult)
+                {
+                    let url = "https://podtek.ru/pool_calculation_result_test/result.php?WEB_FORM_ID="
+                        + data.WEB_FORM_ID
+                        + "&RESULT_ID="
+                        + data.RESULT_ID
+                        + "&formresult="
+                        + data.formresult;
+                    let win = window.open(url, '_blank');
+                    win.focus();
+                }
+            }
+        },
+
+        formSubmit: function(form)
+        {
+            let self = this;
+            $(form).on('submit',function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'post',
+                    url: form.action,
+                    data: $(form).serialize() + '&web_form_submit=submit',
+                    dataType: 'json',
+                    success: function (response) {
+                        self.openPdf(response);
+                    }
+                });
+                return false;
+            });
         },
 
         initDependentBlock: function()
@@ -102,7 +141,6 @@ BX.namespace('BX.PoolCalculationPrise');
                 v = value.split('_');
                 if(v.length > 1 && e.checked)
                 {
-                    // uncheck all hide input
                     for(i=0; i < this.dependentInput[this.currentDependentBlock].length; i++)
                         this.dependentInput[this.currentDependentBlock][i].checked = false;
 
@@ -136,7 +174,6 @@ BX.namespace('BX.PoolCalculationPrise');
                 value = 0;
             var valueSize = 0;
 
-            // формуємо масив цін для товарів внутрфшньої категорії
             for (i = 0; i < this.inputInnerLevel.length; i++)
             {
                 if(this.inputInnerLevel[i].checked)
@@ -147,7 +184,6 @@ BX.namespace('BX.PoolCalculationPrise');
             }
 
             value = 0;
-            // формуємо масив цін для (товарів і робіт) базової категорії
             for (i = 0; i < this.inputTopLevel.length; i++)
             {
                 value = $(this.inputTopLevel[i]).attr(this.dpId);
@@ -214,7 +250,8 @@ BX.namespace('BX.PoolCalculationPrise');
                 strPrice,
                 quantity,
                 action,
-                perimeterNew;
+                perimeterNew,
+                resultPrice = 0;
 
             for(i = 0; i < this.arPrice.length; i++)
             {
@@ -224,6 +261,14 @@ BX.namespace('BX.PoolCalculationPrise');
                     for (j in price)
                     {
                         strPrice = price[j].QUANTITY.toString(); // продукт що розраховується
+
+                        resultPrice = price[j].BASE_PRICE;
+
+                        if(price[j].DISCOUNT_PRICE && price[j].DISCOUNT_PRICE > 0)
+                        {
+                            resultPrice = price[j].DISCOUNT_PRICE;
+                        }
+
                         if(strPrice.length > 5)
                         {
                             // товар для розрахунку
@@ -233,27 +278,27 @@ BX.namespace('BX.PoolCalculationPrise');
                             switch (action)
                             {
                                 case '00000':
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += (parseFloat(price[j].BASE_PRICE) * quantity);
-                                        else this.productPrice += (parseFloat(price[j].BASE_PRICE) * quantity);
+                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += (parseFloat(resultPrice) * quantity);
+                                        else this.productPrice += (parseFloat(resultPrice) * quantity);
                                     break;
                                 case '55555':
                                     break;
                                 case '66666':
                                     break;
                                 case '77777':
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.perimeter() );
-                                        else this.productPrice += Math.ceil(parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.perimeter());
+                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(resultPrice) * quantity * this.pollSize.perimeter() );
+                                        else this.productPrice += Math.ceil(parseFloat(resultPrice) * quantity * this.pollSize.perimeter());
                                     break;
                                 case '88888':
                                     if( (this.pollSize.perimeter() % quantity) > 0) perimeterNew =  (this.pollSize.perimeter() / quantity) + 1;
                                     else perimeterNew = this.pollSize.perimeter() / quantity;
 
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(price[j].BASE_PRICE) *  perimeterNew );
-                                        else this.productPrice += Math.ceil(parseFloat(price[j].BASE_PRICE) * perimeterNew );
+                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(resultPrice) *  perimeterNew );
+                                        else this.productPrice += Math.ceil(parseFloat(resultPrice) * perimeterNew );
                                     break;
                                 case '99999':
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.poolArea() );
-                                        else this.productPrice += Math.ceil(parseFloat(price[j].BASE_PRICE) * quantity * this.pollSize.poolArea() );
+                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(resultPrice) * quantity * this.pollSize.poolArea() );
+                                        else this.productPrice += Math.ceil(parseFloat(resultPrice) * quantity * this.pollSize.poolArea() );
                                     break;
                             }
                         }
@@ -261,11 +306,11 @@ BX.namespace('BX.PoolCalculationPrise');
                         {
                             if(price[j].BLOCK_ID == this.workCatalogID)
                             {
-                                this.workPrice += (parseFloat(price[j].BASE_PRICE) * parseInt(price[j].QUANTITY));
+                                this.workPrice += (parseFloat(resultPrice) * parseInt(price[j].QUANTITY));
                             }
                             else
                             {
-                                this.productPrice += (parseFloat(price[j].BASE_PRICE) * parseInt(price[j].QUANTITY));
+                                this.productPrice += (parseFloat(resultPrice) * parseInt(price[j].QUANTITY));
                             }
                         }
                     }

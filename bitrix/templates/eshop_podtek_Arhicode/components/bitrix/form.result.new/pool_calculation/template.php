@@ -1,11 +1,15 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?if ($arResult["isFormErrors"] == "Y"):?><?=$arResult["FORM_ERRORS_TEXT"];?><?endif;?>
 <?
-//Bitrix\Main\Diag\Debug::writeToFile(array('Form:'.date('H:i:s') => $arResult['arForm']['TIMESTAMP_X'], 'FORM_NOTE' => $arResult["FORM_NOTE"], $arResult["isFormNote"]),"","/test/log.txt");
-//Bitrix\Main\Diag\Debug::writeToFile(array('Form:'.date('H:i:s') => $arResult, $_REQUEST),"","/test/log.txt");
+//Bitrix\Main\Diag\Debug::writeToFile(array('s3-'.date('H:i:s') => $_REQUEST, $arResult),"","/test/log.txt");
 ?>
+<?//=$arResult["FORM_NOTE"];?>
 
-<?=$arResult["FORM_HEADER"]?>
+<?
+//if ($arResult["isFormNote"] != "Y")
+//{
+    ?>
+    <?=$arResult["FORM_HEADER"]?>
 
     <div class="form-header">
         <?
@@ -279,6 +283,9 @@
         <?=$arResult["REQUIRED_SIGN"];?> - <?=GetMessage("FORM_REQUIRED_FIELDS")?>
     </p>
     <?=$arResult["FORM_FOOTER"]?>
+    <?
+//} //endif (isFormNote)
+?>
 <?
 if($arResult["isFormNote"] == 'Y')
 {

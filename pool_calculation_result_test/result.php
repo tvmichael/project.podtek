@@ -1,7 +1,8 @@
 <?
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 $APPLICATION->SetTitle("Title");
-?><?$APPLICATION->IncludeComponent(
+?>
+<?$APPLICATION->IncludeComponent(
 	"arhicode:form.result.view", 
 	"test_1", 
 	array(
@@ -19,4 +20,5 @@ $APPLICATION->SetTitle("Title");
 	),
 	false
 );?>
-<br><?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>
+<br>
+<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php");?>

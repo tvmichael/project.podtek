@@ -45,11 +45,11 @@ foreach ($arResult['arAnswers'] as $resItems)
         }
         elseif ( is_string($item['VALUE']) )
         {
-            $jsonOb = str_replace("'", '"', $item['VALUE']);
+            $jsonStr = str_replace("'", '"', $item['VALUE']);
+            $jsonOb = json_decode($jsonStr);
 
-            if(is_object(json_decode($jsonOb)) || is_array(json_decode($jsonOb)))
+            if(is_object($jsonOb) || is_array($jsonOb))
             {
-                $jsonOb = json_decode($jsonOb);
                 foreach ($jsonOb as $js) // список ІД товаров з json строки
                 {
                     $kitId = intval($js);

@@ -10,18 +10,16 @@ $usrLogoSCR = "";
 $usrNoLogoSCR = 'https://podtek.ru/include/podtek_logo.jpg';
 $myFormID = $_REQUEST["RESULT_ID"];
 
-foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion)
-{
-    if (is_array($arQuestion['ANSWER_VALUE'])):
-        foreach ($arQuestion['ANSWER_VALUE'] as $key => $arAnswer)
-        {
-            if ($arAnswer["ANSWER_IMAGE"]): // LOGO
+foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion) {
+    if (is_array($arQuestion['ANSWER_VALUE'])) {
+        foreach ($arQuestion['ANSWER_VALUE'] as $key => $arAnswer) {
+            if (isset($arAnswer["ANSWER_IMAGE"])) { // LOGO
                 $usrLogoSCR = $arAnswer["ANSWER_IMAGE"]["URL"];
-            else:
+            } else {
                 $usrLogoSCR = $usrNoLogoSCR;
-            endif;
+            }
 
-            if ($FIELD_SID == "new_field_0002"): //Размеры бассейна
+            if ($FIELD_SID == "new_field_0002") { //Размеры бассейна
                 switch ($arAnswer['ANSWER_VALUE']) {
                     case "length":
                         $myLong = floatval($arAnswer['USER_TEXT']);
@@ -33,16 +31,16 @@ foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion)
                         $myDepth = floatval($arAnswer['USER_TEXT']);
                         break;
                 }
-            endif;
+            }
 
             if ($FIELD_SID == "new_field_0001"): //тип бассейна
-                 $myTypeOfPool = $arAnswer['ANSWER_TEXT'];
+                $myTypeOfPool = $arAnswer['ANSWER_TEXT'];
             endif;
             if ($FIELD_SID == "new_field_0001_0"): //Пленка ПВХ
-                 $myColorOfTheFilm = $arAnswer['ANSWER_VALUE'];
+                $myColorOfTheFilm = $arAnswer['ANSWER_VALUE'];
             endif;
             if ($FIELD_SID == "new_field_0004"): //Лестница
-                 $intStairsID = $arAnswer['ANSWER_VALUE'];
+                $intStairsID = $arAnswer['ANSWER_VALUE'];
             endif;
             if ($FIELD_SID == "new_field_0006"): //Фильтровальная установка
                 $intFilterID = $arAnswer['ANSWER_VALUE'];
@@ -54,10 +52,10 @@ foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion)
                 $intMortgagesID = $arAnswer['ANSWER_VALUE'];
             endif;
             if ($FIELD_SID == "new_field_0009"): //Подогрев
-                 $intHeatingID = $arAnswer['ANSWER_VALUE'];
+                $intHeatingID = $arAnswer['ANSWER_VALUE'];
             endif;
-        } // foreach ($arQuestions)
-    endif;
+        }
+    }
 }
 
 //Рассчитаем зависимые данные: //Площадь Зеркала Воды //$myAreaMirrorsOfWater =$myLong * $myWidth;
@@ -91,21 +89,24 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
     $rest = substr($myOllItems['QUANTITY'], -5);
     $myQuantityItem = ($myOllItems['QUANTITY'] - $rest) / 100000;
 
-    //товары
+    // product
     $db_res = CCatalogProduct::GetList(array(), array("ID" => $ID), false, array());
     while (($ar_res = $db_res->Fetch())) {
         $myNameItem = $ar_res['ELEMENT_NAME'];
     }
 
-    //цены
+    // price
     $arPrice = CCatalogProduct::GetOptimalPrice($ID, 1, $USER->GetUserGroupArray(), 'N');
+
     if (!$arPrice || count($arPrice) <= 0) {
         if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
             $quantity = $nearestQuantity;
             $arPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
         }
     }
-    $myPrice = $arPrice['PRICE']['PRICE'];
+
+    $myPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'] ?? $arPrice['RESULT_PRICE']['BASE_PRICE'];
+
     if ($rest == 99999) {
         $myValueItem = $myPrice * $myBasinAreaForFilms;
         $myQuantityItem = $myBasinAreaForFilms;
@@ -136,6 +137,7 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
     $arColNum[] = $i;
     $arMyValueItem[] = $myValueItem;
 
+    // add table `tr`
     $arColTab = $arColTab . '<tr>'
         .'<td style="width:5%;padding-bottom:50px;">' . $i . '</td>'
         .'<td style="width:43%;">' . $myNameItem . '</td>'
@@ -217,16 +219,26 @@ $product_tables = '<table style="width:100%;"><thead><tr>'
         .$arFilterColTab
         .$arServiceColTab
         .$arMortgagesColTab
-        .$arHeatingColTab
-    .'<table style="width:100%;"><thead>'
-        . '<tr><td colspan="5" style="border-top: 1px solid #e6e6e6;"></td></tr>'
-        .'<tr>      
+        .$arHeatingColTab;
+
+$result_table = '<table style="width:100%;"><thead>'
+    . '<tr><td colspan="5"><br></td></tr>'
+    . '<tr><td colspan="5" style="border-top: 1px solid #e6e6e6;"></td></tr>'
+    . '<tr>
+            <td colspan="3">Oборудование и материалы:</td>
+            <td colspan="2"></td>
+        </tr>'
+    . '<tr>
+            <td colspan="3">Работы:</td>
+            <td colspan="2"></td>
+        </tr>'
+    .'<tr>      
             <td colspan="3"><b>Итого:</b></td>
-            <td colspan="2" align="right"><b>' . $allProdSum .'</b></td>
+            <td colspan="2" align="right"><b>' . CCurrencyLang::CurrencyFormat($allProdSum, 'RUB') . '</b></td>
         </tr>'
     .'</thead></table>';
 
-$html_document_pdf = $top_table . $product_tables;
+$html_document_pdf = $top_table . $product_tables . $result_table;
 
 // --- PDF -------------------------------------------------------------------------------------------------------------
 $GLOBALS['APPLICATION']->RestartBuffer();
