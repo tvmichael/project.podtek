@@ -4,14 +4,14 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 include 'include.php';
 
 // https://podtek.ru/pool_calculation_result_test/result.php?WEB_FORM_ID=1&RESULT_ID=86&formresult=addok
-//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult); echo '</pre>';}; die();
+// if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult); echo '</pre>';}; die();
 
 $usrLogoSCR = "";
 $usrNoLogoSCR = 'https://podtek.ru/include/podtek_logo.jpg';
-$myFormID = $_REQUEST["RESULT_ID"];
+$myFormID = $arResult["RESULT_ID"];
 
 foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion) {
-    if (is_array($arQuestion['ANSWER_VALUE'])) {
+    if (!empty($arQuestion['ANSWER_VALUE']) && is_array($arQuestion['ANSWER_VALUE'])) {
         foreach ($arQuestion['ANSWER_VALUE'] as $key => $arAnswer) {
             if (isset($arAnswer["ANSWER_IMAGE"])) { // LOGO
                 $usrLogoSCR = $arAnswer["ANSWER_IMAGE"]["URL"];
@@ -19,7 +19,7 @@ foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion) {
                 $usrLogoSCR = $usrNoLogoSCR;
             }
 
-            if ($FIELD_SID == "new_field_0002") { //Размеры бассейна
+            if ($FIELD_SID == "new_field_0002") { // Размеры бассейна
                 switch ($arAnswer['ANSWER_VALUE']) {
                     case "length":
                         $myLong = floatval($arAnswer['USER_TEXT']);
@@ -33,25 +33,25 @@ foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion) {
                 }
             }
 
-            if ($FIELD_SID == "new_field_0001"): //тип бассейна
+            if ($FIELD_SID == "new_field_0001"): // Тип бассейна
                 $myTypeOfPool = $arAnswer['ANSWER_TEXT'];
             endif;
-            if ($FIELD_SID == "new_field_0001_0"): //Пленка ПВХ
-                $myColorOfTheFilm = $arAnswer['ANSWER_VALUE'];
+            if ($FIELD_SID == "new_field_0001_0"): // Пленка ПВХ
+                $myColorOfTheFilmId = $arAnswer['ANSWER_VALUE'];
             endif;
-            if ($FIELD_SID == "new_field_0004"): //Лестница
+            if ($FIELD_SID == "new_field_0004"): // Лестница
                 $intStairsID = $arAnswer['ANSWER_VALUE'];
             endif;
-            if ($FIELD_SID == "new_field_0006"): //Фильтровальная установка
+            if ($FIELD_SID == "new_field_0006"): // Фильтровальная установка
                 $intFilterID = $arAnswer['ANSWER_VALUE'];
             endif;
-            if ($FIELD_SID == "new_field_0007"): //Сервисный набор
+            if ($FIELD_SID == "new_field_0007"): // Сервисный набор
                 $intServiceID = $arAnswer['ANSWER_VALUE'];
             endif;
-            if ($FIELD_SID == "new_field_0008"): //Закладные
+            if ($FIELD_SID == "new_field_0008"): // Закладные
                 $intMortgagesID = $arAnswer['ANSWER_VALUE'];
             endif;
-            if ($FIELD_SID == "new_field_0009"): //Подогрев
+            if ($FIELD_SID == "new_field_0009"): // Подогрев
                 $intHeatingID = $arAnswer['ANSWER_VALUE'];
             endif;
         }
@@ -71,44 +71,40 @@ $myPerimeterOfTheBasin = GetPerimeterOfTheBasin($myLong, $myWidth, $myDepth);
 //Обем басейна
 $myVolumePool = $myLong * $myWidth * $myDepth;
 
+// Общая сума
+$allWorkSum = 0;
+$allProductSum = 0;
 
 // --- Пленка ПВХ ---
-$arSets = CCatalogProductSet::getAllSetsByProduct($myColorOfTheFilm, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
+$arSets = CCatalogProductSet::getAllSetsByProduct($myColorOfTheFilmId, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
 $arSet = array_shift($arSets); // комплект данного товара
 usort($arSet['ITEMS'], function($a, $b) {
     return $a['SORT'] > $b['SORT'];
 });
 $i = 0;
-$ItogSuma = 0;
-$allProdSum = 0;
 $arColTab = '';
+$itogWorkSuma = 0;
+$itogProductSuma = 0;
 foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
 {
     $i++;
-    $ID = $myOllItems['ITEM_ID'];
     $rest = substr($myOllItems['QUANTITY'], -5);
     $myQuantityItem = ($myOllItems['QUANTITY'] - $rest) / 100000;
 
     // product
-    $db_res = CCatalogProduct::GetList(array(), array("ID" => $ID), false, array());
+    $db_res = CCatalogProduct::GetList(array(), array("ID" => $myOllItems['ITEM_ID']), false, array());
     while (($ar_res = $db_res->Fetch())) {
         $myNameItem = $ar_res['ELEMENT_NAME'];
+        $blockWorkId = $ar_res['ELEMENT_IBLOCK_ID'];
     }
 
     // price
-    $arPrice = CCatalogProduct::GetOptimalPrice($ID, 1, $USER->GetUserGroupArray(), 'N');
-
-    if (!$arPrice || count($arPrice) <= 0) {
-        if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray())) {
-            $quantity = $nearestQuantity;
-            $arPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
-        }
-    }
+    $arPrice = CCatalogProduct::GetOptimalPrice($myOllItems['ITEM_ID'], 1, $USER->GetUserGroupArray(), 'N');
+    if (empty($arPrice)) continue;
 
     $myPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'] ?? $arPrice['RESULT_PRICE']['BASE_PRICE'];
 
     if ($rest == 99999) {
-        $myValueItem = $myPrice * $myBasinAreaForFilms;
         $myQuantityItem = $myBasinAreaForFilms;
     } elseif ($rest == 88888) {
         $drob = ($myPerimeterOfTheBasin / $myQuantityItem) - intval($myPerimeterOfTheBasin / $myQuantityItem);
@@ -118,66 +114,76 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
             $myPerimeterOfTwoMeters = intval($myPerimeterOfTheBasin / $myQuantityItem);
         }
         $myQuantityItem = $myPerimeterOfTwoMeters;
-        $myValueItem = $myPrice * $myPerimeterOfTwoMeters;
+
     } elseif ($rest == 77777) {
         $PerimeterOfTheBasin = ceil($myPerimeterOfTheBasin);
         $myQuantityItem = $myQuantityItem * $PerimeterOfTheBasin;
-        $myValueItem = $myPrice * $myQuantityItem;
+
     } elseif ($rest == 55555) {
         $AreaMirrorsOfWater = ceil($myAreaMirrorsOfWater);
         $myQuantityItem = $myQuantityItem * $AreaMirrorsOfWater;
-        $myValueItem = $myPrice * $myQuantityItem;
-    } else {
-        $myValueItem = $myPrice * $myQuantityItem;
     }
-    $ItogSuma = $ItogSuma + $myValueItem;
-    $arMyNameItem[] = $myNameItem;
-    $arMyQuantityItem[] = $myQuantityItem;
-    $arMyPrice[] = $myPrice;
-    $arColNum[] = $i;
-    $arMyValueItem[] = $myValueItem;
+
+    $style = '';
+    if($blockWorkId == 11) { // калог работ
+        $style = 'color:darkslategrey;';
+        $itogWorkSuma += $myPrice * $myQuantityItem;
+    } else {
+        $itogProductSuma += $myPrice * $myQuantityItem;
+    }
 
     // add table `tr`
     $arColTab = $arColTab . '<tr>'
-        .'<td style="width:5%;padding-bottom:50px;">' . $i . '</td>'
-        .'<td style="width:43%;">' . $myNameItem . '</td>'
-        .'<td style="width:17%;text-align:center;">' . $myQuantityItem . '</td>'
-        .'<td style="width:15%;text-align:right;">'. $myPrice . '</td>'
-        .'<td style="width:20%;text-align:right;">' . $myValueItem . '</td>'
+        .'<td style="width:5%;padding-bottom:50px;'.$style.'">' . $i . '</td>'
+        .'<td style="width:43%;'.$style.'">' . $myNameItem . '</td>'
+        .'<td style="width:17%;text-align:center;'.$style.'">' . $myQuantityItem . '</td>'
+        .'<td style="width:15%;text-align:right;'.$style.'">'. $myPrice . '</td>'
+        .'<td style="width:20%;text-align:right;'.$style.'">' . ($myPrice * $myQuantityItem) . '</td>'
         .'</tr>';
 }
 $arColTab = MakeProductTable($arColTab, $myTypeOfPool);
-$allProdSum = $allProdSum + $ItogSuma;
+$allWorkSum += $itogWorkSuma;
+$allProductSum += $itogProductSuma;
 
 // --- Лестница ---
 $intStairsID = GetIdProductByVolume($intStairsID, $myVolumePool);
 $currentData = getTrTableListAndPriceSum($intStairsID);
 $arStairColTab = MakeProductTable($currentData['trList'], 'Лестница');
-$allProdSum = $allProdSum + $currentData['priceSum'];
+//$allProdSum = $allProdSum + $currentData['priceSum'];
+$allWorkSum += $currentData['itogWorkSuma'];
+$allProductSum += $currentData['itogProductSuma'];
 
 // --- Фильтровальная уставнока ---
 $intFilterID = GetIdProductByVolume($intFilterID, $myVolumePool);
 $currentData = getTrTableListAndPriceSum($intFilterID);
 $arFilterColTab = MakeProductTable($currentData['trList'], 'Фильтровальная уставнока');
-$allProdSum = $allProdSum + $currentData['priceSum'];
+//$allProdSum = $allProdSum + $currentData['priceSum'];
+$allWorkSum += $currentData['itogWorkSuma'];
+$allProductSum += $currentData['itogProductSuma'];
 
 // --- Сервисной набор ---
 $intServiceID = GetIdProductByVolume($intServiceID, $myVolumePool);
 $currentData = getTrTableListAndPriceSum($intServiceID);
 $arServiceColTab = MakeProductTable($currentData['trList'], 'Сервисный набор');
-$allProdSum = $allProdSum + $currentData['priceSum'];
+//$allProdSum = $allProdSum + $currentData['priceSum'];
+$allWorkSum += $currentData['itogWorkSuma'];
+$allProductSum += $currentData['itogProductSuma'];
 
 // --- Закладные ---
 $intMortgagesID = GetIdProductByVolume($intMortgagesID, $myVolumePool);
 $currentData = getTrTableListAndPriceSum($intMortgagesID);
 $arMortgagesColTab = MakeProductTable($currentData['trList'], 'Закладные');
-$allProdSum = $allProdSum + $currentData['priceSum'];
+//$allProdSum = $allProdSum + $currentData['priceSum'];
+$allWorkSum += $currentData['itogWorkSuma'];
+$allProductSum += $currentData['itogProductSuma'];
 
 // --- Подогрев ---
 $intHeatingID = GetIdProductByVolume($intHeatingID, $myVolumePool);
 $currentData = getTrTableListAndPriceSum($intHeatingID);
 $arHeatingColTab = MakeProductTable($currentData['trList'], 'Подогрев');
-$allProdSum = $allProdSum + $currentData['priceSum'];
+//$allProdSum = $allProdSum + $currentData['priceSum'];
+$allWorkSum += $currentData['itogWorkSuma'];
+$allProductSum += $currentData['itogProductSuma'];
 
 // --- PREPEA TABLE ----------------------------------------------------------------------------------------------------
 $top_table = '<table border="0" cellpadding="2" style="width:100%;">    
@@ -226,15 +232,15 @@ $result_table = '<table style="width:100%;"><thead>'
     . '<tr><td colspan="5" style="border-top: 1px solid #e6e6e6;"></td></tr>'
     . '<tr>
             <td colspan="3">Oборудование и материалы:</td>
-            <td colspan="2"></td>
+            <td colspan="2" align="right">' . CCurrencyLang::CurrencyFormat($allProductSum, 'RUB') . '</td>
         </tr>'
     . '<tr>
-            <td colspan="3">Работы:</td>
-            <td colspan="2"></td>
+            <td colspan="3" style="color:darkslategrey;">Работы:</td>
+            <td colspan="2" style="color:darkslategrey;" align="right">' . CCurrencyLang::CurrencyFormat($allWorkSum, 'RUB') . '</td>
         </tr>'
     .'<tr>      
             <td colspan="3"><b>Итого:</b></td>
-            <td colspan="2" align="right"><b>' . CCurrencyLang::CurrencyFormat($allProdSum, 'RUB') . '</b></td>
+            <td colspan="2" align="right"><b>' . CCurrencyLang::CurrencyFormat($allWorkSum + $allProductSum, 'RUB') . '</b></td>
         </tr>'
     .'</thead></table>';
 

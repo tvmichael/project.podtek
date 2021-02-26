@@ -4,14 +4,13 @@ BX.namespace('BX.PoolCalculationPrise');
     BX.PoolCalculationPrise = {
         init: function(parameters)
         {
-            this.params = parameters;
+            //this.params = parameters;
             this.arProductPrice = parameters.arProductPrice;
             this.dpId = parameters.dpId;
             this.workPrice = 0;
             this.productPrice = 0;
             this.arPrice = [];
             this.workCatalogID = parameters.workCatalogID;
-            this.isOpenPdf = parameters.isOpenPdf;
 
             this.form = document.querySelector("form[name='POOL_CALCULATION']");
 
@@ -31,7 +30,7 @@ BX.namespace('BX.PoolCalculationPrise');
                 },
                 volume: function () {
                     this.validate();
-                    return Math.ceil(this.width *this.length * this.deep);
+                    return Math.ceil(this.width * this.length * this.deep);
                 },
                 area: function () {
                     this.validate();
@@ -39,21 +38,22 @@ BX.namespace('BX.PoolCalculationPrise');
                 },
                 perimeter: function () {
                     this.validate();
-                    return Math.ceil(2*(this.width + this.length));
+                    return 2 * (this.width + this.length);
                 },
                 poolArea: function () {
                     this.validate();
-                    return Math.ceil(((this.width * this.length) + 2 * this.deep * (this.width  + this.length)) * 1.1 );
+
+                    return Math.ceil(((this.width * this.length) + (2 * this.deep * (this.width  + this.length))) * 1.1);
                 },
             };
 
             this.obFormTtable = $('.form-table.data-table')[0];
 
-            this.inputTopLevel = $('.question.block1-left input', this.obFormTtable);
+            this.inputTopLevel = $(".question.block1-left input", this.obFormTtable);
             for (i = 0; i < this.inputTopLevel.length; i++)
                 BX.bind(this.inputTopLevel[i], 'click', BX.proxy(this.clickInput, this));
 
-            this.inputInnerLevel = $('.question.block1-right input',this.obFormTtable);
+            this.inputInnerLevel = $(".question.block1-right input",this.obFormTtable);
             for (i = 0; i < this.inputInnerLevel.length; i++)
                 BX.bind(this.inputInnerLevel[i], 'click', BX.proxy(this.calculatePrice, this));
 
@@ -68,8 +68,6 @@ BX.namespace('BX.PoolCalculationPrise');
 
             this.initDependentBlock();
             this.calculatePrice();
-
-            console.log(this);
         },
 
         openPdf: function(data)
@@ -198,13 +196,13 @@ BX.namespace('BX.PoolCalculationPrise');
                     }
                     else
                     {
-                        value = value.replace(/'/g, '"');
-                        if (this.tryParseJSON(value))
+                        value = this.tryParseJSON(value.replace(/'/g, '"'));
+
+                        if (value)
                         {
-                            value = this.tryParseJSON(value);
                             var arrValue = 0;
 
-                            if(value && !value.off)
+                            if(value && !value.off) // если есть 'value.off' от исключить из расчета
                             {
                                 for (j in value) {
                                     if (this.pollSize.volume() <= parseInt(j)) {
@@ -246,73 +244,88 @@ BX.namespace('BX.PoolCalculationPrise');
             this.productPrice = 0;
 
             var i, j,
-                price,
+                price = {work:0, product:0}, //
                 strPrice,
                 quantity,
                 action,
                 perimeterNew,
-                resultPrice = 0;
+                resultPrice = 0,
+                productPrice,
+                obPriceList = {}; //
 
             for(i = 0; i < this.arPrice.length; i++)
             {
                 if(this.arProductPrice[this.arPrice[i]]) // шукаємо в списку продуктів наш продукт по ІД
                 {
-                    price = this.arProductPrice[this.arPrice[i]];
-                    for (j in price)
+                    productPrice = this.arProductPrice[this.arPrice[i]];
+
+                    for (j in productPrice)
                     {
-                        strPrice = price[j].QUANTITY.toString(); // продукт що розраховується
+                        price.work = 0; //
+                        price.product = 0; //
 
-                        resultPrice = price[j].BASE_PRICE;
-
-                        if(price[j].DISCOUNT_PRICE && price[j].DISCOUNT_PRICE > 0)
-                        {
-                            resultPrice = price[j].DISCOUNT_PRICE;
-                        }
+                        quantity = 0;
+                        strPrice = productPrice[j].QUANTITY.toString(); // продукт що розраховується
 
                         if(strPrice.length > 5)
                         {
                             // товар для розрахунку
-                            quantity = parseInt(strPrice.slice(0, strPrice.length-5));
-                            action = strPrice.slice(strPrice.length-5, strPrice.length);
+                            quantity = parseInt(strPrice.slice(0, strPrice.length - 5));
+                            action = strPrice.slice(strPrice.length - 5, strPrice.length);
 
                             switch (action)
                             {
                                 case '00000':
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += (parseFloat(resultPrice) * quantity);
-                                        else this.productPrice += (parseFloat(resultPrice) * quantity);
                                     break;
                                 case '55555':
                                     break;
                                 case '66666':
                                     break;
                                 case '77777':
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(resultPrice) * quantity * this.pollSize.perimeter() );
-                                        else this.productPrice += Math.ceil(parseFloat(resultPrice) * quantity * this.pollSize.perimeter());
+                                    quantity = quantity * parseInt(this.pollSize.perimeter());
                                     break;
                                 case '88888':
                                     if( (this.pollSize.perimeter() % quantity) > 0) perimeterNew =  (this.pollSize.perimeter() / quantity) + 1;
                                     else perimeterNew = this.pollSize.perimeter() / quantity;
 
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(resultPrice) *  perimeterNew );
-                                        else this.productPrice += Math.ceil(parseFloat(resultPrice) * perimeterNew );
+                                    quantity = parseInt(perimeterNew);
                                     break;
                                 case '99999':
-                                    if(price[j].BLOCK_ID == this.workCatalogID) this.workPrice += Math.ceil( parseFloat(resultPrice) * quantity * this.pollSize.poolArea() );
-                                        else this.productPrice += Math.ceil(parseFloat(resultPrice) * quantity * this.pollSize.poolArea() );
+                                    quantity = quantity * this.pollSize.poolArea();
+                                    break;
+                                default:
                                     break;
                             }
                         }
                         else
                         {
-                            if(price[j].BLOCK_ID == this.workCatalogID)
+                            quantity = parseInt(productPrice[j].QUANTITY);
+                        }
+
+                        if(quantity)
+                        {
+                            resultPrice = productPrice[j].BASE_PRICE;
+
+                            if(productPrice[j].DISCOUNT_PRICE && productPrice[j].DISCOUNT_PRICE > 0)
                             {
-                                this.workPrice += (parseFloat(resultPrice) * parseInt(price[j].QUANTITY));
+                                resultPrice = productPrice[j].DISCOUNT_PRICE;
+                            }
+
+                            if(productPrice[j].BLOCK_ID == this.workCatalogID)
+                            {
+                                price.work = Math.ceil(parseFloat(resultPrice) * quantity);
                             }
                             else
                             {
-                                this.productPrice += (parseFloat(resultPrice) * parseInt(price[j].QUANTITY));
+                                price.product = Math.ceil(parseFloat(resultPrice) * quantity);
                             }
+
+                            this.workPrice += price.work;
+                            this.productPrice += price.product;
                         }
+
+                        //if(!obPriceList[this.arPrice[i]]) obPriceList[this.arPrice[i]] = [];
+                        //obPriceList[this.arPrice[i]].push({n:productPrice[j].ELEMENT_NAME, w:price.work, p:price.product})
                     }
                 }
             }
@@ -325,56 +338,44 @@ BX.namespace('BX.PoolCalculationPrise');
         bxFormatPrice: function(price)
         {
             var result = '';
-            if (typeof(price) != 'undefined')
-            {
-                if (typeof(price) == 'number')
+            if (typeof (price) != 'undefined') {
+                if (typeof (price) == 'number')
                     price = price.toString();
-                if (price.length > 0)
-                {
+
+                if (price.length > 0) {
                     var testPrice = /^([\d]+)|([\d]+\.|,[\d]+)$/;
-                    if (testPrice.test(price))
-                    {
+                    if (testPrice.test(price)) {
                         var str, integral, decimal, delim, regex;
 
                         regex = /\.|,[\d]+$/ig;
                         delimPos = price.search(regex);
-                        if (delimPos >= 0)
-                        {
+
+                        if (delimPos >= 0) {
                             integral = price.substr(0, delimPos);
-                            decimal = price.substr(delimPos+1);
-                        }
-                        else
-                        {
+                            decimal = price.substr(delimPos + 1);
+                        } else {
                             integral = price;
                             decimal = '';
                         }
 
                         str = integral;
                         var blockSize = 3;
-                        if (str.length > blockSize)
-                        {
-                            while (str.length > 0)
-                            {
-                                if (str.length > blockSize)
-                                {
-                                    result = ' ' + str.substr((blockSize*(-1)), blockSize) + result;
+
+                        if (str.length > blockSize) {
+                            while (str.length > 0) {
+                                if (str.length > blockSize) {
+                                    result = ' ' + str.substr((blockSize * (-1)), blockSize) + result;
                                     str = str.substr(0, (str.length - blockSize));
-                                }
-                                else
-                                {
+                                } else {
                                     result = str + result;
                                     str = '';
                                 }
                             }
-                            result = decimal.length > 0 ? result+'.'+decimal : result;
+                            result = decimal.length > 0 ? result + '.' + decimal : result;
+                        } else {
+                            result = str + (decimal.length > 0 ? '.' + decimal : '');
                         }
-                        else
-                        {
-                            result = str + (decimal.length > 0 ? '.'+decimal : '');
-                        }
-                    }
-                    else
-                    {
+                    } else {
                         result = price;
                     }
                 }

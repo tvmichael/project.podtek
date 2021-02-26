@@ -2,6 +2,7 @@
 <?if ($arResult["isFormErrors"] == "Y"):?><?=$arResult["FORM_ERRORS_TEXT"];?><?endif;?>
 <?
 //Bitrix\Main\Diag\Debug::writeToFile(array('s3-'.date('H:i:s') => $_REQUEST, $arResult),"","/test/log.txt");
+// 'off':'form'  - new_field_0007
 ?>
 <?//=$arResult["FORM_NOTE"];?>
 

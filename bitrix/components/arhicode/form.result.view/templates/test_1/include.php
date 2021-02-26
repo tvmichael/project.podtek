@@ -103,19 +103,26 @@ function MakeProductTable($innerTr = '', $title = '', $params = null)
     return $table;
 }
 
-function MakeInnerTrForTable($arr = null)
+function MakeInnerTrForTable($arr = null, $params = [])
 {
     if(!is_array($arr) && count($arr) < 3)
     {
         return '';
     }
 
+    $style = '';
+    if(isset($params['iblockId']) && $params['iblockId'] == 11) // блок работ
+    {
+        $style = 'color:darkslategrey;';
+    }
+
+
     $tr = '<tr>'
-        .'<td style="width:5%;">' . $arr[0] . '</td>'
-        .'<td style="width:43%;">' . $arr[1] . '</td>'
-        .'<td style="width:17%;text-align:center;">' . $arr[2] . '</td>'
-        .'<td style="width:15%;text-align:right;">' . $arr[3] . '</td>'
-        .'<td style="width:20%;text-align:right;">' . $arr[4] . '</td>'
+        .'<td style="width:5%;'.$style.'">' . $arr[0] . '</td>'
+        .'<td style="width:43%;'.$style.'">' . $arr[1] . '</td>'
+        .'<td style="width:17%;text-align:center;'.$style.'">' . $arr[2] . '</td>'
+        .'<td style="width:15%;text-align:right;'.$style.'">' . $arr[3] . '</td>'
+        .'<td style="width:20%;text-align:right;'.$style.'">' . $arr[4] . '</td>'
         .'</tr>';
 
     return $tr;
@@ -133,46 +140,49 @@ function getTrTableListAndPriceSum($intID)
     $arTrTable = '';
     $arProductSet = CCatalogProductSet::getAllSetsByProduct($intID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
     $arProductSet = array_shift($arProductSet);
-    $priceSum = 0;
+    $itogWorkSuma = 0;
+    $itogProductSuma = 0;
     $k = 1;
 
     foreach ($arProductSet['ITEMS'] as $myItems)
     {
         // product
         $dbRes = CCatalogProduct::GetList(array(), array("ID" => $myItems['ITEM_ID']), false, array());
-        while (($arRes = $dbRes->Fetch())) {
+        while ($arRes = $dbRes->Fetch()) {
             $myNameItem = $arRes['ELEMENT_NAME'];
+            $iblockId = $arRes['ELEMENT_IBLOCK_ID'];
         }
 
         // price
         $arPrice = CCatalogProduct::GetOptimalPrice($myItems['ITEM_ID'], 1, $USER->GetUserGroupArray(), 'N');
 
-        if (!$arPrice || count($arPrice) <= 0) {
-            // ця частина коду не перевірялася ...
-            if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($intID, 1, $USER->GetUserGroupArray())) {
-                $quantity = $nearestQuantity;
-                $renewal = false;
-                $arPrice = CCatalogProduct::GetOptimalPrice($intID, $quantity, $USER->GetUserGroupArray(), $renewal);
-            }
-            // ....
-        }
+        // количество товара, доступное для покупки
+        //if (!$arPrice || count($arPrice) <= 0) {
+        //    if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($intID, 1, $USER->GetUserGroupArray())) {
+        //        $arPrice = CCatalogProduct::GetOptimalPrice($intID, $nearestQuantity, $USER->GetUserGroupArray(), false);
+        //    }
+        //}
 
         $resultPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'] ?? $arPrice['RESULT_PRICE']['BASE_PRICE'];
-        $myValueItem = $resultPrice * $myItems['QUANTITY'];
-        $priceSum += $myValueItem;
+
+        if($iblockId == 11) { // калог работ
+            $itogWorkSuma += $resultPrice * $myItems['QUANTITY'];
+        } else {
+            $itogProductSuma += $resultPrice * $myItems['QUANTITY'];
+        }
 
         $arTrTable .= MakeInnerTrForTable([
             $k,
             $myNameItem,
             $myItems['QUANTITY'],
             $resultPrice,
-            $myValueItem,
-        ]);
+            $resultPrice * $myItems['QUANTITY'],
+        ],['iblockId' => $iblockId]);
 
         $k++;
     }
 
-    return ['trList' => $arTrTable, 'priceSum' => $priceSum];
+    return ['trList' => $arTrTable, 'itogWorkSuma' => $itogWorkSuma, 'itogProductSuma' => $itogProductSuma];
 }
 
 ?>
