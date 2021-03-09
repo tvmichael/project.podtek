@@ -105,7 +105,7 @@ function MakeProductTable($innerTr = '', $title = '', $params = null)
 
 function MakeInnerTrForTable($arr = null, $params = [])
 {
-    if(!is_array($arr) && count($arr) < 3)
+    if(!is_array($arr) || !isset($arr[4]))
     {
         return '';
     }
@@ -115,7 +115,6 @@ function MakeInnerTrForTable($arr = null, $params = [])
     {
         $style = 'color:darkslategrey;';
     }
-
 
     $tr = '<tr>'
         .'<td style="width:5%;'.$style.'">' . $arr[0] . '</td>'
@@ -181,6 +180,7 @@ function getTrTableListAndPriceSum($intID)
 
         $k++;
     }
+    $arTrTable .= MakeInnerTrForTable(['','','','','']);
 
     return ['trList' => $arTrTable, 'itogWorkSuma' => $itogWorkSuma, 'itogProductSuma' => $itogProductSuma];
 }

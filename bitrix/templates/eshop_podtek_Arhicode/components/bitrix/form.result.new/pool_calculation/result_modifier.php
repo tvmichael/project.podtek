@@ -96,7 +96,7 @@ foreach ($arName as $name)
 {
     $arResultMod = [];
 
-    foreach ($arResult[$name] as $key=>$item)
+    foreach ($arResult[$name] as $key => $item)
     {
         $arr = explode('_', $key);
 
@@ -105,19 +105,54 @@ foreach ($arName as $name)
             if(!is_array($arResultMod[$arr[0].'_'.$arr[1].'_'.$arr[2]]['Q_DATA']))
                 $arResultMod[$arr[0].'_'.$arr[1].'_'.$arr[2]]['Q_DATA'] = [];
 
-            if($name == 'QUESTIONS') $item['FIELD_NAME'] = $key;
+            if($name == 'QUESTIONS')
+            {
+                $item['FIELD_NAME'] = $key;
+
+                if(!empty($item['STRUCTURE']) && is_array($item['STRUCTURE']))
+                {
+                    $structure = [];
+                    foreach ($item['STRUCTURE'] as $k => $el)
+                    {
+                        $IBLOCK_ID = CIBlockElement::GetIBlockByID($el['VALUE']);
+                        $db_res = CIBlockElement::GetProperty($IBLOCK_ID, $el['VALUE'], array(), Array("CODE" => "textures"));
+
+                        if($ar_props = $db_res->Fetch())
+                        {
+                            if(empty($structure[$ar_props['VALUE']]))
+                                $structure[$ar_props['VALUE']] = [
+                                    'TEXTURES_NAME' => $ar_props['VALUE_ENUM'],
+                                    'LIST' => []
+                                ];
+
+                            $arSelect = Array("PREVIEW_PICTURE", "DETAIL_PICTURE");
+                            $arFilter = array("IBLOCK_ID" => $IBLOCK_ID, 'ID' => $el['VALUE'], "ACTIVE"=>"Y");
+                            $res = CIBlockElement::GetList(array(), $arFilter, false, array(), $arSelect);
+
+                            while($ob = $res->GetNextElement())
+                            {
+                                $arFields = $ob->GetFields();
+                                $el['DETAIL_PICTURE'] = CFile::GetPath(($arFields['DETAIL_PICTURE'] ?? $arFields["PREVIEW_PICTURE"]) ?? 0);
+                            }
+
+                            $structure[$ar_props['VALUE']]['LIST'][] = $el;
+                        }
+                    }
+
+                    $item['STRUCTURE'] = $structure;
+                }
+            }
 
             $arResultMod[$arr[0].'_'.$arr[1].'_'.$arr[2]]['Q_DATA'][$arr[3]] = $item;
         }
         elseif (count($arr) == 3)
         {
             $arResultMod[$key] = $item;
-
         }
     }
 
     $arResult[$name] = $arResultMod;
-    unset($arResultMod, $arr);
+    unset($arResultMod, $arr, $structure, $res, $ob, $el);
 }
 
 $arResult["POOL_PARAMS"] = [

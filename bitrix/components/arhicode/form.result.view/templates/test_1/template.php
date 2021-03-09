@@ -141,6 +141,7 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
         .'<td style="width:20%;text-align:right;'.$style.'">' . ($myPrice * $myQuantityItem) . '</td>'
         .'</tr>';
 }
+$arColTab .= '<tr><td colspan="5"><br></td></tr>';
 $arColTab = MakeProductTable($arColTab, $myTypeOfPool);
 $allWorkSum += $itogWorkSuma;
 $allProductSum += $itogProductSuma;
@@ -209,6 +210,9 @@ $top_table = '<table border="0" cellpadding="2" style="width:100%;">
         <td>глубина, м</td>
         <td>' . $myDepth . '</td>
         <td></td>
+    </tr>
+    <tr>
+        <td colspan="5"><br></td>        
     </tr>
 </table><br><br>';
 
