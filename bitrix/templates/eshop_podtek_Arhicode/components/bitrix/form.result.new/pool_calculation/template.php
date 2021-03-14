@@ -1,7 +1,6 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?if ($arResult["isFormErrors"] == "Y"):?><?=$arResult["FORM_ERRORS_TEXT"];?><?endif;?>
 <?
-// Bitrix\Main\Diag\Debug::writeToFile(array('s3-'.date('H:i:s') => $_REQUEST, $arResult),"","/test/log.txt");
 // 'off':'form'  - new_field_0007
 ?>
 <?//=$arResult["FORM_NOTE"];?>
@@ -58,6 +57,7 @@
                 $arSetViewTarget = [];
                 foreach ($arResult["QUESTIONS"] as $FIELD_SID => $arQuestion)
                 {
+					//if($USER->IsAdmin()) {echo '<pre>'; print_r($arQuestion); echo '</pre>';}
                     if ($arQuestion['STRUCTURE'][0]['FIELD_TYPE'] == 'hidden')
                     {
                         echo $arQuestion["HTML_CODE"];
@@ -95,15 +95,21 @@
                                     <?if (is_array($arResult["FORM_ERRORS"]) && array_key_exists($FIELD_SID, $arResult['FORM_ERRORS'])):?>
                                         <span class="error-fld" title="<?=htmlspecialcharsbx($arResult["FORM_ERRORS"][$FIELD_SID])?>"></span>
                                     <?endif;?>
-                                    <div class="color-question title-question"><?=$arQuestion["CAPTION"]?>
+									<?
+									$arDisplay = "style = ''";
+									if ($arQuestion["CAPTION"] =="Тип бассейна:" || $arQuestion["CAPTION"] =="Фильтровальная установка")
+									$arDisplay = "style ='display: none;'";	
+									?>
+                                    <div class="color-question title-question" <?=$arDisplay?>><?=$arQuestion["CAPTION"]?>
                                         <?if ($arQuestion["REQUIRED"] == "Y"):?>
                                             <?=$arResult["REQUIRED_SIGN"];?>
                                         <?endif;?>
                                     </div>
+									
                                     <fieldset>
                                         <?foreach ($arQuestion["STRUCTURE"] as $arLabelImg)
                                         {?>
-                                            <label class="col-xs-12 rb-q">
+                                            <label class="col-xs-12 rb-q" <?=$arDisplay?>>
                                                 <input class="radio-dot"
                                                        type="<?=$arLabelImg['FIELD_TYPE']?>"
                                                        data-product-id="<?=$arLabelImg['VALUE'];?>"
@@ -138,7 +144,7 @@
                                             <?=$q_data["IS_INPUT_CAPTION_IMAGE"] == "Y" ? "<br />".$q_data["IMAGE"]["HTML_CODE"]."<br />" : ""?>
 
                                             <?foreach ($q_data["STRUCTURE"] as $arLabelImg):?>
-                                                <div class="col-xs-12 color-plenki"><?=$arLabelImg['TEXTURES_NAME'] ?? 'Текстура';?></div>
+                                                <div class="col-xs-12 color-plenki"><?=$arLabelImg['TEXTURES_NAME'] ?? '';?></div>
                                                 <?foreach ($arLabelImg['LIST'] as $l):?>
                                                     <label class="col-xs-4 col-sm-2 image-color-rb-q">
                                                         <input class="hidden-dot"
@@ -148,7 +154,7 @@
                                                             data-product-id="<?=$l['VALUE'];?>"
                                                             name="form_radio_<?=$FIELD_SID.'_'.$i;?>"
                                                             value="<?=$l['ID']?>">
-                                                        <img class="checked" src="/upload/iblock/icons/checkmark_green.png">
+                                                        <img class="checked" src="/upload/iblock/icons/checkmark_green_w.png">
 
                                                         <?if(empty($l['DETAIL_PICTURE'])):?>
                                                             <?=$arLabelImg['MESSAGE']?>
@@ -231,7 +237,7 @@
                                                         <?if($arLabelImg['FIELD_PARAM']){?> <?=$arLabelImg['FIELD_PARAM']?> selected="" checked="" <?}?>id="<?=$arLabelImg['ID']?>"
                                                         name="form_radio_<?=$FIELD_SID.'_'.$i;?>"
                                                         value="<?=$arLabelImg['ID']?>">
-                                                    <img class="checked" src="/upload/iblock/icons/checkmark_green.png"><?=$arLabelImg['MESSAGE']?>
+                                                    <img class="checked" src="/upload/iblock/icons/checkmark_green_w.png"><?=$arLabelImg['MESSAGE']?>
                                                 </label>
                                             <?}?>
                                         </div>
@@ -286,7 +292,7 @@
         <!-- FORM FOOTER -->
         <div class="form-footer">
             <div>
-                <input type="submit" name="web_form_submit"  value="Сканировать счет" />
+                <input type="submit" name="web_form_submit"  value="Открыть смету" />
             </div>
 
             <?/* // базовий вариант

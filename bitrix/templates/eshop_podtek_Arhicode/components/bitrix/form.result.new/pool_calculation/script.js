@@ -42,8 +42,11 @@ BX.namespace('BX.PoolCalculationPrise');
                 },
                 poolArea: function () {
                     this.validate();
-
                     return Math.ceil(((this.width * this.length) + (2 * this.deep * (this.width  + this.length))) * 1.1);
+                },
+                poolAreaWork: function () {
+                    this.validate();
+                    return Math.ceil((this.width * this.length) + (2 * this.deep * (this.width  + this.length)));
                 },
             };
 
@@ -76,7 +79,7 @@ BX.namespace('BX.PoolCalculationPrise');
             {
                 if(data.RESULT_ID && data.WEB_FORM_ID && data.formresult)
                 {
-                    let url = "https://podtek.ru/pool_calculation_result_test/result.php?WEB_FORM_ID="
+                    let url = "https://podtek.ru/pool_calculation/result.php?WEB_FORM_ID="
                         + data.WEB_FORM_ID
                         + "&RESULT_ID="
                         + data.RESULT_ID
@@ -277,6 +280,9 @@ BX.namespace('BX.PoolCalculationPrise');
                             {
                                 case '00000':
                                     break;
+                                case '33333':
+                                    quantity = quantity * this.pollSize.poolAreaWork();
+                                    break;
                                 case '55555':
                                     break;
                                 case '66666':
@@ -287,7 +293,6 @@ BX.namespace('BX.PoolCalculationPrise');
                                 case '88888':
                                     if( (this.pollSize.perimeter() % quantity) > 0) perimeterNew =  (this.pollSize.perimeter() / quantity) + 1;
                                     else perimeterNew = this.pollSize.perimeter() / quantity;
-
                                     quantity = parseInt(perimeterNew);
                                     break;
                                 case '99999':
@@ -311,7 +316,7 @@ BX.namespace('BX.PoolCalculationPrise');
                                 resultPrice = productPrice[j].DISCOUNT_PRICE;
                             }
 
-                            if(productPrice[j].BLOCK_ID == this.workCatalogID)
+                            if(productPrice[j].IBLOCK_SECTION_ID == this.workCatalogID)
                             {
                                 price.work = Math.ceil(parseFloat(resultPrice) * quantity);
                             }

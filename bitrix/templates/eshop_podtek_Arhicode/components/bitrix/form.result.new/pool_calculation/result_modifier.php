@@ -39,6 +39,9 @@ foreach ($arResult['arAnswers'] as $fieldId => $resItems)
                         $arPrice['RESULT_PRICE']['BLOCK_ID'] = CIBlockElement::GetIBlockByID($price['ITEM_ID']);
                         $arPrice['RESULT_PRICE']['FIELD_ID'] = $fieldId;
 
+                        $iblockSectionId = CIBlockElement::GetByID($price['ITEM_ID'])->Fetch();
+                        $arPrice['RESULT_PRICE']['IBLOCK_SECTION_ID'] = $iblockSectionId['IBLOCK_SECTION_ID'];
+
                         $arProductPriceList[$price['ITEM_ID']] = $arPrice['RESULT_PRICE'];
                     }
                 }
@@ -76,6 +79,9 @@ foreach ($arResult['arAnswers'] as $fieldId => $resItems)
                             $arPrice['RESULT_PRICE']['QUANTITY'] = $price['QUANTITY'];
                             $arPrice['RESULT_PRICE']['BLOCK_ID'] = CIBlockElement::GetIBlockByID($price['ITEM_ID']);
                             $arPrice['RESULT_PRICE']['FIELD_ID'] = $fieldId;
+
+                            $iblockSectionId = CIBlockElement::GetByID($price['ITEM_ID'])->Fetch();
+                            $arPrice['RESULT_PRICE']['IBLOCK_SECTION_ID'] = $iblockSectionId['IBLOCK_SECTION_ID'];
 
                             $arProductJsonList[$price['ITEM_ID']] = $arPrice['RESULT_PRICE'];
                         }
@@ -158,7 +164,7 @@ foreach ($arName as $name)
 $arResult["POOL_PARAMS"] = [
     'dpId' => 'data-product-id', // name for data parameters
     'arProductPrice' => $arProductPrice,
-    'workCatalogID' => '11', // каталог цен за работу
+    'workCatalogID' => '702', // каталог цен за работу
     'isOpenPdf' => [],
 ];
 

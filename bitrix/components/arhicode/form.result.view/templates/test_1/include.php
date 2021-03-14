@@ -105,13 +105,15 @@ function MakeProductTable($innerTr = '', $title = '', $params = null)
 
 function MakeInnerTrForTable($arr = null, $params = [])
 {
+    global $defaultBlockWorkId;
+
     if(!is_array($arr) || !isset($arr[4]))
     {
         return '';
     }
 
     $style = '';
-    if(isset($params['iblockId']) && $params['iblockId'] == 11) // блок работ
+    if(isset($params['iblockId']) && $params['iblockId'] == $defaultBlockWorkId) // блок работ
     {
         $style = 'color:darkslategrey;';
     }
@@ -129,7 +131,8 @@ function MakeInnerTrForTable($arr = null, $params = [])
 
 function getTrTableListAndPriceSum($intID)
 {
-    global $USER;
+    global $USER,
+           $defaultBlockWorkId; // калог работ
 
     if(!is_int($intID) || $intID == 0)
     {
@@ -146,11 +149,9 @@ function getTrTableListAndPriceSum($intID)
     foreach ($arProductSet['ITEMS'] as $myItems)
     {
         // product
-        $dbRes = CCatalogProduct::GetList(array(), array("ID" => $myItems['ITEM_ID']), false, array());
-        while ($arRes = $dbRes->Fetch()) {
-            $myNameItem = $arRes['ELEMENT_NAME'];
-            $iblockId = $arRes['ELEMENT_IBLOCK_ID'];
-        }
+        $db_res = CIBlockElement::GetList(array(), array("ID" => $myItems['ITEM_ID']), false, false, array('IBLOCK_SECTION_ID', 'NAME'))->GetNext();
+        $myNameItem = $db_res['NAME'];
+        $iblockId = $db_res['IBLOCK_SECTION_ID'];
 
         // price
         $arPrice = CCatalogProduct::GetOptimalPrice($myItems['ITEM_ID'], 1, $USER->GetUserGroupArray(), 'N');
@@ -164,7 +165,7 @@ function getTrTableListAndPriceSum($intID)
 
         $resultPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'] ?? $arPrice['RESULT_PRICE']['BASE_PRICE'];
 
-        if($iblockId == 11) { // калог работ
+        if($iblockId == $defaultBlockWorkId) {
             $itogWorkSuma += $resultPrice * $myItems['QUANTITY'];
         } else {
             $itogProductSuma += $resultPrice * $myItems['QUANTITY'];

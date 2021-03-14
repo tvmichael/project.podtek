@@ -1,5 +1,8 @@
 <?
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+global $defaultBlockWorkId;
+$defaultBlockWorkId = 702; // калог работ
+
 \Bitrix\Main\Loader::includeModule('catalog');
 include 'include.php';
 
@@ -92,11 +95,9 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
     $myQuantityItem = ($myOllItems['QUANTITY'] - $rest) / 100000;
 
     // product
-    $db_res = CCatalogProduct::GetList(array(), array("ID" => $myOllItems['ITEM_ID']), false, array());
-    while (($ar_res = $db_res->Fetch())) {
-        $myNameItem = $ar_res['ELEMENT_NAME'];
-        $blockWorkId = $ar_res['ELEMENT_IBLOCK_ID'];
-    }
+    $db_res = CIBlockElement::GetList(array(), array("ID" => $myOllItems['ITEM_ID']), false, false, array('IBLOCK_SECTION_ID', 'NAME'))->GetNext();
+    $myNameItem = $db_res['NAME'];
+    $blockWorkId = $db_res['IBLOCK_SECTION_ID'];
 
     // price
     $arPrice = CCatalogProduct::GetOptimalPrice($myOllItems['ITEM_ID'], 1, $USER->GetUserGroupArray(), 'N');
@@ -122,10 +123,13 @@ foreach ($arSet['ITEMS'] as $myItems => $myOllItems)
     } elseif ($rest == 55555) {
         $AreaMirrorsOfWater = ceil($myAreaMirrorsOfWater);
         $myQuantityItem = $myQuantityItem * $AreaMirrorsOfWater;
+	} elseif ($rest == 33333) {
+        $AreaOfTheBasin = ceil($myAreaOfTheBasin);
+        $myQuantityItem = $myQuantityItem * $AreaOfTheBasin;
     }
 
     $style = '';
-    if($blockWorkId == 11) { // калог работ
+    if($blockWorkId == $defaultBlockWorkId) {
         $style = 'color:darkslategrey;';
         $itogWorkSuma += $myPrice * $myQuantityItem;
     } else {
