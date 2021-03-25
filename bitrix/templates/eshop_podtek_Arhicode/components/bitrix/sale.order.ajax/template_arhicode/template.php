@@ -12,6 +12,10 @@ use Bitrix\Main,
  * @var string $templateFolder
  */
 
+// Отключить платежную систему для следующих категорий
+$disablePaySystemSection = [870, 819];
+$arParams['DISABLE_PAY_SYSTEM_ID'] = [];
+
 $context = Main\Application::getInstance()->getContext();
 $request = $context->getRequest();
 
@@ -344,9 +348,20 @@ else
                         'SRC' => $src,
                     ];
                 }
+
+                $res = CIBlockElement::GetList(array(), array('ID' => $item['PRODUCT_ID']), false, false, array('IBLOCK_SECTION_ID'));
+                if ($ob = $res->GetNext())
+                {
+                    if(in_array($ob['IBLOCK_SECTION_ID'], $disablePaySystemSection))
+                    {
+                        $arParams['DISABLE_PAY_SYSTEM_ID'] = [13];
+                    }
+                }
+
             }
         }
     }
+    unset($res, $ob);
     ?>
 	<form action="<?=POST_FORM_ACTION_URI?>" method="POST" name="ORDER_FORM" id="bx-soa-order-form" enctype="multipart/form-data">
 		<?

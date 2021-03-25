@@ -4777,6 +4777,12 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			for (i = 0; i < this.paySystemPagination.currentPage.length; i++)
 			{
+				if(this.params.DISABLE_PAY_SYSTEM_ID && Array.isArray(this.params.DISABLE_PAY_SYSTEM_ID))
+				{
+					if(this.params.DISABLE_PAY_SYSTEM_ID.includes(this.paySystemPagination.currentPage[i].ID))
+						continue;
+				}
+
 				paySystemItemNode = this.createPaySystemItem(this.paySystemPagination.currentPage[i]);
 				paySystemItemsContainer.appendChild(paySystemItemNode);
 			}
