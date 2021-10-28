@@ -114,6 +114,10 @@ div.form-table .total-price .price-title{
     color: red;
 }
 
+form[name="POOL_CALCULATION"] {
+    margin-bottom: 40px;
+}
+
 .error-fld {
     display: block;
     float: left;

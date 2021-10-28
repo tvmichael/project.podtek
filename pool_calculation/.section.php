@@ -1,5 +1,5 @@
 <?
-$arDirProperties = Array(
+$arDirProperties = array(
    "description" => "Расчет бассейна",
    "keywords" => "Расчет бассейна",
    "title" => "Расчет бассейна",
