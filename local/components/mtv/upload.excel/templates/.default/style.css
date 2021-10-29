@@ -1,0 +1,8 @@
+.btn-excel-container {
+	padding: 5px;
+}
+.btn-excel-container .btn-excel-load {
+	display: none;
+	width: 18px;
+	margin-left: 10px;
+}
