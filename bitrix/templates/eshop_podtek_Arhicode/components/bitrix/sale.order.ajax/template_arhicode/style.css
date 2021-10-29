@@ -634,6 +634,12 @@
 .bx-soa-cart-total .bx-soa-cart-total-line-total .bx-soa-cart-d {font-size: 28px;}
 .bx-soa-cart-total .bx-soa-cart-total-line-total .bx-soa-cart-d span {font-size: 18px;}
 
+.bx-soa-cart-total .bx-soa-cart-delivery-text {
+    display: block;
+    width: 100%;
+    clear: both;
+}
+
 .bx-soa-cart-total-line.bx-soa-cart-total-line-highlighted {
     background-color: #d4ffb8;
     border-color: transparent;
@@ -869,7 +875,7 @@
 /*bx-soa-reference*/
 .bx-soa-reference {
     color: #9a9a9a;
-    font-size: 14px;
+    font-size: 18px;/*14px;*/
     padding-top: 10px;
     padding-bottom: 20px;
 }
@@ -1565,10 +1571,8 @@ textarea{min-height: 35px; max-height: 35px;}
 .bx-soa-pp-company-subTitle{display: none;}
 .bx-soa-pp-list{}
 
-@media (max-width: 767px)
-.bx-content-seection {
-    padding: 0 15px 70px;
+@media (max-width: 767px){
+    .bx-content-seection {
+        padding: 0 15px 70px;
+    }
 }
-
-
-

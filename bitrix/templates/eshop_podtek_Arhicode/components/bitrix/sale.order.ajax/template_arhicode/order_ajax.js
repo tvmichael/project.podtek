@@ -70,6 +70,11 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 		orderSaveAllowed: false,
 		socServiceHiddenNode: false,
 		additionalParameters: {},
+		deliveryPerriodText: '',
+
+		// current yandex delivery id
+		modYandexDeliveryId: '56',
+		modYandexDeliveryHide: false,
 
 		/**
 		 * Initialization of sale.order.ajax component js
@@ -164,9 +169,6 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
                 };
                 this.phoneMask = new IMask(this.obPhoneMask, maskOptions);
             }
-
-            // console.log('BX.Sale.OrderAjaxComponent');
-            // console.log(this);
 		},
 
 		/**
@@ -1143,6 +1145,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			for (k = 0; k < this.deliveryPagination.currentPage.length; k++)
 			{
+				if(this.modYandexDeliveryId == this.deliveryPagination.currentPage[k].ID && this.modYandexDeliveryHide)
+					continue;
+
 				deliveryItemNode = this.createDeliveryItem(this.deliveryPagination.currentPage[k]);
 				deliveryItemsContainer.appendChild(deliveryItemNode);
 			}
@@ -2392,6 +2397,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 			if (!this.orderBlockNode || !this.result)
 				return;
 
+			this.modCheckIfAllProductInStock();
+
 			if (this.result.DELIVERY.length > 0)
 			{
 				BX.addClass(this.deliveryBlockNode, 'bx-active');
@@ -3532,6 +3539,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 		createBasketItemColumn: function(column, allData, active)
 		{
 			if (!column || !allData)
+				return;
+
+			if(column.id == 'PROPERTY_NALICHIE_VALUE') // modified, hide property
 				return;
 
 			var data = allData.columns[column.id] ? allData.columns : allData.data,
@@ -5228,6 +5238,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			for (k = 0; k < this.deliveryPagination.currentPage.length; k++)
 			{
+				if(this.modYandexDeliveryId == this.deliveryPagination.currentPage[k].ID && this.modYandexDeliveryHide)
+					continue;
+
 				deliveryItemNode = this.createDeliveryItem(this.deliveryPagination.currentPage[k]);
 				deliveryItemsContainer.appendChild(deliveryItemNode);
 			}
@@ -5308,6 +5321,13 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			if (currentDelivery.PERIOD_TEXT && currentDelivery.PERIOD_TEXT.length)
 			{
+				if (typeof currentDelivery.PERIOD_TEXT == 'string')
+				{
+					let pt = currentDelivery.PERIOD_TEXT;
+					currentDelivery.PERIOD_TEXT = pt.replace(/дн\.[\s]?\d+[\s]?/g, this.calculateDeliveryPeriod.bind(this));
+				}
+				else this.deliveryPerriodText = '';
+
 				period = BX.create('LI', {
 					children: [
 						BX.create('DIV', {props: {className: 'bx-soa-pp-list-termin'}, html: this.params.MESS_PERIOD + ':'}),
@@ -5340,6 +5360,42 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			if (this.params.DELIVERY_NO_AJAX != 'Y')
 				this.deliveryCachedInfo[currentDelivery.ID] = currentDelivery;
+		},
+
+		calculateDeliveryPeriod: function (text) {
+			let dayNames = ['вс.', 'пн.', 'вт.', 'ср.', 'чт.', 'пт.', 'сб.'];
+			let monthNames = ['Янв', 'Фев',  'Мрт',  'Апр',  'Май',  'Июн',  'Июл',  'Авг',  'Сен',  'Окт',  'Нбр',  'Дек'];
+
+			function addDaysToPeriod(days) {
+				let date = new Date();
+				date.setDate(date.getDate() + days);
+				return date;
+			}
+
+			let n = parseInt(text.replace(/\D/g, "")) + 1;
+			let i = 1;
+
+			while (i <= n) {
+				let d = addDaysToPeriod(i);
+
+				if (d.getDay() == 0) {
+					n += 1;
+					i ++;
+				}
+				else if (d.getDay() == 6) {
+					n += 2;
+					i += 2;
+				}
+				else i ++;
+
+				if(i > 100) break;
+			}
+
+			let date = addDaysToPeriod(n);
+
+			this.deliveryPerriodText = dayNames[parseInt(date.getDay())] + ' ' + date.getDate() + ' ' + monthNames[date.getMonth()] + ' ' + date.getFullYear() + 'г. ';
+
+			return this.deliveryPerriodText
 		},
 
 		getDeliveryPriceNodes: function(delivery)
@@ -7869,6 +7925,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			if (this.result.DELIVERY.length)
 			{
+				if (typeof curDelivery.PERIOD_TEXT == 'string')
+					params.periodNode = BX.create('SPAN', {props: {className: 'bx-soa-cart-delivery-text'}, text: this.deliveryPerriodText});
+
 				this.totalInfoBlockNode.appendChild(this.createTotalUnit(BX.message('SOA_SUM_DELIVERY'), deliveryValue, params));
 			}
 
@@ -7988,7 +8047,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 							className: 'bx-soa-cart-d' + (!!params.total && this.options.totalPriceChanged ? ' bx-soa-changeCostSign' : '')
 						},
 						children: totalValue
-					})
+					}),
+					params.periodNode || null,
 				]
 			});
 		},
@@ -8213,6 +8273,22 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 					BX.addCustomEvent(control, BX.UserConsent.events.refused, BX.proxy(this.disallowOrderSave, this));
 				}
 			}, this));
-		}
+		},
+
+		modCheckIfAllProductInStock: function () {
+			let length = 0, all = 0;
+			this.modYandexDeliveryHide = false;
+
+			for(let i in this.result.GRID.ROWS) {
+				if(this.result.GRID.ROWS[i].columns.PROPERTY_NALICHIE_VALUE[0].value == 'В наличии') {
+					length++;
+				}
+				all++;
+			}
+
+			if(all != length) {
+				this.modYandexDeliveryHide = true;
+			}
+		},
 	};
 })();

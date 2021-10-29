@@ -13,7 +13,12 @@ use Bitrix\Main,
  */
 
 // Отключить платежную систему для следующих категорий
-$disablePaySystemSection = [870, 819];
+$disablePaySystemSection = [819];
+$disablePaySystemSectionId = [13];
+
+// Отключить платежную систему для следующих груп пользователей
+$groupUserIds = 23;
+$disablePaySystemGroupId = [12, 13];
 $arParams['DISABLE_PAY_SYSTEM_ID'] = [];
 
 $context = Main\Application::getInstance()->getContext();
@@ -326,7 +331,7 @@ else
                     array("sort" => "asc"),
                     Array("CODE" => "NALICHIE")
                 );
-
+                /* hidden checkmark
                 while ($ob = $res->GetNext()) {
                     $src = "";
                     if($ob['VALUE_ENUM'] == 'В наличии' || $ob['VALUE_ENUM'] == '')
@@ -348,13 +353,13 @@ else
                         'SRC' => $src,
                     ];
                 }
-
+                end  hidden checkmark */
                 $res = CIBlockElement::GetList(array(), array('ID' => $item['PRODUCT_ID']), false, false, array('IBLOCK_SECTION_ID'));
                 if ($ob = $res->GetNext())
                 {
                     if(in_array($ob['IBLOCK_SECTION_ID'], $disablePaySystemSection))
                     {
-                        $arParams['DISABLE_PAY_SYSTEM_ID'] = [13];
+                        $arParams['DISABLE_PAY_SYSTEM_ID'] = $disablePaySystemSectionId;
                     }
                 }
 
@@ -613,6 +618,10 @@ else
 	$signer = new Main\Security\Sign\Signer;
 	$signedParams = $signer->sign(base64_encode(serialize($arParams)), 'sale.order.ajax');
 	$messages = Loc::loadLanguageFile(__FILE__);
+
+	//if($USER->IsAdmin()) Bitrix\Main\Diag\Debug::writeToFile(array('ID' => $arResult),"","/test-1234/log.txt");
+    if(in_array($groupUserIds, $USER->GetUserGroupArray()))
+        $arParams['DISABLE_PAY_SYSTEM_ID'] = array_merge($arParams['DISABLE_PAY_SYSTEM_ID'], $disablePaySystemGroupId);
 	?>
 	<script>
 		BX.message(<?=CUtil::PhpToJSObject($messages)?>);
