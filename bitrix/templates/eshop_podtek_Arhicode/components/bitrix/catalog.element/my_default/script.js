@@ -776,6 +776,9 @@
 				}
 
 				this.currentIsSet = true;
+
+				this.product.isSimilarProducts =  this.params.PRODUCT.IS_SIMILAR_PRODUCTS;
+				this.product.checkNalichie =  this.params.PRODUCT.CHECK_NALICHIE;
 			}
 			else
 			{
@@ -1037,20 +1040,17 @@
 		{
 			var tabs = this.getEntities(this.obTabs, 'tab'),
 				panelTabs = this.getEntities(this.obTabsPanel, 'tab');
-					//console.log(tabs);
-					//console.log(panelTabs);
 			var	tabValue, targetTab, haveActive = false;
-				//console.log(tabs.length);
+
 			if (tabs.length !== panelTabs.length)
 				return;
 
 			for (var i in tabs)
 			{
-				//console.log(tabs);
 				if (tabs.hasOwnProperty(i) && BX.type.isDomNode(tabs[i]))
 				{
 					tabValue = tabs[i].getAttribute('data-value');
-					//console.log(tabValue);
+
 					if (tabValue)
 					{
 						targetTab = this.obTabContainers.querySelector('[data-value="' + tabValue + '"]');
@@ -1059,18 +1059,37 @@
 							BX.bind(tabs[i], 'click', BX.proxy(this.changeTab, this));
 							BX.bind(panelTabs[i], 'click', BX.proxy(this.changeTab, this));
 
-							if (!haveActive)
+							if(!this.product.checkNalichie && this.product.isSimilarProducts)
 							{
-								BX.addClass(tabs[i], 'active');
-								BX.addClass(panelTabs[i], 'active');
-								BX.show(targetTab);
-								haveActive = true;
+								if(tabValue =='similarproducts')
+								{
+									BX.addClass(tabs[i], 'active');
+									BX.addClass(panelTabs[i], 'active');
+									BX.show(targetTab);
+									haveActive = true;
+								}
+								else
+								{
+									BX.removeClass(tabs[i], 'active');
+									BX.removeClass(panelTabs[i], 'active');
+									BX.hide(targetTab);
+								}
 							}
 							else
 							{
-								BX.removeClass(tabs[i], 'active');
-								BX.removeClass(panelTabs[i], 'active');
-								BX.hide(targetTab);
+								if (!haveActive)
+								{
+									BX.addClass(tabs[i], 'active');
+									BX.addClass(panelTabs[i], 'active');
+									BX.show(targetTab);
+									haveActive = true;
+								}
+								else
+								{
+									BX.removeClass(tabs[i], 'active');
+									BX.removeClass(panelTabs[i], 'active');
+									BX.hide(targetTab);
+								}
 							}
 						}
 					}
