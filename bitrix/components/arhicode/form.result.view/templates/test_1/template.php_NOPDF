@@ -1,0 +1,204 @@
+<?
+if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+\Bitrix\Main\Loader::includeModule('catalog');
+$GLOBALS['APPLICATION']->RestartBuffer();
+include 'include.php';
+?>
+<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult["RESULT"]); echo '</pre>';}?>
+
+<?
+$usrLogoSCR = "";
+$usrNoLogoSCR = "/bitrix/templates/eshop_bootstrap_green_Arhicode/images/logo-alex.png";
+$myFormID = $_REQUEST["RESULT_ID"];
+?>
+<?
+foreach ($arResult["RESULT"] as $FIELD_SID => $arQuestion)
+{
+?>
+
+	<?
+	if (is_array($arQuestion['ANSWER_VALUE'])):
+		foreach ($arQuestion['ANSWER_VALUE'] as $key => $arAnswer)
+		{?>
+			<?if ($arAnswer["ANSWER_IMAGE"]):// LOGO?>
+				<?$usrLogoSCR=$arAnswer["ANSWER_IMAGE"]["URL"]; $usrNoLogoheight = '';?>
+			<?else:?>
+				<?$usrLogoSCR = $usrNoLogoSCR; $usrNoLogoheight = 'style="height: 62px;"';?>
+			<?endif;?>	
+			<?if ($FIELD_SID == "new_field_2914")://Размеры бассейна?>
+				<?switch ($arAnswer['ANSWER_TEXT']) {
+					case "Длинна":
+						$myLong = $arAnswer['USER_TEXT'];
+						break;
+					case "Ширина":
+						$myWidth = $arAnswer['USER_TEXT'];
+						break;
+					case "Глубина":
+						$myDepth = $arAnswer['USER_TEXT'];
+						break;	}	?>
+			<?endif;?>
+			<?if ($FIELD_SID == "new_field_2913")://тип бассейна?>			
+			<?$myTypeOfPool = $arAnswer['ANSWER_TEXT'];//echo '<pre>'; print_r($arAnswer); echo '</pre>';?><?endif;?>
+			<?if ($FIELD_SID == "new_field_2921")://Пленка ПВХ?>			
+			<?$myColorOfTheFilm = $arAnswer['ANSWER_VALUE'];?><?endif;?>
+			<?if ($FIELD_SID == "new_field_2915"): //Лестница?>	
+			<?//echo '<pre>'; print_r($arAnswer); echo '</pre>';$myNameofStairs = $arAnswer['ANSWER_TEXT'];?><?$intStairsID = $arAnswer['ANSWER_VALUE'];?><?endif;?>
+		<?} //foreach ($arQuestions)
+	endif;?>
+<?} //echo '<pre>'; print_r($myTypeOfStairs); echo '</pre>'; // foreach ($arResult["RESULT"])
+?>
+<?	//Рассчитаем зависимые данные: //Площадь Зеркала Воды //$myAreaMirrorsOfWater =$myLong * $myWidth;
+$myAreaMirrorsOfWater = GetAreaMirrorsOfWater($myLong, $myWidth);
+//Площадь Бассейна	//$myAreaOfTheBasin =($myLong + $myWidth)*2*$myDepth + $myAreaMirrorsOfWater;
+$myAreaOfTheBasin = GetAreaOfTheBasin($myLong, $myWidth, $myDepth);
+//Площадь Бассейна Для Пленки 	//$BasinAreaForFilms =$myAreaOfTheBasin*1.2; //$myBasinAreaForFilms = ceil($BasinAreaForFilms);
+$myBasinAreaForFilms = GetBasinAreaForFilms($myLong, $myWidth, $myDepth);
+//Площадь Бассейна Для Плитки	//$myBasinAreaForTile =$myAreaOfTheBasin*1.1;
+$myBasinAreaForTile = GetBasinAreaForTile($myLong, $myWidth, $myDepth);
+//Периметр Бассейна	//$myPerimeterOfTheBasin =($myLong + $myWidth)*2;
+$myPerimeterOfTheBasin = GetPerimeterOfTheBasin($myLong, $myWidth, $myDepth);
+?>
+<?//Пленка ПВХ
+$arSets = CCatalogProductSet::getAllSetsByProduct($myColorOfTheFilm, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
+$arSet = array_shift($arSets); // комплект данного товара
+$i=0;
+$ItogSuma = 0;
+foreach ($arSet['ITEMS'] as $myItems  => $myOllItems){
+	$i++;
+	$ID = $myOllItems['ITEM_ID'];
+	$rest = substr($myOllItems['QUANTITY'], -5);
+	$myQuantityItem = ($myOllItems['QUANTITY']-$rest)/100000;
+//товары
+$db_res  = CCatalogProduct::GetList(array(), array("ID" => $ID ), false, array());
+	while (($ar_res = $db_res->Fetch()))
+	{$myNameItem = $ar_res['ELEMENT_NAME']; /* $i=$i+1; */}
+//цены
+$arPrice = CCatalogProduct::GetOptimalPrice($ID, 1, $USER->GetUserGroupArray(), 'N');
+	if (!$arPrice || count($arPrice) <= 0)
+	{	if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
+			{	$quantity = $nearestQuantity;
+				$arPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);}
+	}
+$myPrice = $arPrice['PRICE']['PRICE'];
+if($rest == 99999){	$myValueItem = $myPrice*$myBasinAreaForFilms; $myQuantityItem = $myBasinAreaForFilms; }
+elseif($rest == 88888){ $drob = ($myPerimeterOfTheBasin / $myQuantityItem) - intval($myPerimeterOfTheBasin/$myQuantityItem);
+	if ($drob > 0){ $myPerimeterOfTwoMeters =intval($myPerimeterOfTheBasin/$myQuantityItem) + 1; }
+		else{ $myPerimeterOfTwoMeters =intval($myPerimeterOfTheBasin/$myQuantityItem); }
+	$myQuantityItem = $myPerimeterOfTwoMeters; $myValueItem = $myPrice*$myPerimeterOfTwoMeters; }
+elseif($rest == 77777){	$PerimeterOfTheBasin = ceil($myPerimeterOfTheBasin); $myQuantityItem = $myQuantityItem*$PerimeterOfTheBasin; $myValueItem = $myPrice*$myQuantityItem; }
+else{ $myValueItem = $myPrice*$myQuantityItem; }
+$ItogSuma = $ItogSuma + $myValueItem;
+$arMyNameItem[] = $myNameItem; 	$arMyQuantityItem[] = $myQuantityItem; 	$arMyPrice[] = $myPrice; $arColNum[] = $i; $arMyValueItem[] = $myValueItem;
+}
+
+//Лестница
+$ItogStairSuma = 0;
+$arStairSets = CCatalogProductSet::getAllSetsByProduct($intStairsID, CCatalogProductSet::TYPE_SET); // массив комплектов данного товара
+$arStairSet = array_shift($arStairSets); // комплект данного товара
+$j=0; 
+
+foreach ($arStairSet['ITEMS'] as $myStairItems  => $myOllStairItems){
+	$strID = $myOllStairItems['ITEM_ID'];
+	$myQuantityStairItem = $myOllStairItems['QUANTITY'];
+//товары
+	$dbStairRes  = CCatalogProduct::GetList(array(),array("ID" => $strID ),false,array());
+	while (($arStairRes = $dbStairRes->Fetch()))
+	{ $myNameStairItem = $arStairRes['ELEMENT_NAME']; $j=$j+1; }
+
+
+//цены
+$arStairPrice = CCatalogProduct::GetOptimalPrice($strID, 1, $USER->GetUserGroupArray(), 'N');
+	if (!$arStairPrice || count($arStairPrice) <= 0)
+	{
+		if ($nearestQuantity = CCatalogProduct::GetNearestQuantityPrice($productID, $quantity, $USER->GetUserGroupArray()))
+		{
+			$quantity = $nearestQuantity;
+			$arStairPrice = CCatalogProduct::GetOptimalPrice($productID, $quantity, $USER->GetUserGroupArray(), $renewal);
+		}
+	}
+$myStairPrice = $arStairPrice['PRICE']['PRICE'];
+$myStairValueItem = $myStairPrice*$myQuantityStairItem;
+$ItogStairSuma = $ItogStairSuma + $myStairValueItem;
+
+$arStairColNum[] = $j; $arMyNameStairItem[] = $myNameStairItem; $arMyQuantityStairItem[] = $myQuantityItem; $arMyStairPrice[] = $myStairPrice; $arMyStairValueItem[] = $myStairValueItem;
+}
+
+$allProdSum = $ItogSuma+$ItogStairSuma;
+?>
+
+<table style="border-collapse: collapse;max-width:650px;width: 100%; margin: 15px;">
+    <tr><td colspan="5"><img src="<?=$usrLogoSCR?>" <?=$usrNoLogoheight?> border="0" /></td></tr>
+    <tr><td colspan="5" style="text-align: center;"><h3>Коммерческое предложение № <?=$myFormID;?></h3></td></tr>
+    <tr><td colspan="5"><b>Параметры Вашего бассейна:</b></td></tr>
+    <tr><td></td><td>длинна, м</td><td><?=$myLong?></td></tr>
+    <tr><td></td><td>ширина, м</td><td><?=$myWidth?></td></tr>
+    <tr><td></td><td>глубина, м</td><td><?=$myDepth?></td></tr>
+    <tr style="font-weight: bold;">
+        <td style="width:5%">№</td>
+        <td style="width:50%">Наименование материалов</td>
+        <td style="width:15%">Количество</td>
+        <td style="width:10%">Цена</td>
+        <td style="width:20%">Сумма</td>
+    </tr>
+    <tr style="font-style: italic; font-weight: bold;">
+        <td colspan="5" style="text-align: center;"><?=$myTypeOfPool?></td>
+    </tr>
+    <tr>
+        <td><?=$arColNum[0]?></td>
+        <td><?=$arMyNameItem[0]?></td>
+        <td><?=$arMyQuantityItem[0]?></td>
+        <td><?=$arMyPrice[0]?></td>
+        <td><?=$arMyValueItem[0]?></td>
+    </tr>
+    <tr>
+        <td><?=$arColNum[1]?></td>
+        <td><?=$arMyNameItem[1]?></td>
+        <td><?=$arMyQuantityItem[1]?></td>
+        <td><?=$arMyPrice[1]?></td>
+        <td><?=$arMyValueItem[1]?></td>
+    </tr>
+    <tr>
+        <td><?=$arColNum[2]?></td>
+        <td><?=$arMyNameItem[2]?></td>
+        <td><?=$arMyQuantityItem[2]?></td>
+        <td><?=$arMyPrice[2]?></td>
+        <td><?=$arMyValueItem[2]?></td>
+    </tr>
+    <tr>
+        <td><?=$arColNum[3]?></td>
+        <td><?=$arMyNameItem[3]?></td>
+        <td><?=$arMyQuantityItem[3]?></td>
+        <td><?=$arMyPrice[3]?></td>
+        <td><?=$arMyValueItem[3]?></td>
+    </tr>
+    <tr>
+        <td><?=$arColNum[4]?></td>
+        <td><?=$arMyNameItem[4]?></td>
+        <td><?=$arMyQuantityItem[4]?></td>
+        <td><?=$arMyPrice[4]?></td>
+        <td><?=$arMyValueItem[4]?></td>
+    </tr>
+    <tr style="font-style: italic; font-weight: bold;">
+        <td colspan="5" style="text-align: center;"><?=$arMyNameStairItem[0]?></td>
+    </tr>
+    <tr>
+        <td><?=$arStairColNum[0]?></td>
+        <td><?=$arMyNameStairItem[0]?></td>
+        <td><?=$arMyQuantityStairItem[0]?></td>
+        <td><?=$arMyStairPrice[0]?></td>
+        <td><?=$arMyStairValueItem[0]?></td>
+    </tr>
+    <tr>
+        <td><?=$arStairColNum[1]?></td>
+        <td><?=$arMyNameStairItem[1]?></td>
+        <td><?=$arMyQuantityStairItem[1]?></td>
+        <td><?=$arMyStairPrice[1]?></td>
+        <td><?=$arMyStairValueItem[1]?></td>
+    </tr>
+    <tr style="font-style: italic; font-weight: bold;">
+        <td colspan="3"></td>
+        <td>Итого:</td>
+        <td><?=$allProdSum?></td>
+    </tr>
+</table>
+<?die();?>
