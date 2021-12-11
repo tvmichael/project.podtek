@@ -10,8 +10,6 @@ $(document).ready(function () {
             ddepth = parseFloat($("#select-d-depth").val()),
             volumeMultiple;
 
-        console.log(pVolume + ' >>> ' + $("#select-volume").val());
-
         if(currentPoolType == 'ahc-priamokutna' && length && width && depth)
         {
             volumeMultiple = (length * width * depth).toFixed(2);
@@ -22,7 +20,7 @@ $(document).ready(function () {
         }
         else if (currentPoolType == 'ahc-okrugla' && diameter && ddepth)
         {
-            volumeMultiple = (2 * diameter * Math.PI * ddepth).toFixed(2);
+            volumeMultiple = (0.5 * diameter * 0.5 * diameter * Math.PI * ddepth).toFixed(2);
             $('.ac-panel-default').show();
             $('.ac-volume-poll-number').html(volumeMultiple);
             $('#select-volume').val(volumeMultiple);
