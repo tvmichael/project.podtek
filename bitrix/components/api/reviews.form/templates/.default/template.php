@@ -394,7 +394,9 @@ $modalId = $formId . '_modal';
 	ob_start();
 	?>
 	<script type="text/javascript">
+        console.log('>> 1');
 		jQuery(document).ready(function ($) {
+            console.log('>> 2');
 			$.fn.apiReviewsForm({
 				id:                   '<?=$modalId?>',
 				USE_EULA:             '<?=CUtil::JSEscape($arParams['USE_EULA'])?>',
