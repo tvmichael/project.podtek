@@ -183,19 +183,19 @@ while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
     };
 }
 
-//if($USER->IsAdmin()) {$isTempPanel = true;}
+
 /***************************************/
 
 /***************20_08_2019***************/
 $isRELATEDPRODUCTS = false;
 $isSIMILARPRODUCTS = false;
-//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['ID']); echo '</pre>';}
+
 $resRELATEDPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "RELATED_PRODUCTS"));
 $resSIMILARPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SIMILAR_PRODUCTS"));
 while ($obRELATEDPRODUCTS = $resRELATEDPRODUCTS->GetNext()) {
     if (!empty($obRELATEDPRODUCTS['VALUE'])) {
         $isRELATEDPRODUCTS = true;
-		//if($USER->IsAdmin()) {echo '<pre>'; print_r($obRELATEDPRODUCTS['VALUE']); echo '</pre>';}
+		
     };
 }
 while ($obSIMILARPRODUCTS = $resSIMILARPRODUCTS->GetNext()) {
@@ -364,7 +364,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 {
     $arResult['META_TAGS']['DESCRIPTION'] = preg_replace("/([\d\s\.,]+руб. )|(((€)|(&euro;))[\d\s\.,]+)/", ' ' . $price['PRINT_RATIO_PRICE'] . ' ', $arResult['META_TAGS']['DESCRIPTION']);
 }
-//if($USER->IsAdmin() && $USER->GetID() == 8) {echo '<pre data-mv="0" style="display:none;">'; print_r($arResult); echo '</pre>';}
+
 ?>
 
     <div class="bx-catalog-element bx-<?= $arParams['TEMPLATE_THEME'] ?>" id="<?= $itemIds['ID'] ?>"
@@ -561,19 +561,42 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                         <div class="col-sm-12">
                             <div class="col-xs-12">
                                 <h1 class="bx-title"><?= $name ?></h1>
-                                <!--?$rest = substr($arResult['PROPERTIES']['CML2_TRAITS']['VALUE']['2'], 3);?-->
+                                
                                 <? $rest = $arResult['ID']; ?>
-                                <div class="bx-code"><span>код товара: </span><?= $rest; ?></div>
-                                <!--?
-								if (
-									$arResult['PREVIEW_TEXT'] != ''
-								)
-								{
-									echo $arResult['PREVIEW_TEXT_TYPE'] === 'html' ? $arResult['PREVIEW_TEXT'] : '<p style = "font-size: 12px;">'.$arResult['PREVIEW_TEXT'].'</p>';
-								}
-							?-->
-                                <!--?if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['PROPERTIES']['CML2_TRAITS']['VALUE']['2']); echo '</pre>';}?-->
+                                <div class="bx-code row">
+									<div class="col-xs-3">
+										<span>код товара: </span><?=$rest; ?>
+									</div>
+									<!----  09/2021 ---->
+									<?if($USER->IsAdmin()) {
+										//echo '<pre>'; print_r($arResult['PROPERTIES']); echo '</pre>';?>
+									<div class="col-xs-3 stars">
+										<?=GetMessage('CATALOG_NOT_RESPONSE')?>
+									</div>
+
+									<?if($arResult["COUNT_PRODUCT"]){?>
+										<div class="col-xs-3">
+										
+											<?=GetMessage('CATALOG_MORE_THEN')?> <?=$arResult["COUNT_PRODUCT"];?> раз<?=($arResult["COUNT_PRODUCT"]==1?'а':'')?>
+										 
+										</div>
+									<?}?>
+									<?//if($arResult['PROPERTIES']['COL_OBRASCH'] && $arResult['PROPERTIES']['COL_PRODANIH']>0){
+										//$nadejnost=$arResult['PROPERTIES']['COL_OBRASCH']*100/$arResult['PROPERTIES']['COL_PRODANIH'];?>
+										<div class="col-xs-3">
+											<?=GetMessage('CATALOG_NADEJNOST')?> <?echo $nadejnost;?>
+										 
+										</div>
+									<?//}?>
+									
+									
+								<?}?>
+									<!---- end 09/2021 ---->
+								</div>
                             </div>
+							
+							<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult["COUNT_PRODUCT"]); echo '</pre>'; 							echo '<pre>'; print_r($arResult["PROPERTIES"]); echo '</pre>'; 							}?>
+							
                             <div class="col-xs-12  product-item-detail-info-section">
                                 <?
                                 foreach ($arParams['PRODUCT_INFO_BLOCK_ORDER'] as $blockName) {
@@ -752,7 +775,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                          style="display: <?= ($showDiscount ? '' : 'none') ?>;">
                                                         <?
                                                         if ($showDiscount) {
-                                                            echo Loc::getMessage('CT_BCE_CATALOG_ECONOMY_INFO2', array('#ECONOMY#' => $price['PRINT_RATIO_DISCOUNT']));
+															//echo Loc::getMessage('CT_BCE_CATALOG_ECONOMY_INFO2', array('#ECONOMY#' => $price['PRINT_RATIO_DISCOUNT']));
                                                         }
                                                         ?>
                                                     </div>
@@ -963,16 +986,21 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 												$textstyle = '';
 												if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии')) {
 													$textstyle = 'none';
+													$isSIMILARPRODUCTS = true;
+													$isH2SIMILARPRODUCTS = true;
+												}else{
+													$isSIMILARPRODUCTS = false;
+													$isH2SIMILARPRODUCTS = false;
 												}?>
 												<?
-														 /*if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['ID']); echo '</pre>';}*/
+														
 														 $mNALICHIE = "";
 														 $arFilter = Array("PRODUCT_ID"=>$arResult['ID'],"ID"=>3);
 														$arSelectFields = Array("PRODUCT_AMOUNT");
 														$res = CCatalogStore::GetList(Array(),$arFilter,false,false,$arSelectFields);
 														if ($arRes = $res->GetNext()) 
 															$mNALICHIE = $arRes['PRODUCT_AMOUNT'];
-														/*if($USER->IsAdmin()) {echo '<pre>'; print_r($arRes ); echo '</pre>';}*/?>
+														?>
 														 <?
 														 /////////////////////2020_12_19//////////////////////////
 														if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии') || ($arResult['PROPERTIES']['NALICHIE']['VALUE'] == '')) {
@@ -983,13 +1011,13 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 																$isH2SIMILARPRODUCTS = false;
 														} else {
 															if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии'){
+															$isSIMILARPRODUCTS = true;					
 															?>
-															<div class="nalichie_n"><b>Нет в наличии</b></div>
+															<div class="nalichie_n"><b>Под заказ</b></div>
 															<?	
 															}else {
 																if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии (мало)'){
-																$isSIMILARPRODUCTS = false;
-																$isH2SIMILARPRODUCTS = false;
+
 																	?>
 																	<div class="nalichie_y"><div class="col-xs-6 col-sm-7 nalichie_y_m">В наличии</div> <div class="col-xs-6 col-sm-5 nalichie_y_m"><p>мало</p></div></div>
 																	
@@ -1035,31 +1063,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 															<?
                                                         }
                                                         ?>
-															<!--?if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии') || ($arResult['PROPERTIES']['NALICHIE']['VALUE'] == '')) {?>
-                                                            <div class="product-item-detail-info-container 110">
-                                                                <a class="btn <!--?= $buyButtonClassName ?> product-item-detail-buy-button"
-                                                                   id="<!--?= $itemIds['BUY_LINK'] ?>"
-                                                                   href="javascript:void(0);">
-                                                                    <span><!--?= $arParams['MESS_BTN_BUY'] ?></span>
-                                                                </a>
-                                                            </div>
-                                                            <!--?
-															} else {
-															?>
-															<div class="product-item-detail-info-container 112">
-                                                        <a class="btn btn-link product-item-detail-buy-button"
-                                                           id="<!--?= $itemIds['NOT_AVAILABLE_MESS'] ?>"
-                                                           href="javascript:void(0)"
-                                                           rel="nofollow"
-                                                           style="display: <!--?= (!$actualItem['CAN_BUY'] ? '' : ';padding: 6px 12px 6px 1px;"') ?>;">
-                                                            <!--?= $arParams['MESS_NOT_AVAILABLE'] ?>
-                                                        </a>
-                                                    </div>
-															<!--?
-															}
 															
-                                                        }
-                                                        ?-->
                                                     </div>
                                                     <?
                                                     if ($showSubscribe) {
@@ -1115,37 +1119,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                         <?
                                     }
                                     ?>
-                                    <!--?
-                                    if (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'В наличии') || ($arResult['PROPERTIES']['NALICHIE']['VALUE'] == '')) {
-                                        ?>
-                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_green.png" alt="В наличии">В
-                                            наличии
-                                        </div><!--?
-                                    } else {
-										if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Нет в наличии'){
-										?>
-                                        <div class="nalichie"><img src="/upload/iblock/icons/checkmark_gray.png" alt="Нет в наличии">Нет в наличии
-                                        </div><!--?	
-										}else {
-                                        ?>
-                                        <!--div class="nalichie"><img
-                                                src="/upload/iblock/icons/checkmark_gray.png"><!--?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
-                                        </div--><!--?
-										/////////////////////2020_07_14//////////////////////////
-											if($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, 1-2 дня'){
-											?>
-											<div class="nalichie"><img src="/upload/iblock/icons/checkmark_green_2.png" alt="Под заказ">Под заказ, 1-2 дня
-											</div><!--?	
-											}else {
-											?>
-											<div class="nalichie"><img
-													src="/upload/iblock/icons/checkmark_gray.png" alt="Под заказ"><!--?= $arResult['PROPERTIES']['NALICHIE']['VALUE']; ?>
-											</div><!--?
-										}
-									/////////////////////2020_07_14//////////////////////////
-                                    }
-									}
-                                    ?-->
+                                 
                                 </div>
 
                                 <!----------------------------------->
@@ -1218,7 +1192,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                     <a href="/about/delivery/" target="_blank">Максимально быстрая доставка</a>
                                                 </p>
                                             </div>
-											<!--?if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult['PROPERTIES']['NALICHIE']['VALUE']); echo '</pre>';}?-->
+											
                                             <div class="feature feature-icon-hover indent indent">
                                                 <span class="icon">
                                                     <img src="/upload/iblock/icons/credit-card-payment.png" alt="paying">
@@ -1434,10 +1408,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 
                                 </div>
                             </div>
-                            <!--div class="col-xs-12 col-sm-5">
-							<div class="bx-worktime-prop">
-								<!--?$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/info(1).php"), false);?>
-						</div-->
+
 
                         </div>
                     </div>
@@ -1504,118 +1475,500 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                 </div>
             </div>
             <div class="row" style="border-bottom: 1px solid #ededed;">
-                <!--div class="col-sm-8 col-md-9"-->
-                <div class="col-sm-10 col-md-12">
-                    <div class="row" id="<?= $itemIds['TABS_ID'] ?>">
-                        <div class="col-xs-12">
-                            <div class="product-item-detail-tabs-container">
-                                <ul class="product-item-detail-tabs-list">
-                                    <? if (!empty($arResult['DISPLAY_PROPERTIES']) || $arResult['SHOW_OFFERS_PROPS']) { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab"
-                                            data-value="properties">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= $arParams['MESS_PROPERTIES_TAB'] ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <? if ($isSIMILARPRODUCTS) { ?>
-                                        <li class="product-item-detail-tab active" data-entity="tab"
-                                            data-value="similarproducts">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= GetMessage('CP_BCE_SIMILAR_PRODUCTS_TAB') ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <? if ($showDescription) { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab" data-value="description">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= $arParams['MESS_DESCRIPTION_TAB'] ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <!--/****************************************/-->
+ 
+				 <!----  09/2021 ---->
+				 <? if ($isSIMILARPRODUCTS && $arResult['PROPERTIES']['SIMILAR_PRODUCTS']['VALUE']) { /** Схожі товари **/?>
+                    <div class="similarproducts col-xs-12">
+					<h2><?= GetMessage('CP_BCE_SIMILAR_PRODUCTS_TAB') ?></h2>
+					                <div class="border-top">
 
-                                    <? if ($isVIDEOYOUTUBE) { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab" data-value="videoyoutube">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= GetMessage('CP_BCE_VIDEOYOUTUBE_TAB') ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <? if ($isINSTRUCTIONS) { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab" data-value="instructions">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= $arParams['MESS_INSTRUCTIONS_TAB'] ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <? if ($isCERTIFICATES) { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab" data-value="certificates">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= $arParams['MESS_CERTIFICATES_TAB'] ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <? if ($isACCESSORIES) { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab" data-value="accessories">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= $arParams['MESS_ACCESSORIES_TAB'] ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <? if ($isDIMENSIONS) { ?>
-                                        <li class="product-item-detail-tab active" data-entity="tab"
-                                            data-value="dimensions">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= GetMessage('CP_BCE_DIMENSIONS_TAB') ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                    <? if ($isRELATEDPRODUCTS) { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab"
-                                            data-value="relatedproducts">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= GetMessage('CP_BCE_RELATED_PRODUCTS_TAB') ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-	<!--/****************************************/-->
-                                    <? if ($arParams['USE_COMMENTS'] === 'Y') { ?>
-                                        <li class="product-item-detail-tab" data-entity="tab" data-value="comments">
-                                            <a href="javascript:void(0);" class="product-item-detail-tab-link">
-                                                <span><?= $arParams['MESS_COMMENTS_TAB'] ?></span>
-                                            </a>
-                                        </li>
-                                    <? } ?>
-                                </ul>
-                            </div>
-                        </div>
+                                    <? /***************20_08_2019***************/
+                                    if ($resH2SIMILARPRODUCTS) {
+                                        $resH2SIMILARPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_SIMILAR_PRODUCTS"));
+                                        while ($obH2SIMILARPRODUCTS = $resH2SIMILARPRODUCTS->GetNext()) {
+                                            if (!empty($obH2SIMILARPRODUCTS['VALUE'])) {
+                                                echo '<h2>' . $obH2SIMILARPRODUCTS['VALUE'] . '</h2>';
+                                            }
+                                        }
+                                    }
+                                    /***************************************/ ?>
+                                    <? $arSelect = array('ID', 'IBLOCK_ID', 'NAME', 'CODE', 'PROPERTY_*');
+                                    $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]),'ID' => $arResult['ID'], 'ACTIVE' => 'Y', "!PROPERTY_SIMILAR_PRODUCTS" => false);
+
+                                    $res = CIBlockElement::GetList(
+                                        array("PROPERTY_SIMILAR_PRODUCTS" => "ASC"),
+                                        $arFilter,
+                                        false,
+                                        array('nPageSize' => 1000),
+                                        $arSelect
+                                    );
+                                    while ($ob = $res->GetNextElement()) {
+                                        $arProps = $ob->GetProperties();
+                                        $arRelatID = $arProps['SIMILAR_PRODUCTS']['VALUE'];
+                                        $GLOBALS['arRelatFilter'] = array('ID' => $arRelatID);
+
+                                    } ?>
+                                    <? $APPLICATION->IncludeComponent(
+                                        "bitrix:catalog.section",
+                                        ".default",
+                                        array(
+                                            "ACTION_VARIABLE" => "action",
+                                            "ADD_PICT_PROP" => "-",
+                                            "ADD_PROPERTIES_TO_BASKET" => "Y",
+                                            "ADD_SECTIONS_CHAIN" => "N",
+                                            "ADD_TO_BASKET_ACTION" => "ADD",
+                                            "AJAX_MODE" => "N",
+                                            "AJAX_OPTION_ADDITIONAL" => "",
+                                            "AJAX_OPTION_HISTORY" => "N",
+                                            "AJAX_OPTION_JUMP" => "N",
+                                            "AJAX_OPTION_STYLE" => "Y",
+                                            "BACKGROUND_IMAGE" => "-",
+                                            "BASKET_URL" => "/personal/basket.php",
+                                            "BROWSER_TITLE" => "-",
+                                            "CACHE_FILTER" => "N",
+                                            "CACHE_GROUPS" => "Y",
+                                            "CACHE_TIME" => "3600",
+                                            "CACHE_TYPE" => "A",
+                                            "COMPATIBLE_MODE" => "Y",
+                                            "COMPOSITE_FRAME_MODE" => "A",
+                                            "COMPOSITE_FRAME_TYPE" => "AUTO",
+                                            "CONVERT_CURRENCY" => "Y",
+                                            "CURRENCY_ID" => "RUB",
+                                            "CUSTOM_FILTER" => "",
+                                            "DETAIL_URL" => "",
+                                            "DISABLE_INIT_JS_IN_COMPONENT" => "N",
+                                            "DISPLAY_BOTTOM_PAGER" => "Y",
+                                            "DISPLAY_COMPARE" => "N",
+                                            "DISPLAY_TOP_PAGER" => "N",
+                                            "ELEMENT_SORT_FIELD" => "sort",
+                                            "ELEMENT_SORT_FIELD2" => "id",
+                                            "ELEMENT_SORT_ORDER" => "asc",
+                                            "ELEMENT_SORT_ORDER2" => "desc",
+                                            "ENLARGE_PRODUCT" => "STRICT",
+                                            "FILTER_NAME" => "arRelatFilter",
+                                            "HIDE_NOT_AVAILABLE" => "N",
+                                            "HIDE_NOT_AVAILABLE_OFFERS" => "N",
+                                            "IBLOCK_ID" => "7",
+                                            "IBLOCK_TYPE" => "1c_catalog",
+                                            "INCLUDE_SUBSECTIONS" => "Y",
+                                            "LABEL_PROP" => array(),
+                                            "LAZY_LOAD" => "N",
+                                            "LINE_ELEMENT_COUNT" => "3",
+                                            "LOAD_ON_SCROLL" => "N",
+                                            "MESSAGE_404" => "",
+                                            "MESS_BTN_ADD_TO_BASKET" => "В корзину",
+                                            "MESS_BTN_BUY" => "Купить",
+                                            "MESS_BTN_DETAIL" => "Подробнее",
+                                            "MESS_BTN_SUBSCRIBE" => "Подписаться",
+                                            "MESS_NOT_AVAILABLE" => "Нет в наличии",
+                                            "META_DESCRIPTION" => "-",
+                                            "META_KEYWORDS" => "-",
+                                            "OFFERS_CART_PROPERTIES" => array(),
+                                            "OFFERS_FIELD_CODE" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "OFFERS_LIMIT" => "5",
+                                            "OFFERS_PROPERTY_CODE" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "OFFERS_SORT_FIELD" => "sort",
+                                            "OFFERS_SORT_FIELD2" => "id",
+                                            "OFFERS_SORT_ORDER" => "asc",
+                                            "OFFERS_SORT_ORDER2" => "desc",
+                                            "PAGER_BASE_LINK_ENABLE" => "N",
+                                            "PAGER_DESC_NUMBERING" => "N",
+                                            "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
+                                            "PAGER_SHOW_ALL" => "N",
+                                            "PAGER_SHOW_ALWAYS" => "N",
+                                            "PAGER_TEMPLATE" => ".default",
+                                            "PAGER_TITLE" => "Товары",
+                                            "PAGE_ELEMENT_COUNT" => "12",
+                                            "PARTIAL_PRODUCT_PROPERTIES" => "N",
+                                            "PRICE_CODE" => array(
+                                                0 => "BASE",
+                                                1 => "Интернет-магазин",
+                                                2 => "Розничные продажи (EUR)",
+                                            ),
+                                            "PRICE_VAT_INCLUDE" => "Y",
+                                            "PRODUCT_BLOCKS_ORDER" => "price,props,sku,quantityLimit,quantity,buttons",
+                                            "PRODUCT_DISPLAY_MODE" => "N",
+                                            "PRODUCT_ID_VARIABLE" => "id",
+                                            "PRODUCT_PROPERTIES" => array(),
+                                            "PRODUCT_PROPS_VARIABLE" => "prop",
+                                            "PRODUCT_QUANTITY_VARIABLE" => "quantity",
+                                            "PRODUCT_ROW_VARIANTS" => "[{'VARIANT':'6','BIG_DATA':false},{'VARIANT':'6','BIG_DATA':false}]",
+                                            "PRODUCT_SUBSCRIPTION" => "Y",
+                                            "PROPERTY_CODE" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "PROPERTY_CODE_MOBILE" => array(),
+                                            "RCM_PROD_ID" => $_REQUEST["PRODUCT_ID"],
+                                            "RCM_TYPE" => "personal",
+                                            "SECTION_CODE" => "",
+                                            "SECTION_ID" => " ={\$_REQUEST[\"SECTION_ID\"]}",
+                                            "SECTION_ID_VARIABLE" => "SECTION_ID",
+                                            "SECTION_URL" => "",
+                                            "SECTION_USER_FIELDS" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "SEF_MODE" => "N",
+                                            "SET_BROWSER_TITLE" => "Y",
+                                            "SET_LAST_MODIFIED" => "N",
+                                            "SET_META_DESCRIPTION" => "Y",
+                                            "SET_META_KEYWORDS" => "Y",
+                                            "SET_STATUS_404" => "N",
+                                            "SET_TITLE" => "Y",
+                                            "SHOW_404" => "N",
+                                            "SHOW_ALL_WO_SECTION" => "Y",
+                                            "SHOW_CLOSE_POPUP" => "N",
+                                            "SHOW_DISCOUNT_PERCENT" => "N",
+                                            "SHOW_FROM_SECTION" => "N",
+                                            "SHOW_MAX_QUANTITY" => "N",
+                                            "SHOW_OLD_PRICE" => "N",
+                                            "SHOW_PRICE_COUNT" => "1",
+                                            "SHOW_SLIDER" => "Y",
+                                            "SLIDER_INTERVAL" => "3000",
+                                            "SLIDER_PROGRESS" => "N",
+                                            "TEMPLATE_THEME" => "blue",
+                                            "USE_ENHANCED_ECOMMERCE" => "N",
+                                            "USE_MAIN_ELEMENT_SECTION" => "N",
+                                            "USE_PRICE_COUNT" => "N",
+                                            "USE_PRODUCT_QUANTITY" => "N",
+                                            "COMPONENT_TEMPLATE" => ".default"
+                                        ),
+                                        false
+                                    ); ?>
+                             
+                            
+					  </div> 
+					   
+					   
+					   
                     </div>
-                    <div class="row" id="<?= $itemIds['TAB_CONTAINERS_ID'] ?>">
-                        <div class="col-xs-12">
-                            <? if ($isVIDEOYOUTUBE) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="videoyoutube">
+                <? } ?>
+				<div class="detail-product row">
+
+				                            
+
+				<? if (!empty($arResult['DISPLAY_PROPERTIES'])) { /** Характеристики **/?> 
+				<h2><?= GetMessage('CT_BCE_CATALOG_PROPERTIES_TAB') ?></h2>
+					<div class="border-top col-sm-6 col-xs-12">
+                                        <dl class="product-item-detail-properties product-item-detail-tab-content">
+											<? /***************20_08_2019***************/
+
+											if ($isH2ATTRIBUTES) {
+												$resH2ATTRIBUTES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ATTRIBUTES"));
+												while ($obH2ATTRIBUTES = $resH2ATTRIBUTES->GetNext()) {
+													if (!empty($obH2ATTRIBUTES['VALUE'])) {
+														echo '<h4>' . $obH2ATTRIBUTES['VALUE'] . '</h4>';
+													}
+												}
+											}
+											/***************************************/ ?>
+                                            <? foreach ($arResult['DISPLAY_PROPERTIES'] as $property) { ?>
+                                                <dt><?= $property['NAME'] ?></dt>
+                                                <dd><?= (
+                                                    is_array($property['DISPLAY_VALUE'])
+                                                        ? implode(' / ', $property['DISPLAY_VALUE'])
+                                                        : $property['DISPLAY_VALUE']
+                                                    ) ?>
+                                                </dd>
+                                            <? }
+                                            unset($property);
+                                            ?>
+                                        </dl>
+					</div>
+                <? } ?>
+				<?if ($showDescription){ /** Опис **/?>
+					<div  class="border-top col-sm-6 col-xs-12">
+                                <div class="description">
                                     <?
-                                    /***************02_09_2019***************/
-                                    if ($isH2SECTIONVIDEO) {
-                                        $resH2SECTIONVIDEO = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_VIDEO"));
-                                        while ($obH2SECTIONVIDEO = $resH2SECTIONVIDEO->GetNext()) {
-                                            if (!empty($obH2SECTIONVIDEO['VALUE'])) {
-                                                echo '<h2>' . $obH2SECTIONVIDEO['VALUE'] . '</h2>';
+                                    /***************20_08_2019***************/
+                                    if ($isH2DESCRIPTION) {
+                                        $resH2DESCRIPTION = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_DESCRIPTION"));
+                                        while ($obH2DESCRIPTION = $resH2DESCRIPTION->GetNext()) {
+                                            if (!empty($obH2DESCRIPTION['VALUE'])) {
+                                                echo '<h4>' . $obH2DESCRIPTION['VALUE'] . '</h4>';
                                             }
                                         }
                                     }
                                     /***************************************/
-                                    $myresVIDEOYOUTUBE = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "VIDEO_YOUTUBE"));
-                                    while ($obVIDEOYOUTUBE = $myresVIDEOYOUTUBE->GetNext()) {
-                                        $tegs[] = $obVIDEOYOUTUBE['VALUE'];
+                                    if (
+                                        $arResult['PREVIEW_TEXT'] != ''
+                                        && (
+                                            $arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'S'
+                                            || ($arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'E' && $arResult['DETAIL_TEXT'] == '')
+                                        )
+                                    ) {
+                                        echo $arResult['PREVIEW_TEXT_TYPE'] === 'html' ? $arResult['PREVIEW_TEXT'] : '<p>' . $arResult['PREVIEW_TEXT'] . '</p>';
+                                    }
 
+                                    if ($arResult['DETAIL_TEXT'] != '') {
+                                        echo $arResult['DETAIL_TEXT_TYPE'] === 'html' ? $arResult['DETAIL_TEXT'] : '<p>' . $arResult['DETAIL_TEXT'] . '</p>';
+                                    }
+                                    ?>
+                                </div>
+					</div>
+				<?} ?>
+					
+					</div>
+                    <?if ($isACCESSORIES) { /** Комплектуючі **/
+							?>
+                        <div class="accessories row">
+							<h2><?= GetMessage('CT_BCE_CATALOG_ACCESSORIES_TAB') ?></h2>
+                                    <div class="border-top col-xs-12 col-sm-6">
+                                        <? $myresPHOTO_ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "PHOTO_ACCESSORIES"));
+                                        //$i = 1;
+                                        while ($obPHOTO_ACCESSORIES = $myresPHOTO_ACCESSORIES->GetNext()) {
+                                            $tegs[] = $obPHOTO_ACCESSORIES['VALUE'];
+                                            $pic = CFile::GetFileArray($obPHOTO_ACCESSORIES['VALUE']);
+                                            echo '<img src="' . $pic['SRC'] . '"alt="'.$alt . '">';
+                                            echo $arProperty["DISPLAY_VALUE"];
+                                        }
                                         ?>
-                                        <div class="col-xs-12 col-md-6">
+                                    </div>
+                                    <div class="border-top col-xs-12 col-sm-6">
+                                        <?
+                                        $resACCESSORIESNUM = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES_NUM"));
+                                        while ($obACCESSORIESNUM = $resACCESSORIESNUM->GetNext()) {
+                                            $tegsNum[] = $obACCESSORIESNUM['VALUE'];
+                                        }
+                                        $n = count($tegsNum);
+                                        /***************20_08_2019***************/
+                                        if ($isH2ACCESSORIES) {
+                                            $resH2ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ACCESSORIES"));
+                                            while ($obH2ACCESSORIES = $resH2ACCESSORIES->GetNext()) {
+                                                if (!empty($obH2ACCESSORIES['VALUE'])) {
+                                                    echo '<h2>' . $obH2ACCESSORIES['VALUE'] . '</h2>';
+                                                }
+                                            }
+                                        }
+                                        /***************************************/
+                                        $resACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES"));
 
-                                            <?
-                                            $APPLICATION->IncludeComponent(
+                                        $i = 1;
+                                        while ($obACCESSORIES = $resACCESSORIES->GetNext()) {
+                                        $tegs[] = $obACCESSORIES['VALUE'];
+                                        $resEl = CIBlockElement::GetByID($obACCESSORIES['VALUE']);
+                                        if ($ar_resEl = $resEl->GetNext())
+                                            // $val - переменная где Вы указали ID элемента инфоблока
+                                            $resElement = CIBlockElement::GetByID($ar_resEl['ID']);
+                                        if ($ar_resElement = $resElement->GetNext())
+                                            if ($i <= $n) {
+                                                $j = $tegsNum[$i - 1];
+                                            } else {
+                                                $j = $i;
+                                            }
+                                        echo $j . '. ';
+                                        echo '<a href="' . $ar_resElement['DETAIL_PAGE_URL'] . '"target="_blank" style="color: #256aa3;text-decoration: underline;">' . $ar_resEl['NAME'] . '</a>';
+                                        $i++;
+                                        ?></br><?}?>
+                        </div>
+                    <?}?>	
+				
+				
+				
+				   <? if ($isDIMENSIONS) { /** Розміри **/?>
+                                <div class="dimensions col-xs-12">
+                                   
+                                    <h2><?= GetMessage('CP_BCE_DIMENSIONS_TAB') ?></h2>
+                                    <div class=" border-top">
+                                    <? $resDIMENSIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "DIMENSIONS"));
+                                    while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
+                                        $picDIMENSIONS = CFile::GetFileArray($obDIMENSIONS['VALUE']);
+                                        echo '<img src="' . $picDIMENSIONS['SRC'] . '" alt="'.$alt . '" style="margin-left: 10%; max-width: 75%;">';
+                                    }
+                                    ?>
+									</div>
+                                </div>
+                            <? } ?>
+							
+				<? if ($isRELATEDPRODUCTS) { /** Рекомендовані товари **/?>
+                    <div class="relatedproducts col-xs-12">
+					<h2><?= GetMessage('CP_BCE_RELATED_PRODUCTS_TAB') ?></h2>
+					                <div class=" border-top">
+
+                                    <? /***************20_08_2019***************/
+                                    if ($resH2RELATEDPRODUCTS) {
+                                        $resH2RELATEDPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_RELATED_PRODUCTS"));
+                                        while ($obH2RELATEDPRODUCTS = $resH2RELATEDPRODUCTS->GetNext()) {
+                                            if (!empty($obH2RELATEDPRODUCTS['VALUE'])) {
+                                                echo '<h2>' . $obH2RELATEDPRODUCTS['VALUE'] . '</h2>';
+                                            }
+                                        }
+                                    }
+                                    /***************************************/ ?>
+                                    <? $arSelect = array('ID', 'IBLOCK_ID', 'NAME', 'CODE', 'PROPERTY_*');
+                                    $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]),'ID' => $arResult['ID'], 'ACTIVE' => 'Y', "!PROPERTY_RELATED_PRODUCTS" => false);
+
+                                    $res = CIBlockElement::GetList(
+                                        array("PROPERTY_RELATED_PRODUCTS" => "ASC"),
+                                        $arFilter,
+                                        false,
+                                        array('nPageSize' => 1000),
+                                        $arSelect
+                                    );
+                                    while ($ob = $res->GetNextElement()) {
+                                        $arProps = $ob->GetProperties();
+                                        $arRelatID = $arProps['RELATED_PRODUCTS']['VALUE'];
+                                        $GLOBALS['arRelatFilter'] = array('ID' => $arRelatID);
+
+                                    } ?>
+                                    <? $APPLICATION->IncludeComponent(
+                                        "bitrix:catalog.section",
+                                        ".default",
+                                        array(
+                                            "ACTION_VARIABLE" => "action",
+                                            "ADD_PICT_PROP" => "-",
+                                            "ADD_PROPERTIES_TO_BASKET" => "Y",
+                                            "ADD_SECTIONS_CHAIN" => "N",
+                                            "ADD_TO_BASKET_ACTION" => "ADD",
+                                            "AJAX_MODE" => "N",
+                                            "AJAX_OPTION_ADDITIONAL" => "",
+                                            "AJAX_OPTION_HISTORY" => "N",
+                                            "AJAX_OPTION_JUMP" => "N",
+                                            "AJAX_OPTION_STYLE" => "Y",
+                                            "BACKGROUND_IMAGE" => "-",
+                                            "BASKET_URL" => "/personal/basket.php",
+                                            "BROWSER_TITLE" => "-",
+                                            "CACHE_FILTER" => "N",
+                                            "CACHE_GROUPS" => "Y",
+                                            "CACHE_TIME" => "3600",
+                                            "CACHE_TYPE" => "A",
+                                            "COMPATIBLE_MODE" => "Y",
+                                            "COMPOSITE_FRAME_MODE" => "A",
+                                            "COMPOSITE_FRAME_TYPE" => "AUTO",
+                                            "CONVERT_CURRENCY" => "Y",
+                                            "CURRENCY_ID" => "RUB",
+                                            "CUSTOM_FILTER" => "",
+                                            "DETAIL_URL" => "",
+                                            "DISABLE_INIT_JS_IN_COMPONENT" => "N",
+                                            "DISPLAY_BOTTOM_PAGER" => "Y",
+                                            "DISPLAY_COMPARE" => "N",
+                                            "DISPLAY_TOP_PAGER" => "N",
+                                            "ELEMENT_SORT_FIELD" => "sort",
+                                            "ELEMENT_SORT_FIELD2" => "id",
+                                            "ELEMENT_SORT_ORDER" => "asc",
+                                            "ELEMENT_SORT_ORDER2" => "desc",
+                                            "ENLARGE_PRODUCT" => "STRICT",
+                                            "FILTER_NAME" => "arRelatFilter",
+                                            "HIDE_NOT_AVAILABLE" => "N",
+                                            "HIDE_NOT_AVAILABLE_OFFERS" => "N",
+                                            "IBLOCK_ID" => "7",
+                                            "IBLOCK_TYPE" => "1c_catalog",
+                                            "INCLUDE_SUBSECTIONS" => "Y",
+                                            "LABEL_PROP" => array(),
+                                            "LAZY_LOAD" => "N",
+                                            "LINE_ELEMENT_COUNT" => "3",
+                                            "LOAD_ON_SCROLL" => "N",
+                                            "MESSAGE_404" => "",
+                                            "MESS_BTN_ADD_TO_BASKET" => "В корзину",
+                                            "MESS_BTN_BUY" => "Купить",
+                                            "MESS_BTN_DETAIL" => "Подробнее",
+                                            "MESS_BTN_SUBSCRIBE" => "Подписаться",
+                                            "MESS_NOT_AVAILABLE" => "Нет в наличии",
+                                            "META_DESCRIPTION" => "-",
+                                            "META_KEYWORDS" => "-",
+                                            "OFFERS_CART_PROPERTIES" => array(),
+                                            "OFFERS_FIELD_CODE" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "OFFERS_LIMIT" => "5",
+                                            "OFFERS_PROPERTY_CODE" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "OFFERS_SORT_FIELD" => "sort",
+                                            "OFFERS_SORT_FIELD2" => "id",
+                                            "OFFERS_SORT_ORDER" => "asc",
+                                            "OFFERS_SORT_ORDER2" => "desc",
+                                            "PAGER_BASE_LINK_ENABLE" => "N",
+                                            "PAGER_DESC_NUMBERING" => "N",
+                                            "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
+                                            "PAGER_SHOW_ALL" => "N",
+                                            "PAGER_SHOW_ALWAYS" => "N",
+                                            "PAGER_TEMPLATE" => ".default",
+                                            "PAGER_TITLE" => "Товары",
+                                            "PAGE_ELEMENT_COUNT" => "12",
+                                            "PARTIAL_PRODUCT_PROPERTIES" => "N",
+                                            "PRICE_CODE" => array(
+                                                0 => "BASE",
+                                                1 => "Интернет-магазин",
+                                                2 => "Розничные продажи (EUR)",
+                                            ),
+                                            "PRICE_VAT_INCLUDE" => "Y",
+                                            "PRODUCT_BLOCKS_ORDER" => "price,props,sku,quantityLimit,quantity,buttons",
+                                            "PRODUCT_DISPLAY_MODE" => "N",
+                                            "PRODUCT_ID_VARIABLE" => "id",
+                                            "PRODUCT_PROPERTIES" => array(),
+                                            "PRODUCT_PROPS_VARIABLE" => "prop",
+                                            "PRODUCT_QUANTITY_VARIABLE" => "quantity",
+                                            "PRODUCT_ROW_VARIANTS" => "[{'VARIANT':'6','BIG_DATA':false},{'VARIANT':'6','BIG_DATA':false}]",
+                                            "PRODUCT_SUBSCRIPTION" => "Y",
+                                            "PROPERTY_CODE" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "PROPERTY_CODE_MOBILE" => array(),
+                                            "RCM_PROD_ID" => $_REQUEST["PRODUCT_ID"],
+                                            "RCM_TYPE" => "personal",
+                                            "SECTION_CODE" => "",
+                                            "SECTION_ID" => " ={\$_REQUEST[\"SECTION_ID\"]}",
+                                            "SECTION_ID_VARIABLE" => "SECTION_ID",
+                                            "SECTION_URL" => "",
+                                            "SECTION_USER_FIELDS" => array(
+                                                0 => "",
+                                                1 => "",
+                                            ),
+                                            "SEF_MODE" => "N",
+                                            "SET_BROWSER_TITLE" => "Y",
+                                            "SET_LAST_MODIFIED" => "N",
+                                            "SET_META_DESCRIPTION" => "Y",
+                                            "SET_META_KEYWORDS" => "Y",
+                                            "SET_STATUS_404" => "N",
+                                            "SET_TITLE" => "Y",
+                                            "SHOW_404" => "N",
+                                            "SHOW_ALL_WO_SECTION" => "Y",
+                                            "SHOW_CLOSE_POPUP" => "N",
+                                            "SHOW_DISCOUNT_PERCENT" => "N",
+                                            "SHOW_FROM_SECTION" => "N",
+                                            "SHOW_MAX_QUANTITY" => "N",
+                                            "SHOW_OLD_PRICE" => "N",
+                                            "SHOW_PRICE_COUNT" => "1",
+                                            "SHOW_SLIDER" => "Y",
+                                            "SLIDER_INTERVAL" => "3000",
+                                            "SLIDER_PROGRESS" => "N",
+                                            "TEMPLATE_THEME" => "blue",
+                                            "USE_ENHANCED_ECOMMERCE" => "N",
+                                            "USE_MAIN_ELEMENT_SECTION" => "N",
+                                            "USE_PRICE_COUNT" => "N",
+                                            "USE_PRODUCT_QUANTITY" => "N",
+                                            "COMPONENT_TEMPLATE" => ".default"
+                                        ),
+                                        false
+                                    ); ?>
+                             
+                            
+					  </div> 
+					   
+					   
+					   
+                    </div>
+                <? } ?>
+                <?if($isVIDEOYOUTUBE){ ?>
+                    <div class="videoyoutube col-xs-12">
+						<h2><?=GetMessage('CT_BCE_CATALOG_VIDEO_YOUTUBE_TAB')?></h2>
+                        <?
+                        $myresVIDEOYOUTUBE = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "VIDEO_YOUTUBE"));
+                        while ($obVIDEOYOUTUBE = $myresVIDEOYOUTUBE->GetNext()) {
+							$tegs[] = $obVIDEOYOUTUBE['VALUE'];?>
+                                <div class="col-xs-12 col-md-6 border-top">
+                                    <?$APPLICATION->IncludeComponent(
                                                 "bitrix:player",
                                                 "",
                                                 Array(
@@ -1640,622 +1993,13 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                     "VOLUME" => "80",
                                                     "WIDTH" => "400"
                                                 )
-                                            ); ?>
-                                        </div>
-
-                                        <?
-                                        /*$pic=CFile::GetFileArray($obPHOTO_ACCESSORIES['VALUE']);
-												echo'<img src="'.$pic['SRC'].'">';
-												echo $arProperty["DISPLAY_VALUE"];*/
-                                    }
-                                    /*if($obVIDEOYOUTUBE = $myresVIDEOYOUTUBE->Fetch()) $arFile = CFile::GetFileArray($obVIDEOYOUTUBE["VALUE"]);*/
-
-
-                                    //=$obVideoYoutube["VALUE"]?>
-
-                                </div>
-                            <? } ?>
-                            <? if ($showDescription) { ?>
-                                <div class="product-item-detail-tab-content active" data-entity="tab-container"
-                                     data-value="description" itemprop="description">
-                                    <?
-                                    /***************20_08_2019***************/
-                                    if ($isH2DESCRIPTION) {
-                                        $resH2DESCRIPTION = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_DESCRIPTION"));
-                                        while ($obH2DESCRIPTION = $resH2DESCRIPTION->GetNext()) {
-                                            if (!empty($obH2DESCRIPTION['VALUE'])) {
-                                                echo '<h2>' . $obH2DESCRIPTION['VALUE'] . '</h2>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/
-                                    if (
-                                        $arResult['PREVIEW_TEXT'] != ''
-                                        && (
-                                            $arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'S'
-                                            || ($arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'E' && $arResult['DETAIL_TEXT'] == '')
-                                        )
-                                    ) {
-                                        echo $arResult['PREVIEW_TEXT_TYPE'] === 'html' ? $arResult['PREVIEW_TEXT'] : '<p>' . $arResult['PREVIEW_TEXT'] . '</p>';
-                                    }
-
-                                    if ($arResult['DETAIL_TEXT'] != '') {
-                                        echo $arResult['DETAIL_TEXT_TYPE'] === 'html' ? $arResult['DETAIL_TEXT'] : '<p>' . $arResult['DETAIL_TEXT'] . '</p>';
-                                    }
-                                    ?>
-                                </div>
-                                <?
-                            } ?>
-                            <!-- ================================================================================================================= -->
-                            <? if ($isSIMILARPRODUCTS) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="similarproducts">
-                                    <? /***************20_08_2019***************/
-                                    if ($resH2SIMILARPRODUCTS) {
-                                        $resH2SIMILARPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_SIMILAR_PRODUCTS"));
-                                        while ($obH2SIMILARPRODUCTS = $resH2SIMILARPRODUCTS->GetNext()) {
-                                            if (!empty($obH2SIMILARPRODUCTS['VALUE'])) {
-                                                echo '<h2>' . $obH2SIMILARPRODUCTS['VALUE'] . '</h2>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/ ?>
-                                    <? $arSelect = array('ID', 'IBLOCK_ID', 'NAME', 'CODE', 'PROPERTY_*');
-                                    $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]),'ID' => $arResult['ID'], 'ACTIVE' => 'Y', "!PROPERTY_SIMILAR_PRODUCTS" => false);
-                                    $res = CIBlockElement::GetList(
-                                        array("PROPERTY_SIMILAR_PRODUCTS" => "ASC"),
-                                        $arFilter,
-                                        false,
-                                        array('nPageSize' => 1000),
-                                        $arSelect
-                                    );
-                                    while ($ob = $res->GetNextElement()) {
-                                        $arProps = $ob->GetProperties();
-                                        $arRelatID = $arProps['SIMILAR_PRODUCTS']['VALUE'];
-                                        $GLOBALS['arRelatFilter'] = array('ID' => $arRelatID);
-                                    } ?>
-                                    <? $APPLICATION->IncludeComponent(
-                                        "bitrix:catalog.section",
-                                        ".default",
-                                        array(
-                                            "ACTION_VARIABLE" => "action",
-                                            "ADD_PICT_PROP" => "-",
-                                            "ADD_PROPERTIES_TO_BASKET" => "Y",
-                                            "ADD_SECTIONS_CHAIN" => "N",
-                                            "ADD_TO_BASKET_ACTION" => "ADD",
-                                            "AJAX_MODE" => "N",
-                                            "AJAX_OPTION_ADDITIONAL" => "",
-                                            "AJAX_OPTION_HISTORY" => "N",
-                                            "AJAX_OPTION_JUMP" => "N",
-                                            "AJAX_OPTION_STYLE" => "Y",
-                                            "BACKGROUND_IMAGE" => "-",
-                                            "BASKET_URL" => "/personal/basket.php",
-                                            "BROWSER_TITLE" => "-",
-                                            "CACHE_FILTER" => "N",
-                                            "CACHE_GROUPS" => "Y",
-                                            "CACHE_TIME" => "3600",
-                                            "CACHE_TYPE" => "A",
-                                            "COMPATIBLE_MODE" => "Y",
-                                            "COMPOSITE_FRAME_MODE" => "A",
-                                            "COMPOSITE_FRAME_TYPE" => "AUTO",
-                                            "CONVERT_CURRENCY" => "Y",
-                                            "CURRENCY_ID" => "RUB",
-                                            "CUSTOM_FILTER" => "",
-                                            "DETAIL_URL" => "",
-                                            "DISABLE_INIT_JS_IN_COMPONENT" => "N",
-                                            "DISPLAY_BOTTOM_PAGER" => "Y",
-                                            "DISPLAY_COMPARE" => "N",
-                                            "DISPLAY_TOP_PAGER" => "N",
-                                            "ELEMENT_SORT_FIELD" => "sort",
-                                            "ELEMENT_SORT_FIELD2" => "id",
-                                            "ELEMENT_SORT_ORDER" => "asc",
-                                            "ELEMENT_SORT_ORDER2" => "desc",
-                                            "ENLARGE_PRODUCT" => "STRICT",
-                                            "FILTER_NAME" => "arRelatFilter",
-                                            "HIDE_NOT_AVAILABLE" => "N",
-                                            "HIDE_NOT_AVAILABLE_OFFERS" => "N",
-                                            "IBLOCK_ID" => "7",
-                                            "IBLOCK_TYPE" => "1c_catalog",
-                                            "INCLUDE_SUBSECTIONS" => "Y",
-                                            "LABEL_PROP" => array(),
-                                            "LAZY_LOAD" => "N",
-                                            "LINE_ELEMENT_COUNT" => "3",
-                                            "LOAD_ON_SCROLL" => "N",
-                                            "MESSAGE_404" => "",
-                                            "MESS_BTN_ADD_TO_BASKET" => "В корзину",
-                                            "MESS_BTN_BUY" => "Купить",
-                                            "MESS_BTN_DETAIL" => "Подробнее",
-                                            "MESS_BTN_SUBSCRIBE" => "Подписаться",
-                                            "MESS_NOT_AVAILABLE" => "Нет в наличии",
-                                            "META_DESCRIPTION" => "-",
-                                            "META_KEYWORDS" => "-",
-                                            "OFFERS_CART_PROPERTIES" => array(),
-                                            "OFFERS_FIELD_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "OFFERS_LIMIT" => "5",
-                                            "OFFERS_PROPERTY_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "OFFERS_SORT_FIELD" => "sort",
-                                            "OFFERS_SORT_FIELD2" => "id",
-                                            "OFFERS_SORT_ORDER" => "asc",
-                                            "OFFERS_SORT_ORDER2" => "desc",
-                                            "PAGER_BASE_LINK_ENABLE" => "N",
-                                            "PAGER_DESC_NUMBERING" => "N",
-                                            "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
-                                            "PAGER_SHOW_ALL" => "N",
-                                            "PAGER_SHOW_ALWAYS" => "N",
-                                            "PAGER_TEMPLATE" => ".default",
-                                            "PAGER_TITLE" => "Товары",
-                                            "PAGE_ELEMENT_COUNT" => "12",
-                                            "PARTIAL_PRODUCT_PROPERTIES" => "N",
-                                            "PRICE_CODE" => array(
-                                                0 => "BASE",
-                                                1 => "Интернет-магазин",
-                                                2 => "Розничные продажи (EUR)",
-                                            ),
-                                            "PRICE_VAT_INCLUDE" => "Y",
-                                            "PRODUCT_BLOCKS_ORDER" => "price,props,sku,quantityLimit,quantity,buttons",
-                                            "PRODUCT_DISPLAY_MODE" => "N",
-                                            "PRODUCT_ID_VARIABLE" => "id",
-                                            "PRODUCT_PROPERTIES" => array(),
-                                            "PRODUCT_PROPS_VARIABLE" => "prop",
-                                            "PRODUCT_QUANTITY_VARIABLE" => "quantity",
-                                            "PRODUCT_ROW_VARIANTS" => "[{'VARIANT':'6','BIG_DATA':false},{'VARIANT':'6','BIG_DATA':false}]",
-                                            "PRODUCT_SUBSCRIPTION" => "Y",
-                                            "PROPERTY_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "PROPERTY_CODE_MOBILE" => array(),
-                                            "RCM_PROD_ID" => $_REQUEST["PRODUCT_ID"],
-                                            "RCM_TYPE" => "personal",
-                                            "SECTION_CODE" => "",
-                                            "SECTION_ID" => " ={\$_REQUEST[\"SECTION_ID\"]}",
-                                            "SECTION_ID_VARIABLE" => "SECTION_ID",
-                                            "SECTION_URL" => "",
-                                            "SECTION_USER_FIELDS" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "SEF_MODE" => "N",
-                                            "SET_BROWSER_TITLE" => "Y",
-                                            "SET_LAST_MODIFIED" => "N",
-                                            "SET_META_DESCRIPTION" => "Y",
-                                            "SET_META_KEYWORDS" => "Y",
-                                            "SET_STATUS_404" => "N",
-                                            "SET_TITLE" => "Y",
-                                            "SHOW_404" => "N",
-                                            "SHOW_ALL_WO_SECTION" => "Y",
-                                            "SHOW_CLOSE_POPUP" => "N",
-                                            "SHOW_DISCOUNT_PERCENT" => "N",
-                                            "SHOW_FROM_SECTION" => "N",
-                                            "SHOW_MAX_QUANTITY" => "N",
-                                            "SHOW_OLD_PRICE" => "N",
-                                            "SHOW_PRICE_COUNT" => "1",
-                                            "SHOW_SLIDER" => "Y",
-                                            "SLIDER_INTERVAL" => "3000",
-                                            "SLIDER_PROGRESS" => "N",
-                                            "TEMPLATE_THEME" => "blue",
-                                            "USE_ENHANCED_ECOMMERCE" => "N",
-                                            "USE_MAIN_ELEMENT_SECTION" => "N",
-                                            "USE_PRICE_COUNT" => "N",
-                                            "USE_PRODUCT_QUANTITY" => "N",
-                                            "COMPONENT_TEMPLATE" => ".default"
-                                        ),
-                                        false
-                                    ); ?>
-                                </div>
-                            <? } ?>
-                            <? if ($isACCESSORIES) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="accessories">
-                                    <div class="col-xs-12 col-sm-5">
-                                        <? $myresPHOTO_ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "PHOTO_ACCESSORIES"));
-                                        //$i = 1;
-                                        while ($obPHOTO_ACCESSORIES = $myresPHOTO_ACCESSORIES->GetNext()) {
-                                            $tegs[] = $obPHOTO_ACCESSORIES['VALUE'];
-                                            //if($USER->IsAdmin()) {echo '<pre>'; print_r($obPHOTO_ACCESSORIES['VALUE']); echo '</pre>';}
-                                            $pic = CFile::GetFileArray($obPHOTO_ACCESSORIES['VALUE']);
-                                            echo '<img src="' . $pic['SRC'] . '"alt="'.$alt . '">';
-                                            echo $arProperty["DISPLAY_VALUE"];
-                                        }
-                                        ?>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-7">
-                                        <?
-                                        $resACCESSORIESNUM = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES_NUM"));
-                                        while ($obACCESSORIESNUM = $resACCESSORIESNUM->GetNext()) {
-                                            $tegsNum[] = $obACCESSORIESNUM['VALUE'];
-                                        }
-                                        $n = count($tegsNum);
-                                        /***************20_08_2019***************/
-                                        if ($isH2ACCESSORIES) {
-                                            $resH2ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ACCESSORIES"));
-                                            while ($obH2ACCESSORIES = $resH2ACCESSORIES->GetNext()) {
-                                                if (!empty($obH2ACCESSORIES['VALUE'])) {
-                                                    echo '<h2>' . $obH2ACCESSORIES['VALUE'] . '</h2>';
-                                                }
-                                            }
-                                        }
-                                        /***************************************/
-                                        $resACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES"));
-
-                                        $i = 1;
-                                        while ($obACCESSORIES = $resACCESSORIES->GetNext()) {
-                                        $tegs[] = $obACCESSORIES['VALUE'];
-                                        //if($USER->IsAdmin()) {echo '<pre>'; print_r($tegs); echo '</pre>';}
-                                        $resEl = CIBlockElement::GetByID($obACCESSORIES['VALUE']);
-                                        if ($ar_resEl = $resEl->GetNext())
-                                            // $val - переменная где Вы указали ID элемента инфоблока
-                                            $resElement = CIBlockElement::GetByID($ar_resEl['ID']);
-                                        if ($ar_resElement = $resElement->GetNext())
-                                            if ($i <= $n) {
-                                                $j = $tegsNum[$i - 1];
-                                            } else {
-                                                $j = $i;
-                                            }
-                                        //echo $ar_resElement['DETAIL_PAGE_URL']; <a href="/sredstva_dlya_ukhoda_za_vodoy/">
-                                        echo $j . '. ';
-                                        echo '<a href="' . $ar_resElement['DETAIL_PAGE_URL'] . '"target="_blank" style="color: #256aa3;text-decoration: underline;">' . $ar_resEl['NAME'] . '</a>';
-                                        $i++;
-                                        //if($USER->IsAdmin()) {echo '<pre>'; print_r($ar_resElement['DETAIL_PAGE_URL']); echo '</pre>';}
-                                        ?></br><? } ?>
-                                    </div>
-                                </div>
-                            <? } ?>
-                            <? if ($isINSTRUCTIONS) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="instructions">
-                                    <?
-                                    /***************02_09_2019***************/
-                                    if ($isH2INSTRUCTIONS) {
-                                        $resH2INSTRUCTIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_INSTRUCTIONS"));
-                                        while ($obH2INSTRUCTIONS = $resH2INSTRUCTIONS->GetNext()) {
-                                            if (!empty($obH2INSTRUCTIONS['VALUE'])) {
-                                                echo '<h2>' . $obH2INSTRUCTIONS['VALUE'] . '</h2>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/
-                                    $myresINSTRUCTIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "INSTRUCTIONS"));
-                                    if ($obINSTRUCTIONS = $myresINSTRUCTIONS->Fetch()) $arFile = CFile::GetFileArray($obINSTRUCTIONS["VALUE"]);
-                                    //if($USER->IsAdmin()) {echo '<pre>'; print_r($arFile); echo '</pre>';}
-                                    if ($arFile) { ?>
-                                        <a
-                                                href="<?= $arFile['SRC'] ?>"
-                                                target="_blank"
-                                                title="<?= $arFile['ORIGINAL_NAME'] ?>">
-                                            <div class="row">
-                                                <!--div class = "col-xs-2 col-sm-1 text-center"><i class="type-files ico-pdf"></i></div-->
-                                                <div class="col-xs-10">
-                                                    <strong style="color: #256aa3;text-decoration: underline;">
-                                                        Инструкция для <?= $name ?>
-                                                        <span>
-																			(<?= round((CFile::FormatSize($arFile['FILE_SIZE']) / 1024), 2) ?> Мб)
-																		</span>
-                                                    </strong>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    <? } ?>
-                                </div>
-                            <? } ?>
-                            <? if ($isCERTIFICATES) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="certificates">
-                                    <?
-                                    /***************02_09_2019***************/
-                                    if ($isH2CERTIFICATES) {
-                                        $resH2CERTIFICATES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_CERTIFICATES"));
-                                        while ($obH2CERTIFICATES = $resH2CERTIFICATES->GetNext()) {
-                                            if (!empty($obH2CERTIFICATES['VALUE'])) {
-                                                echo '<h2>' . $obH2CERTIFICATES['VALUE'] . '</h2>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/
-                                    $myresCERTIFICATES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "CERTIFICATES"));
-                                    if ($obCERTIFICATES = $myresCERTIFICATES->Fetch()) $arFile = CFile::GetFileArray($obCERTIFICATES["VALUE"]);
-                                    if ($arFile) { ?>
-                                        <div class="row">
-                                            <!--div class = "col-xs-2 col-sm-1 text-center"><i class="type-files ico-pdf"></i></div-->
-                                            <div class="col-xs-10  col-sm-8">
-                                                <? //if($USER->IsAdmin()) {echo '<pre>'; print_r($arFile); echo '</pre>';}
-                                                ?>
-                                                <a download="<?= $arFile['ORIGINAL_NAME'] ?>"
-                                                   href="<?= $arFile['SRC'] ?>" target="_blank" title="Скачать"
-                                                   style="color: #256aa3;text-decoration: underline;">
-                                                    <strong>Скачать сертификат соответствия для <?= $name ?></strong>
-                                                </a>
-                                                <span>
-																(<?= round((CFile::FormatSize($arFile['FILE_SIZE']) / 1024), 2) ?> Мб)
-															</span>
-                                            </div>
-                                        </div>
-                                    <? } ?>
-                                </div>
-                            <? } ?>
-                            <? if ($isDIMENSIONS) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="dimensions">
-                                    <? /***************20_08_2019***************/
-                                    if ($isH2DIMENSIONS) {
-                                        $resH2DIMENSIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_DIMENSIONS"));
-                                        while ($obH2DIMENSIONS = $resH2DIMENSIONS->GetNext()) {
-                                            if (!empty($obH2DIMENSIONS['VALUE'])) {
-                                                echo '<h2>' . $obH2DIMENSIONS['VALUE'] . '</h2>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/ ?>
-                                    <? $resDIMENSIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "DIMENSIONS"));
-                                    while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
-                                        $picDIMENSIONS = CFile::GetFileArray($obDIMENSIONS['VALUE']);
-                                        echo '<img src="' . $picDIMENSIONS['SRC'] . '" alt="'.$alt . '" style="margin-left: 10%; max-width: 75%;">';
-                                    }
-                                    ?>
-                                </div>
-                            <? } ?>
-                            <? if ($isRELATEDPRODUCTS) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="relatedproducts">
-                                    <? /***************20_08_2019***************/
-                                    if ($resH2RELATEDPRODUCTS) {
-                                        $resH2RELATEDPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_RELATED_PRODUCTS"));
-                                        while ($obH2RELATEDPRODUCTS = $resH2RELATEDPRODUCTS->GetNext()) {
-                                            if (!empty($obH2RELATEDPRODUCTS['VALUE'])) {
-                                                echo '<h2>' . $obH2RELATEDPRODUCTS['VALUE'] . '</h2>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/ ?>
-                                    <? $arSelect = array('ID', 'IBLOCK_ID', 'NAME', 'CODE', 'PROPERTY_*');
-                                    $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]),'ID' => $arResult['ID'], 'ACTIVE' => 'Y', "!PROPERTY_RELATED_PRODUCTS" => false);
-									//if($USER->IsAdmin()) {echo '<pre>'; print_r($arFilter); echo '</pre>';}
-                                    $res = CIBlockElement::GetList(
-                                        array("PROPERTY_RELATED_PRODUCTS" => "ASC"),
-                                        $arFilter,
-                                        false,
-                                        array('nPageSize' => 1000),
-                                        $arSelect
-                                    );
-                                    while ($ob = $res->GetNextElement()) {
-                                        $arProps = $ob->GetProperties();
-                                        $arRelatID = $arProps['RELATED_PRODUCTS']['VALUE'];
-                                        $GLOBALS['arRelatFilter'] = array('ID' => $arRelatID);
-										//if($USER->IsAdmin()) {echo '<pre>'; print_r($arProps['RELATED_PRODUCTS']['VALUE']); echo '</pre>';}
-                                    } ?>
-                                    <? $APPLICATION->IncludeComponent(
-                                        "bitrix:catalog.section",
-                                        ".default",
-                                        array(
-                                            "ACTION_VARIABLE" => "action",
-                                            "ADD_PICT_PROP" => "-",
-                                            "ADD_PROPERTIES_TO_BASKET" => "Y",
-                                            "ADD_SECTIONS_CHAIN" => "N",
-                                            "ADD_TO_BASKET_ACTION" => "ADD",
-                                            "AJAX_MODE" => "N",
-                                            "AJAX_OPTION_ADDITIONAL" => "",
-                                            "AJAX_OPTION_HISTORY" => "N",
-                                            "AJAX_OPTION_JUMP" => "N",
-                                            "AJAX_OPTION_STYLE" => "Y",
-                                            "BACKGROUND_IMAGE" => "-",
-                                            "BASKET_URL" => "/personal/basket.php",
-                                            "BROWSER_TITLE" => "-",
-                                            "CACHE_FILTER" => "N",
-                                            "CACHE_GROUPS" => "Y",
-                                            "CACHE_TIME" => "3600",
-                                            "CACHE_TYPE" => "A",
-                                            "COMPATIBLE_MODE" => "Y",
-                                            "COMPOSITE_FRAME_MODE" => "A",
-                                            "COMPOSITE_FRAME_TYPE" => "AUTO",
-                                            "CONVERT_CURRENCY" => "Y",
-                                            "CURRENCY_ID" => "RUB",
-                                            "CUSTOM_FILTER" => "",
-                                            "DETAIL_URL" => "",
-                                            "DISABLE_INIT_JS_IN_COMPONENT" => "N",
-                                            "DISPLAY_BOTTOM_PAGER" => "Y",
-                                            "DISPLAY_COMPARE" => "N",
-                                            "DISPLAY_TOP_PAGER" => "N",
-                                            "ELEMENT_SORT_FIELD" => "sort",
-                                            "ELEMENT_SORT_FIELD2" => "id",
-                                            "ELEMENT_SORT_ORDER" => "asc",
-                                            "ELEMENT_SORT_ORDER2" => "desc",
-                                            "ENLARGE_PRODUCT" => "STRICT",
-                                            "FILTER_NAME" => "arRelatFilter",
-                                            "HIDE_NOT_AVAILABLE" => "N",
-                                            "HIDE_NOT_AVAILABLE_OFFERS" => "N",
-                                            "IBLOCK_ID" => "7",
-                                            "IBLOCK_TYPE" => "1c_catalog",
-                                            "INCLUDE_SUBSECTIONS" => "Y",
-                                            "LABEL_PROP" => array(),
-                                            "LAZY_LOAD" => "N",
-                                            "LINE_ELEMENT_COUNT" => "3",
-                                            "LOAD_ON_SCROLL" => "N",
-                                            "MESSAGE_404" => "",
-                                            "MESS_BTN_ADD_TO_BASKET" => "В корзину",
-                                            "MESS_BTN_BUY" => "Купить",
-                                            "MESS_BTN_DETAIL" => "Подробнее",
-                                            "MESS_BTN_SUBSCRIBE" => "Подписаться",
-                                            "MESS_NOT_AVAILABLE" => "Нет в наличии",
-                                            "META_DESCRIPTION" => "-",
-                                            "META_KEYWORDS" => "-",
-                                            "OFFERS_CART_PROPERTIES" => array(),
-                                            "OFFERS_FIELD_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "OFFERS_LIMIT" => "5",
-                                            "OFFERS_PROPERTY_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "OFFERS_SORT_FIELD" => "sort",
-                                            "OFFERS_SORT_FIELD2" => "id",
-                                            "OFFERS_SORT_ORDER" => "asc",
-                                            "OFFERS_SORT_ORDER2" => "desc",
-                                            "PAGER_BASE_LINK_ENABLE" => "N",
-                                            "PAGER_DESC_NUMBERING" => "N",
-                                            "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
-                                            "PAGER_SHOW_ALL" => "N",
-                                            "PAGER_SHOW_ALWAYS" => "N",
-                                            "PAGER_TEMPLATE" => ".default",
-                                            "PAGER_TITLE" => "Товары",
-                                            "PAGE_ELEMENT_COUNT" => "12",
-                                            "PARTIAL_PRODUCT_PROPERTIES" => "N",
-                                            "PRICE_CODE" => array(
-                                                0 => "BASE",
-                                                1 => "Интернет-магазин",
-                                                2 => "Розничные продажи (EUR)",
-                                            ),
-                                            "PRICE_VAT_INCLUDE" => "Y",
-                                            "PRODUCT_BLOCKS_ORDER" => "price,props,sku,quantityLimit,quantity,buttons",
-                                            "PRODUCT_DISPLAY_MODE" => "N",
-                                            "PRODUCT_ID_VARIABLE" => "id",
-                                            "PRODUCT_PROPERTIES" => array(),
-                                            "PRODUCT_PROPS_VARIABLE" => "prop",
-                                            "PRODUCT_QUANTITY_VARIABLE" => "quantity",
-                                            "PRODUCT_ROW_VARIANTS" => "[{'VARIANT':'6','BIG_DATA':false},{'VARIANT':'6','BIG_DATA':false}]",
-                                            "PRODUCT_SUBSCRIPTION" => "Y",
-                                            "PROPERTY_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "PROPERTY_CODE_MOBILE" => array(),
-                                            "RCM_PROD_ID" => $_REQUEST["PRODUCT_ID"],
-                                            "RCM_TYPE" => "personal",
-                                            "SECTION_CODE" => "",
-                                            "SECTION_ID" => " ={\$_REQUEST[\"SECTION_ID\"]}",
-                                            "SECTION_ID_VARIABLE" => "SECTION_ID",
-                                            "SECTION_URL" => "",
-                                            "SECTION_USER_FIELDS" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "SEF_MODE" => "N",
-                                            "SET_BROWSER_TITLE" => "Y",
-                                            "SET_LAST_MODIFIED" => "N",
-                                            "SET_META_DESCRIPTION" => "Y",
-                                            "SET_META_KEYWORDS" => "Y",
-                                            "SET_STATUS_404" => "N",
-                                            "SET_TITLE" => "Y",
-                                            "SHOW_404" => "N",
-                                            "SHOW_ALL_WO_SECTION" => "Y",
-                                            "SHOW_CLOSE_POPUP" => "N",
-                                            "SHOW_DISCOUNT_PERCENT" => "N",
-                                            "SHOW_FROM_SECTION" => "N",
-                                            "SHOW_MAX_QUANTITY" => "N",
-                                            "SHOW_OLD_PRICE" => "N",
-                                            "SHOW_PRICE_COUNT" => "1",
-                                            "SHOW_SLIDER" => "Y",
-                                            "SLIDER_INTERVAL" => "3000",
-                                            "SLIDER_PROGRESS" => "N",
-                                            "TEMPLATE_THEME" => "blue",
-                                            "USE_ENHANCED_ECOMMERCE" => "N",
-                                            "USE_MAIN_ELEMENT_SECTION" => "N",
-                                            "USE_PRICE_COUNT" => "N",
-                                            "USE_PRODUCT_QUANTITY" => "N",
-                                            "COMPONENT_TEMPLATE" => ".default"
-                                        ),
-                                        false
-                                    ); ?>
-                                </div>
-                            <? } ?>
-                            <!-- ================================================================================================================= -->
-                            <? if (!empty($arResult['DISPLAY_PROPERTIES']) || $arResult['SHOW_OFFERS_PROPS']) { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="properties">
-                                    <? /***************20_08_2019***************/
-
-                                    if ($isH2ATTRIBUTES) {
-                                        $resH2ATTRIBUTES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ATTRIBUTES"));
-                                        while ($obH2ATTRIBUTES = $resH2ATTRIBUTES->GetNext()) {
-                                            if (!empty($obH2ATTRIBUTES['VALUE'])) {
-                                                echo '<h2>' . $obH2ATTRIBUTES['VALUE'] . '</h2>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/ ?>
-                                    <? if (!empty($arResult['DISPLAY_PROPERTIES'])) { ?>
-                                        <dl class="product-item-detail-properties">
-                                            <? foreach ($arResult['DISPLAY_PROPERTIES'] as $property) { ?>
-                                                <dt><?= $property['NAME'] ?></dt>
-                                                <dd><?= (
-                                                    is_array($property['DISPLAY_VALUE'])
-                                                        ? implode(' / ', $property['DISPLAY_VALUE'])
-                                                        : $property['DISPLAY_VALUE']
-                                                    ) ?>
-                                                </dd>
-                                            <? }
-                                            unset($property);
-                                            ?>
-                                        </dl>
-                                    <? } ?>
-                                    <? if ($arResult['SHOW_OFFERS_PROPS']) { ?>
-                                        <dl class="product-item-detail-properties"
-                                            id="<?= $itemIds['DISPLAY_PROP_DIV'] ?>"></dl>
-                                    <? } ?>
-                                </div>
-                            <? } ?>
-                            <? if ($arParams['USE_COMMENTS'] === 'Y') { ?>
-                                <div class="product-item-detail-tab-content" data-entity="tab-container"
-                                     data-value="comments" style="display: none;">
-                                    <?
-                                    $componentCommentsParams = array(
-                                        'ELEMENT_ID' => $arResult['ID'],
-                                        'ELEMENT_CODE' => '',
-                                        'IBLOCK_ID' => $arParams['IBLOCK_ID'],
-                                        'SHOW_DEACTIVATED' => $arParams['SHOW_DEACTIVATED'],
-                                        'URL_TO_COMMENT' => '',
-                                        'WIDTH' => '',
-                                        'COMMENTS_COUNT' => '5',
-                                        'BLOG_USE' => $arParams['BLOG_USE'],
-                                        'FB_USE' => $arParams['FB_USE'],
-                                        'FB_APP_ID' => $arParams['FB_APP_ID'],
-                                        'VK_USE' => $arParams['VK_USE'],
-                                        'VK_API_ID' => $arParams['VK_API_ID'],
-                                        'CACHE_TYPE' => $arParams['CACHE_TYPE'],
-                                        'CACHE_TIME' => $arParams['CACHE_TIME'],
-                                        'CACHE_GROUPS' => $arParams['CACHE_GROUPS'],
-                                        'BLOG_TITLE' => '',
-                                        'BLOG_URL' => $arParams['BLOG_URL'],
-                                        'PATH_TO_SMILE' => '',
-                                        'EMAIL_NOTIFY' => $arParams['BLOG_EMAIL_NOTIFY'],
-                                        'AJAX_POST' => 'Y',
-                                        'SHOW_SPAM' => 'Y',
-                                        'SHOW_RATING' => 'N',
-                                        'FB_TITLE' => '',
-                                        'FB_USER_ADMIN_ID' => '',
-                                        'FB_COLORSCHEME' => 'light',
-                                        'FB_ORDER_BY' => 'reverse_time',
-                                        'VK_TITLE' => '',
-                                        'TEMPLATE_THEME' => $arParams['~TEMPLATE_THEME']
-                                    );
-                                    if (isset($arParams["USER_CONSENT"]))
-                                        $componentCommentsParams["USER_CONSENT"] = $arParams["USER_CONSENT"];
-                                    if (isset($arParams["USER_CONSENT_ID"]))
-                                        $componentCommentsParams["USER_CONSENT_ID"] = $arParams["USER_CONSENT_ID"];
-                                    if (isset($arParams["USER_CONSENT_IS_CHECKED"]))
-                                        $componentCommentsParams["USER_CONSENT_IS_CHECKED"] = $arParams["USER_CONSENT_IS_CHECKED"];
-                                    if (isset($arParams["USER_CONSENT_IS_LOADED"]))
-                                        $componentCommentsParams["USER_CONSENT_IS_LOADED"] = $arParams["USER_CONSENT_IS_LOADED"];
-                                    $APPLICATION->IncludeComponent(
-                                        'bitrix:catalog.comments',
-                                        '',
-                                        $componentCommentsParams,
-                                        $component,
-                                        array('HIDE_ICONS' => 'Y')
-                                    );
-                                    ?>
-                                </div>
-                            <? } ?>
-                        </div>
+                                    );?>
+								</div>
+						<?}?>
                     </div>
-                </div>
+                <?}?>
+				<!---- end 09/2021 ---->
+				<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult); echo '</pre>';}?>
                 <div class="col-sm-4 col-md-3">
                     <div>
                         <?
