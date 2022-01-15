@@ -13,6 +13,10 @@ use \Bitrix\Main\Localization\Loc;
  * @var string $templateFolder
  */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array(date('H:i:s')=>'template'),"","/test-1234/log.txt");
+
 $this->setFrameMode(true);
 $this->addExternalCss('/bitrix/css/main/bootstrap.css');
 
@@ -71,6 +75,7 @@ $itemIds = array(
     'SMALL_CARD_PANEL_ID' => $mainId . '_small_card_panel',
     'TABS_PANEL_ID' => $mainId . '_tabs_panel'
 );
+
 $obName = $templateData['JS_OBJ'] = 'ob' . preg_replace('/[^a-zA-Z0-9_]/', 'x', $mainId);
 $name = !empty($arResult['IPROPERTY_VALUES']['ELEMENT_PAGE_TITLE'])
     ? $arResult['IPROPERTY_VALUES']['ELEMENT_PAGE_TITLE']
@@ -81,7 +86,6 @@ $title = !empty($arResult['IPROPERTY_VALUES']['ELEMENT_DETAIL_PICTURE_FILE_TITLE
 $alt = !empty($arResult['IPROPERTY_VALUES']['ELEMENT_DETAIL_PICTURE_FILE_ALT'])
     ? $arResult['IPROPERTY_VALUES']['ELEMENT_DETAIL_PICTURE_FILE_ALT']
     : $arResult['NAME'];
-
 
 $haveOffers = !empty($arResult['OFFERS']);
 if ($haveOffers) {
@@ -133,7 +137,6 @@ $arParams['MESS_CERTIFICATES_TAB'] = $arParams['MESS_CERTIFICATES_TAB'] ?: Loc::
 $arParams['MESS_DIMENSIONS_TAB'] = $arParams['MESS_DIMENSIONS_TAB'] ?: Loc::getMessage('CT_BCE_CATALOG_DIMENSIONS_TAB');
 $arParams['MESS_TEMPPANEL_TAB'] = $arParams['MESS_TEMPPANEL_TAB'] ?: Loc::getMessage('CP_BCE_TEMPPANEL_TAB');
 
-
 $isACCESSORIES = false;
 $isVIDEOYOUTUBE = false;
 $isINSTRUCTIONS = false;
@@ -149,6 +152,7 @@ while ($obPHOTO_ACCESSORIES = $resPHOTO_ACCESSORIES->GetNext()) {
         $isACCESSORIES = true;
     }
 }
+
 while ($obACCESSORIES = $resACCESSORIES->GetNext()) {
     if (!empty($obACCESSORIES['VALUE'])) {
         $isACCESSORIES = true;
@@ -183,9 +187,6 @@ while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
     };
 }
 
-
-/***************************************/
-
 /***************20_08_2019***************/
 $isRELATEDPRODUCTS = false;
 $isSIMILARPRODUCTS = false;
@@ -195,7 +196,6 @@ $resSIMILARPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arRes
 while ($obRELATEDPRODUCTS = $resRELATEDPRODUCTS->GetNext()) {
     if (!empty($obRELATEDPRODUCTS['VALUE'])) {
         $isRELATEDPRODUCTS = true;
-		
     };
 }
 while ($obSIMILARPRODUCTS = $resSIMILARPRODUCTS->GetNext()) {
@@ -305,8 +305,7 @@ if (!empty($arParams['LABEL_PROP_POSITION'])) {
 <?php
 $showDiscountList = false;
 $arFileDiscount = CFile::MakeFileArray($_SERVER["DOCUMENT_ROOT"]."/include/discount_config.php");
-if(isset($arFileDiscount['type']))
-{
+if(isset($arFileDiscount['type'])) {
     if($arFileDiscount['type'] == 'text/x-php')
     {
         $arFileDiscount = require($_SERVER["DOCUMENT_ROOT"]."/include/discount_config.php");
@@ -360,27 +359,25 @@ if(isset($arFileDiscount['type']))
     }
 }
 
-if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
-{
-    $arResult['META_TAGS']['DESCRIPTION'] = preg_replace("/([\d\s\.,]+руб. )|(((€)|(&euro;))[\d\s\.,]+)/", ' ' . $price['PRINT_RATIO_PRICE'] . ' ', $arResult['META_TAGS']['DESCRIPTION']);
+if(isset($arResult["COUNT_PRODUCT"]) && $arResult["COUNT_PRODUCT"] <= 1 && !empty($arResult['PROPERTIES']['COL_PRODANIH']['VALUE'])) {
+    $arResult["COUNT_PRODUCT"] = $arResult['PROPERTIES']['COL_PRODANIH']['VALUE'];
+} else {
+    $arResult['PROPERTIES']['COL_PRODANIH']['VALUE'] = $arResult["COUNT_PRODUCT"];
 }
 
-?>
+if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE'])) {
+    $arResult['META_TAGS']['DESCRIPTION'] = preg_replace("/([\d\s\.,]+руб. )|(((€)|(&euro;))[\d\s\.,]+)/", ' ' . $price['PRINT_RATIO_PRICE'] . ' ', $arResult['META_TAGS']['DESCRIPTION']);
+}?>
 
-    <div class="bx-catalog-element bx-<?= $arParams['TEMPLATE_THEME'] ?>" id="<?= $itemIds['ID'] ?>"
-         itemscope itemtype="http://schema.org/Product">
+    <div class="bx-catalog-element bx-<?= $arParams['TEMPLATE_THEME'] ?>" id="<?= $itemIds['ID'] ?>" itemscope itemtype="http://schema.org/Product">
         <div class="container-fluid">
-            <?
-            if ($arParams['DISPLAY_NAME'] === 'Y') {
-                ?>
+            <?if ($arParams['DISPLAY_NAME'] === 'Y') {?>
                 <div class="row">
                     <div class="col-xs-12">
                         <h1 class="bx-title"><?= $name ?></h1>
                     </div>
                 </div>
-                <?
-            }
-            ?>
+            <?}?>
             <div class="row">
                 <div class="col-md-4 col-sm-12">
                     <div class="product-item-detail-slider-container" id="<?= $itemIds['BIG_SLIDER_ID'] ?>">
@@ -388,7 +385,6 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                             <? if($showDiscountList):
                                 foreach ($discountList as $discountItem):
                                     if(isset($discountItem['NAME'])):?>
-									
                                         <div class="product-item-discount-text"><?=$discountItem['NAME'];?>
                                             <div class="product-item-discount-file">
                                                 <? $APPLICATION->IncludeFile(
@@ -398,9 +394,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                 );?>
                                             </div>
                                         </div>
-                                    <? 
-									//if($USER->IsAdmin()) {echo '<pre>'; print_r($discountItem); echo '</pre>';}
-									endif;?>
+                                    <? endif;?>
                                 <? endforeach;?>
                             <? endif;?>
                             <?if(isset($arResult['PROPERTIES']['BESPLATNAYA_USTANOVKA']) && $arResult['PROPERTIES']['BESPLATNAYA_USTANOVKA']['VALUE']):?>
@@ -440,7 +434,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                         </div>
                         <span class="product-item-detail-slider-close" data-entity="close-popup"></span>
                         <div class="product-item-detail-slider-block
-						<?= ($arParams['IMAGE_RESOLUTION'] === '1by1' ? 'product-item-detail-slider-block-square' : '') ?>"
+						    <?= ($arParams['IMAGE_RESOLUTION'] === '1by1' ? 'product-item-detail-slider-block-square' : '') ?>"
                              data-entity="images-slider-block">
                             <span class="product-item-detail-slider-left" data-entity="slider-control-left"
                                   style="display: none;"></span>
@@ -458,13 +452,10 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                         </div>
                                         <?
                                     }
-                                }
-                                ?>
+                                }?>
                             </div>
-                            <?
-                            if ($arParams['SHOW_DISCOUNT_PERCENT'] === 'Y') {
-                                if ($haveOffers) {
-                                    ?>
+                            <?if ($arParams['SHOW_DISCOUNT_PERCENT'] === 'Y') {
+                                if ($haveOffers) {?>
                                     <div class="product-item-label-ring <?= $discountPositionClass ?>"
                                          id="<?= $itemIds['DISCOUNT_PERCENT_ID'] ?>"
                                          style="display: none;">
@@ -481,12 +472,9 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                         <?
                                     }
                                 }
-                            }
-                            ?>
+                            }?>
                             <div class="product-item-detail-slider-images-container" data-entity="images-container">
-                                <?
-								
-                                if (!empty($actualItem['MORE_PHOTO'])) {
+                                <? if (!empty($actualItem['MORE_PHOTO'])) {
                                     foreach ($actualItem['MORE_PHOTO'] as $key => $photo) {
                                         ?>
                                         <div class="product-item-detail-slider-image<?= ($key == 0 ? ' active' : '') ?>"
@@ -497,18 +485,15 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                         <?
                                     }
                                 }
-
                                 if ($arParams['SLIDER_PROGRESS'] === 'Y') {
                                     ?>
                                     <div class="product-item-detail-slider-progress-bar"
                                          data-entity="slider-progress-bar" style="width: 0;"></div>
                                     <?
-                                }
-                                ?>
+                                }?>
                             </div>
                         </div>
-                        <?
-                        if ($showSliderControls) {
+                        <? if ($showSliderControls) {
                             if ($haveOffers) {
                                 foreach ($arResult['OFFERS'] as $keyOffer => $offer) {
                                     if (!isset($offer['MORE_PHOTO_COUNT']) || $offer['MORE_PHOTO_COUNT'] <= 0)
@@ -558,46 +543,53 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                 </div>
                 <div class="col-md-8 col-sm-12">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="product-statistic-block">
                             <div class="col-xs-12">
                                 <h1 class="bx-title"><?= $name ?></h1>
-                                
-                                <? $rest = $arResult['ID']; ?>
                                 <div class="bx-code row">
-									<div class="col-xs-3">
-										<span>код товара: </span><?=$rest; ?>
+									<div class="col-xs-12 col-sm-6 col-md-3 pad-10">
+										<span>код товара: </span><?=$arResult['ID']; ?>
 									</div>
-									<!----  09/2021 ---->
-									<?if($USER->IsAdmin()) {
-										//echo '<pre>'; print_r($arResult['PROPERTIES']); echo '</pre>';?>
-									<div class="col-xs-3 stars">
-										<?=GetMessage('CATALOG_NOT_RESPONSE')?>
-									</div>
-
-									<?if($arResult["COUNT_PRODUCT"]){?>
-										<div class="col-xs-3">
-										
-											<?=GetMessage('CATALOG_MORE_THEN')?> <?=$arResult["COUNT_PRODUCT"];?> раз<?=($arResult["COUNT_PRODUCT"]==1?'а':'')?>
-										 
-										</div>
-									<?}?>
-									<?//if($arResult['PROPERTIES']['COL_OBRASCH'] && $arResult['PROPERTIES']['COL_PRODANIH']>0){
-										//$nadejnost=$arResult['PROPERTIES']['COL_OBRASCH']*100/$arResult['PROPERTIES']['COL_PRODANIH'];?>
-										<div class="col-xs-3">
-											<?=GetMessage('CATALOG_NADEJNOST')?> <?echo $nadejnost;?>
-										 
-										</div>
-									<?//}?>
-									
-									
-								<?}?>
-									<!---- end 09/2021 ---->
+                                    <div class="col-xs-12 col-sm-6 col-md-3 stars">
+                                        <?// =GetMessage('CATALOG_NOT_RESPONSE')?>
+                                        <?$APPLICATION->IncludeComponent(
+                                            "api:reviews.element.rating",
+                                            "template-m",
+                                            array(
+                                                "COLOR" => "blue2",
+                                                "COMPOSITE_FRAME_MODE" => "A",
+                                                "COMPOSITE_FRAME_TYPE" => "AUTO",
+                                                "ELEMENT_ID" => $arResult["ID"],
+                                                "HIDE_BORDER" => "N",
+                                                "IBLOCK_ID" => $arResult["IBLOCK_ID"],
+                                                "INCLUDE_CSS" => "Y",
+                                                "MESS_EMPTY_RATING" => "Пока нет ",
+                                                "MESS_FULL_RATING" => "#COUNT#",
+                                                "ORDER_ID" => "",
+                                                "REVIEWS_LINK" => "#reviews",
+                                                "SECTION_ID" => $arResult["SECTION_ID"],
+                                                "SHOW_PROGRESS_BAR" => "N",
+                                                "THEME" => "flat",
+                                                "URL" => "",
+                                                "COMPONENT_TEMPLATE" => "template-m"
+                                            ),
+                                            false
+                                        );?>
+                                    </div>
+                                    <?if($arResult["COUNT_PRODUCT"]){?>
+                                        <div class="col-xs-12 col-sm-6 col-md-3 pad-10">
+                                            <?=GetMessage('CATALOG_MORE_THEN')?> <?=$arResult["COUNT_PRODUCT"] ?? 1;?> раз<?=(($arResult["COUNT_PRODUCT"] ?? 1) == 1 ? 'а':'')?>
+                                        </div>
+                                    <?}?>
+                                    <?if(isset($arResult['PROPERTIES']['COL_OBRASCH']['VALUE']) && !empty($arResult['PROPERTIES']['COL_PRODANIH']['VALUE'])):
+                                        $nadejnostTovara = 100 - round(($arResult['PROPERTIES']['COL_OBRASCH']['VALUE'] * 100 / $arResult['PROPERTIES']['COL_PRODANIH']['VALUE']), 1);?>
+                                        <div class="col-xs-12 col-sm-6 col-md-3 pad-10">
+                                            <a href="#catalog-nadejnost"><?=GetMessage('CATALOG_NADEJNOST')?> <?echo $nadejnostTovara;?>%</a>
+                                        </div>
+                                    <?endif;?>
 								</div>
                             </div>
-							
-							<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult["COUNT_PRODUCT"]); echo '</pre>'; 							echo '<pre>'; print_r($arResult["PROPERTIES"]); echo '</pre>'; 							}?>
-							
-                            <div class="col-xs-12  product-item-detail-info-section">
+                            <div class="col-xs-12 product-item-detail-info-section">
                                 <?
                                 foreach ($arParams['PRODUCT_INFO_BLOCK_ORDER'] as $blockName) {
                                     switch ($blockName) {
@@ -669,9 +661,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                 </div>
                                                 <?
                                             }
-
                                             break;
-
                                         case 'props':
                                             if (!empty($arResult['DISPLAY_PROPERTIES']) || $arResult['SHOW_OFFERS_PROPS']) {
                                                 ?>
@@ -708,7 +698,6 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                 </div>
                                                 <?
                                             }
-
                                             break;
                                     }
                                 }
@@ -1127,7 +1116,6 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                             <!----------------------------------->
 
                             <div class="col-xs-12 col-md-5">
-                                <!--div class="bx-worktime-prop">
 								<? $APPLICATION->IncludeComponent("bitrix:main.include", "", array(
                                     "AREA_FILE_SHOW" => "file",
                                     "PATH" => SITE_DIR . "include/element_info.php"
@@ -1136,16 +1124,11 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                     array(
                                         "ACTIVE_COMPONENT" => "N"
                                     )
-                                ); ?>
-							</div-->
+                                );?>
                                 <div class="bx-worktime-prop">
                                     <noindex>
-
                                         <?
-
-
                                         $deliveryFree = '';
-
                                         if ($arResult['ITEM_PRICES'][0]['PRICE'] > 35000) {
                                             $deliveryFree = '<span class="color_green"> бесплатно</span>';
                                         }
@@ -1178,17 +1161,11 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                             } else {
                                                 $share = 'завтра';
                                             }
-
                                             ?>
-
-
                                             <div class="feature feature-icon-hover indent first">
                                                 <span class="icon"><img
                                                             src="/upload/iblock/icons/delivery_1.png" alt="delivery"></span>
                                                 <p class="no-margin ">
-                                                    <!--a href="/about/delivery/" target="_blank"><!--?
-                                                        echo "Доставим " . $share;
-                                                        echo $deliveryFree; ?></a-->
                                                     <a href="/about/delivery/" target="_blank">Максимально быстрая доставка</a>
                                                 </p>
                                             </div>
@@ -1201,7 +1178,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                     <a href="/paying/" target="_blank">Удобные способы оплаты</a>
                                                 </p>
                                             </div>
-                                            <?if($arResult["COUNT_PRODUCT"] > 0):?>
+                                            <?/*if($arResult["COUNT_PRODUCT"] > 0):?>
                                                 <div class="feature feature-icon-hover indent indent">
                                                     <span class="icon">
                                                         <img src="/upload/iblock/icons/buy-1.png" alt="buy">
@@ -1210,7 +1187,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                                         Купили более <?=$arResult["COUNT_PRODUCT"];?> раз<?=($arResult["COUNT_PRODUCT"]==1?'а':'')?>
                                                     </p>
                                                 </div>
-                                            <?endif;?>
+                                            <?endif;*/?>
                                             <?
                                             if ($arResult['PROPERTIES']['description_action']['VALUE'] != '') {
                                                 ?>
@@ -1226,7 +1203,6 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                             <div class="feature-wrapper addto-border">
                                                 &nbsp;
                                             </div>
-
                                         <?
                                         } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] === 'В наличии (мало)')) {
                                             //$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/element_info_pod_zakaz_1_2.php"), false);
@@ -1259,24 +1235,19 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                             $strEng = array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
                                             $strRu = array("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря");
                                             $share = str_replace($strEng, $strRu, $date);
-
                                             ?>
-
-
                                             <div class="feature feature-icon-hover indent first">
-                                                <span class="icon"><img
-                                                            src="/upload/iblock/icons/delivery_1.png" alt="delivery"></span>
+                                                <span class="icon">
+                                                    <img src="/upload/iblock/icons/delivery_1.png" alt="delivery">
+                                                </span>
                                                 <p class="no-margin ">
-                                                    <!--a href="/about/delivery/" target="_blank"><!--?
-                                                        echo "Доставим " . $share;
-                                                        echo $deliveryFree; ?></a-->
 													<a href="/about/delivery/" target="_blank">Условия доставки</a>
-
                                                 </p>
                                             </div>
                                             <div class="feature feature-icon-hover indent indent">
-                                                <span class="icon"><img
-                                                            src="/upload/iblock/icons/credit-card-payment.png" alt="paying"></span>
+                                                <span class="icon">
+                                                    <img src="/upload/iblock/icons/credit-card-payment.png" alt="paying">
+                                                </span>
                                                 <p class="no-margin ">
                                                     <a href="/paying/" target="_blank">Удобные способы оплаты</a>
                                                 </p>
@@ -1296,7 +1267,6 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                             <div class="feature-wrapper addto-border">
                                                 &nbsp;
                                             </div>
-
                                             <?
                                         } elseif (($arResult['PROPERTIES']['NALICHIE']['VALUE'] == 'Под заказ, 3-5 дней')) {
                                             //$APPLICATION->IncludeComponent("bitrix:main.include", "", array("AREA_FILE_SHOW" => "file", "PATH" => SITE_DIR."include/element_info_pod_zakaz_3_5.php"), false);
@@ -1401,14 +1371,11 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                             <div class="feature-wrapper addto-border">
                                                 &nbsp;
                                             </div>
-
                                             <?
                                         } ?>
                                     </noindex>
-
                                 </div>
                             </div>
-
 
                         </div>
                     </div>
@@ -1475,13 +1442,11 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                 </div>
             </div>
             <div class="row" style="border-bottom: 1px solid #ededed;">
- 
 				 <!----  09/2021 ---->
 				 <? if ($isSIMILARPRODUCTS && $arResult['PROPERTIES']['SIMILAR_PRODUCTS']['VALUE']) { /** Схожі товари **/?>
-                    <div class="similarproducts col-xs-12">
-					<h2><?= GetMessage('CP_BCE_SIMILAR_PRODUCTS_TAB') ?></h2>
-					                <div class="border-top">
-
+                     <div class="similarproducts col-xs-12">
+					    <h2><?= GetMessage('CP_BCE_SIMILAR_PRODUCTS_TAB') ?></h2>
+                        <div class="border-top">
                                     <? /***************20_08_2019***************/
                                     if ($resH2SIMILARPRODUCTS) {
                                         $resH2SIMILARPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_SIMILAR_PRODUCTS"));
@@ -1642,322 +1607,311 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
                                         ),
                                         false
                                     ); ?>
-                             
-                            
-					  </div> 
-					   
-					   
-					   
+					    </div>
+                     </div>
+                <? } ?>
+
+				<div class="detail-product row">
+                    <? if (!empty($arResult['DISPLAY_PROPERTIES'])) { /** Характеристики **/?>
+                    <h2><?= GetMessage('CT_BCE_CATALOG_PROPERTIES_TAB') ?></h2>
+                        <div class="border-top col-sm-6 col-xs-12">
+                            <dl class="product-item-detail-properties product-item-detail-tab-content">
+                                <? /***************20_08_2019***************/
+
+                                if ($isH2ATTRIBUTES) {
+                                    $resH2ATTRIBUTES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ATTRIBUTES"));
+                                    while ($obH2ATTRIBUTES = $resH2ATTRIBUTES->GetNext()) {
+                                        if (!empty($obH2ATTRIBUTES['VALUE'])) {
+                                            echo '<h4>' . $obH2ATTRIBUTES['VALUE'] . '</h4>';
+                                        }
+                                    }
+                                }
+                                /***************************************/ ?>
+                                <? foreach ($arResult['DISPLAY_PROPERTIES'] as $property) { ?>
+                                    <dt><?= $property['NAME'] ?></dt>
+                                    <dd><?= (
+                                        is_array($property['DISPLAY_VALUE'])
+                                            ? implode(' / ', $property['DISPLAY_VALUE'])
+                                            : $property['DISPLAY_VALUE']
+                                        ) ?>
+                                    </dd>
+                                <? }
+                                unset($property);
+                                ?>
+                            </dl>
+                        </div>
+                    <? } ?>
+
+                    <?if ($showDescription){ /** Опис **/?>
+                        <div  class="border-top col-sm-6 col-xs-12">
+                            <div class="description">
+                                <?
+                                /***************20_08_2019***************/
+                                if ($isH2DESCRIPTION) {
+                                    $resH2DESCRIPTION = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_DESCRIPTION"));
+                                    while ($obH2DESCRIPTION = $resH2DESCRIPTION->GetNext()) {
+                                        if (!empty($obH2DESCRIPTION['VALUE'])) {
+                                            echo '<h4>' . $obH2DESCRIPTION['VALUE'] . '</h4>';
+                                        }
+                                    }
+                                }
+                                /***************************************/
+                                if (
+                                    $arResult['PREVIEW_TEXT'] != ''
+                                    && (
+                                        $arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'S'
+                                        || ($arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'E' && $arResult['DETAIL_TEXT'] == '')
+                                    )
+                                ) {
+                                    echo $arResult['PREVIEW_TEXT_TYPE'] === 'html' ? $arResult['PREVIEW_TEXT'] : '<p>' . $arResult['PREVIEW_TEXT'] . '</p>';
+                                }
+
+                                if ($arResult['DETAIL_TEXT'] != '') {
+                                    echo $arResult['DETAIL_TEXT_TYPE'] === 'html' ? $arResult['DETAIL_TEXT'] : '<p>' . $arResult['DETAIL_TEXT'] . '</p>';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    <?} ?>
+                </div>
+
+                <?if ($isACCESSORIES) { /** Комплектуючі **/ ?>
+                    <div class="accessories row">
+                        <h2><?= GetMessage('CT_BCE_CATALOG_ACCESSORIES_TAB') ?></h2>
+                        <div class="border-top col-xs-12 col-sm-6">
+                            <? $myresPHOTO_ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "PHOTO_ACCESSORIES"));
+                            while ($obPHOTO_ACCESSORIES = $myresPHOTO_ACCESSORIES->GetNext()) {
+                                $tegs[] = $obPHOTO_ACCESSORIES['VALUE'];
+                                $pic = CFile::GetFileArray($obPHOTO_ACCESSORIES['VALUE']);
+                                echo '<img src="' . $pic['SRC'] . '"alt="'.$alt . '">';
+                                echo $arProperty["DISPLAY_VALUE"];
+                            }?>
+                        </div>
+                        <div class="border-top col-xs-12 col-sm-6">
+                            <?
+                            $resACCESSORIESNUM = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES_NUM"));
+                            while ($obACCESSORIESNUM = $resACCESSORIESNUM->GetNext()) {
+                                $tegsNum[] = $obACCESSORIESNUM['VALUE'];
+                            }
+                            $n = count($tegsNum);
+                            // ----------------20_08_2019---------------
+                            if ($isH2ACCESSORIES) {
+                                $resH2ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ACCESSORIES"));
+                                while ($obH2ACCESSORIES = $resH2ACCESSORIES->GetNext()) {
+                                    if (!empty($obH2ACCESSORIES['VALUE'])) {
+                                        echo '<h2>' . $obH2ACCESSORIES['VALUE'] . '</h2>';
+                                    }
+                                }
+                            }
+                            // ------------------------------------------
+                            $resACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES"));
+
+                            $j = $i = 1;
+                            while ($obACCESSORIES = $resACCESSORIES->GetNext()):
+                                $tegs[] = $obACCESSORIES['VALUE'];
+                                $resEl = CIBlockElement::GetByID($obACCESSORIES['VALUE']);
+                                if ($ar_resEl = $resEl->GetNext()) {
+                                    // $val - переменная где Вы указали ID элемента инфоблока
+                                    $resElement = CIBlockElement::GetByID($ar_resEl['ID']);
+
+                                    if ($ar_resElement = $resElement->GetNext()) {
+                                        if ($i <= $n) {
+                                            $j = $tegsNum[$i - 1];
+                                        } else {
+                                            $j = $i;
+                                        }
+                                    }
+
+                                    echo $j . '. ';
+                                    echo '<a href="' . $ar_resElement['DETAIL_PAGE_URL'] . '"target="_blank" style="color: #256aa3;text-decoration: underline;">' . $ar_resEl['NAME'] . '</a>';
+                                    $i++;
+                                }?>
+                                </br>
+                            <?endwhile;?>
+                        </div>
+                    </div>
+                <?}?>
+
+               <? if ($isDIMENSIONS) { /** Розміри **/?>
+                    <div class="dimensions col-xs-12">
+
+                        <h2><?= GetMessage('CP_BCE_DIMENSIONS_TAB') ?></h2>
+                        <div class=" border-top">
+                        <? $resDIMENSIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "DIMENSIONS"));
+                        while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
+                            $picDIMENSIONS = CFile::GetFileArray($obDIMENSIONS['VALUE']);
+                            echo '<img src="' . $picDIMENSIONS['SRC'] . '" alt="'.$alt . '" style="margin-left: 10%; max-width: 75%;">';
+                        }
+                        ?>
+                        </div>
                     </div>
                 <? } ?>
-				<div class="detail-product row">
-
-				                            
-
-				<? if (!empty($arResult['DISPLAY_PROPERTIES'])) { /** Характеристики **/?> 
-				<h2><?= GetMessage('CT_BCE_CATALOG_PROPERTIES_TAB') ?></h2>
-					<div class="border-top col-sm-6 col-xs-12">
-                                        <dl class="product-item-detail-properties product-item-detail-tab-content">
-											<? /***************20_08_2019***************/
-
-											if ($isH2ATTRIBUTES) {
-												$resH2ATTRIBUTES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ATTRIBUTES"));
-												while ($obH2ATTRIBUTES = $resH2ATTRIBUTES->GetNext()) {
-													if (!empty($obH2ATTRIBUTES['VALUE'])) {
-														echo '<h4>' . $obH2ATTRIBUTES['VALUE'] . '</h4>';
-													}
-												}
-											}
-											/***************************************/ ?>
-                                            <? foreach ($arResult['DISPLAY_PROPERTIES'] as $property) { ?>
-                                                <dt><?= $property['NAME'] ?></dt>
-                                                <dd><?= (
-                                                    is_array($property['DISPLAY_VALUE'])
-                                                        ? implode(' / ', $property['DISPLAY_VALUE'])
-                                                        : $property['DISPLAY_VALUE']
-                                                    ) ?>
-                                                </dd>
-                                            <? }
-                                            unset($property);
-                                            ?>
-                                        </dl>
-					</div>
-                <? } ?>
-				<?if ($showDescription){ /** Опис **/?>
-					<div  class="border-top col-sm-6 col-xs-12">
-                                <div class="description">
-                                    <?
-                                    /***************20_08_2019***************/
-                                    if ($isH2DESCRIPTION) {
-                                        $resH2DESCRIPTION = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_DESCRIPTION"));
-                                        while ($obH2DESCRIPTION = $resH2DESCRIPTION->GetNext()) {
-                                            if (!empty($obH2DESCRIPTION['VALUE'])) {
-                                                echo '<h4>' . $obH2DESCRIPTION['VALUE'] . '</h4>';
-                                            }
-                                        }
-                                    }
-                                    /***************************************/
-                                    if (
-                                        $arResult['PREVIEW_TEXT'] != ''
-                                        && (
-                                            $arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'S'
-                                            || ($arParams['DISPLAY_PREVIEW_TEXT_MODE'] === 'E' && $arResult['DETAIL_TEXT'] == '')
-                                        )
-                                    ) {
-                                        echo $arResult['PREVIEW_TEXT_TYPE'] === 'html' ? $arResult['PREVIEW_TEXT'] : '<p>' . $arResult['PREVIEW_TEXT'] . '</p>';
-                                    }
-
-                                    if ($arResult['DETAIL_TEXT'] != '') {
-                                        echo $arResult['DETAIL_TEXT_TYPE'] === 'html' ? $arResult['DETAIL_TEXT'] : '<p>' . $arResult['DETAIL_TEXT'] . '</p>';
-                                    }
-                                    ?>
-                                </div>
-					</div>
-				<?} ?>
-					
-					</div>
-                    <?if ($isACCESSORIES) { /** Комплектуючі **/
-							?>
-                        <div class="accessories row">
-							<h2><?= GetMessage('CT_BCE_CATALOG_ACCESSORIES_TAB') ?></h2>
-                                    <div class="border-top col-xs-12 col-sm-6">
-                                        <? $myresPHOTO_ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "PHOTO_ACCESSORIES"));
-                                        //$i = 1;
-                                        while ($obPHOTO_ACCESSORIES = $myresPHOTO_ACCESSORIES->GetNext()) {
-                                            $tegs[] = $obPHOTO_ACCESSORIES['VALUE'];
-                                            $pic = CFile::GetFileArray($obPHOTO_ACCESSORIES['VALUE']);
-                                            echo '<img src="' . $pic['SRC'] . '"alt="'.$alt . '">';
-                                            echo $arProperty["DISPLAY_VALUE"];
-                                        }
-                                        ?>
-                                    </div>
-                                    <div class="border-top col-xs-12 col-sm-6">
-                                        <?
-                                        $resACCESSORIESNUM = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES_NUM"));
-                                        while ($obACCESSORIESNUM = $resACCESSORIESNUM->GetNext()) {
-                                            $tegsNum[] = $obACCESSORIESNUM['VALUE'];
-                                        }
-                                        $n = count($tegsNum);
-                                        /***************20_08_2019***************/
-                                        if ($isH2ACCESSORIES) {
-                                            $resH2ACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_ACCESSORIES"));
-                                            while ($obH2ACCESSORIES = $resH2ACCESSORIES->GetNext()) {
-                                                if (!empty($obH2ACCESSORIES['VALUE'])) {
-                                                    echo '<h2>' . $obH2ACCESSORIES['VALUE'] . '</h2>';
-                                                }
-                                            }
-                                        }
-                                        /***************************************/
-                                        $resACCESSORIES = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "ACCESSORIES"));
-
-                                        $i = 1;
-                                        while ($obACCESSORIES = $resACCESSORIES->GetNext()) {
-                                        $tegs[] = $obACCESSORIES['VALUE'];
-                                        $resEl = CIBlockElement::GetByID($obACCESSORIES['VALUE']);
-                                        if ($ar_resEl = $resEl->GetNext())
-                                            // $val - переменная где Вы указали ID элемента инфоблока
-                                            $resElement = CIBlockElement::GetByID($ar_resEl['ID']);
-                                        if ($ar_resElement = $resElement->GetNext())
-                                            if ($i <= $n) {
-                                                $j = $tegsNum[$i - 1];
-                                            } else {
-                                                $j = $i;
-                                            }
-                                        echo $j . '. ';
-                                        echo '<a href="' . $ar_resElement['DETAIL_PAGE_URL'] . '"target="_blank" style="color: #256aa3;text-decoration: underline;">' . $ar_resEl['NAME'] . '</a>';
-                                        $i++;
-                                        ?></br><?}?>
-                        </div>
-                    <?}?>	
-				
-				
-				
-				   <? if ($isDIMENSIONS) { /** Розміри **/?>
-                                <div class="dimensions col-xs-12">
-                                   
-                                    <h2><?= GetMessage('CP_BCE_DIMENSIONS_TAB') ?></h2>
-                                    <div class=" border-top">
-                                    <? $resDIMENSIONS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "DIMENSIONS"));
-                                    while ($obDIMENSIONS = $resDIMENSIONS->GetNext()) {
-                                        $picDIMENSIONS = CFile::GetFileArray($obDIMENSIONS['VALUE']);
-                                        echo '<img src="' . $picDIMENSIONS['SRC'] . '" alt="'.$alt . '" style="margin-left: 10%; max-width: 75%;">';
-                                    }
-                                    ?>
-									</div>
-                                </div>
-                            <? } ?>
 							
 				<? if ($isRELATEDPRODUCTS) { /** Рекомендовані товари **/?>
                     <div class="relatedproducts col-xs-12">
-					<h2><?= GetMessage('CP_BCE_RELATED_PRODUCTS_TAB') ?></h2>
-					                <div class=" border-top">
-
-                                    <? /***************20_08_2019***************/
-                                    if ($resH2RELATEDPRODUCTS) {
-                                        $resH2RELATEDPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_RELATED_PRODUCTS"));
-                                        while ($obH2RELATEDPRODUCTS = $resH2RELATEDPRODUCTS->GetNext()) {
-                                            if (!empty($obH2RELATEDPRODUCTS['VALUE'])) {
-                                                echo '<h2>' . $obH2RELATEDPRODUCTS['VALUE'] . '</h2>';
-                                            }
-                                        }
+					    <h2><?= GetMessage('CP_BCE_RELATED_PRODUCTS_TAB') ?></h2>
+                        <div class=" border-top">
+                            <? /***************20_08_2019***************/
+                            if ($resH2RELATEDPRODUCTS) {
+                                $resH2RELATEDPRODUCTS = CIBlockElement::GetProperty($arParams['IBLOCK_ID'], $arResult['ID'], array("sort" => "asc"), Array("CODE" => "SUBTITLE_SECTION_RELATED_PRODUCTS"));
+                                while ($obH2RELATEDPRODUCTS = $resH2RELATEDPRODUCTS->GetNext()) {
+                                    if (!empty($obH2RELATEDPRODUCTS['VALUE'])) {
+                                        echo '<h2>' . $obH2RELATEDPRODUCTS['VALUE'] . '</h2>';
                                     }
-                                    /***************************************/ ?>
-                                    <? $arSelect = array('ID', 'IBLOCK_ID', 'NAME', 'CODE', 'PROPERTY_*');
-                                    $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]),'ID' => $arResult['ID'], 'ACTIVE' => 'Y', "!PROPERTY_RELATED_PRODUCTS" => false);
+                                }
+                            }
+                            /***************************************/ ?>
+                            <? $arSelect = array('ID', 'IBLOCK_ID', 'NAME', 'CODE', 'PROPERTY_*');
+                            $arFilter = array('IBLOCK_ID' => IntVal($arParams["IBLOCK_ID"]),'ID' => $arResult['ID'], 'ACTIVE' => 'Y', "!PROPERTY_RELATED_PRODUCTS" => false);
 
-                                    $res = CIBlockElement::GetList(
-                                        array("PROPERTY_RELATED_PRODUCTS" => "ASC"),
-                                        $arFilter,
-                                        false,
-                                        array('nPageSize' => 1000),
-                                        $arSelect
-                                    );
-                                    while ($ob = $res->GetNextElement()) {
-                                        $arProps = $ob->GetProperties();
-                                        $arRelatID = $arProps['RELATED_PRODUCTS']['VALUE'];
-                                        $GLOBALS['arRelatFilter'] = array('ID' => $arRelatID);
+                            $res = CIBlockElement::GetList(
+                                array("PROPERTY_RELATED_PRODUCTS" => "ASC"),
+                                $arFilter,
+                                false,
+                                array('nPageSize' => 1000),
+                                $arSelect
+                            );
+                            while ($ob = $res->GetNextElement()) {
+                                $arProps = $ob->GetProperties();
+                                $arRelatID = $arProps['RELATED_PRODUCTS']['VALUE'];
+                                $GLOBALS['arRelatFilter'] = array('ID' => $arRelatID);
 
-                                    } ?>
-                                    <? $APPLICATION->IncludeComponent(
-                                        "bitrix:catalog.section",
-                                        ".default",
-                                        array(
-                                            "ACTION_VARIABLE" => "action",
-                                            "ADD_PICT_PROP" => "-",
-                                            "ADD_PROPERTIES_TO_BASKET" => "Y",
-                                            "ADD_SECTIONS_CHAIN" => "N",
-                                            "ADD_TO_BASKET_ACTION" => "ADD",
-                                            "AJAX_MODE" => "N",
-                                            "AJAX_OPTION_ADDITIONAL" => "",
-                                            "AJAX_OPTION_HISTORY" => "N",
-                                            "AJAX_OPTION_JUMP" => "N",
-                                            "AJAX_OPTION_STYLE" => "Y",
-                                            "BACKGROUND_IMAGE" => "-",
-                                            "BASKET_URL" => "/personal/basket.php",
-                                            "BROWSER_TITLE" => "-",
-                                            "CACHE_FILTER" => "N",
-                                            "CACHE_GROUPS" => "Y",
-                                            "CACHE_TIME" => "3600",
-                                            "CACHE_TYPE" => "A",
-                                            "COMPATIBLE_MODE" => "Y",
-                                            "COMPOSITE_FRAME_MODE" => "A",
-                                            "COMPOSITE_FRAME_TYPE" => "AUTO",
-                                            "CONVERT_CURRENCY" => "Y",
-                                            "CURRENCY_ID" => "RUB",
-                                            "CUSTOM_FILTER" => "",
-                                            "DETAIL_URL" => "",
-                                            "DISABLE_INIT_JS_IN_COMPONENT" => "N",
-                                            "DISPLAY_BOTTOM_PAGER" => "Y",
-                                            "DISPLAY_COMPARE" => "N",
-                                            "DISPLAY_TOP_PAGER" => "N",
-                                            "ELEMENT_SORT_FIELD" => "sort",
-                                            "ELEMENT_SORT_FIELD2" => "id",
-                                            "ELEMENT_SORT_ORDER" => "asc",
-                                            "ELEMENT_SORT_ORDER2" => "desc",
-                                            "ENLARGE_PRODUCT" => "STRICT",
-                                            "FILTER_NAME" => "arRelatFilter",
-                                            "HIDE_NOT_AVAILABLE" => "N",
-                                            "HIDE_NOT_AVAILABLE_OFFERS" => "N",
-                                            "IBLOCK_ID" => "7",
-                                            "IBLOCK_TYPE" => "1c_catalog",
-                                            "INCLUDE_SUBSECTIONS" => "Y",
-                                            "LABEL_PROP" => array(),
-                                            "LAZY_LOAD" => "N",
-                                            "LINE_ELEMENT_COUNT" => "3",
-                                            "LOAD_ON_SCROLL" => "N",
-                                            "MESSAGE_404" => "",
-                                            "MESS_BTN_ADD_TO_BASKET" => "В корзину",
-                                            "MESS_BTN_BUY" => "Купить",
-                                            "MESS_BTN_DETAIL" => "Подробнее",
-                                            "MESS_BTN_SUBSCRIBE" => "Подписаться",
-                                            "MESS_NOT_AVAILABLE" => "Нет в наличии",
-                                            "META_DESCRIPTION" => "-",
-                                            "META_KEYWORDS" => "-",
-                                            "OFFERS_CART_PROPERTIES" => array(),
-                                            "OFFERS_FIELD_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "OFFERS_LIMIT" => "5",
-                                            "OFFERS_PROPERTY_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "OFFERS_SORT_FIELD" => "sort",
-                                            "OFFERS_SORT_FIELD2" => "id",
-                                            "OFFERS_SORT_ORDER" => "asc",
-                                            "OFFERS_SORT_ORDER2" => "desc",
-                                            "PAGER_BASE_LINK_ENABLE" => "N",
-                                            "PAGER_DESC_NUMBERING" => "N",
-                                            "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
-                                            "PAGER_SHOW_ALL" => "N",
-                                            "PAGER_SHOW_ALWAYS" => "N",
-                                            "PAGER_TEMPLATE" => ".default",
-                                            "PAGER_TITLE" => "Товары",
-                                            "PAGE_ELEMENT_COUNT" => "12",
-                                            "PARTIAL_PRODUCT_PROPERTIES" => "N",
-                                            "PRICE_CODE" => array(
-                                                0 => "BASE",
-                                                1 => "Интернет-магазин",
-                                                2 => "Розничные продажи (EUR)",
-                                            ),
-                                            "PRICE_VAT_INCLUDE" => "Y",
-                                            "PRODUCT_BLOCKS_ORDER" => "price,props,sku,quantityLimit,quantity,buttons",
-                                            "PRODUCT_DISPLAY_MODE" => "N",
-                                            "PRODUCT_ID_VARIABLE" => "id",
-                                            "PRODUCT_PROPERTIES" => array(),
-                                            "PRODUCT_PROPS_VARIABLE" => "prop",
-                                            "PRODUCT_QUANTITY_VARIABLE" => "quantity",
-                                            "PRODUCT_ROW_VARIANTS" => "[{'VARIANT':'6','BIG_DATA':false},{'VARIANT':'6','BIG_DATA':false}]",
-                                            "PRODUCT_SUBSCRIPTION" => "Y",
-                                            "PROPERTY_CODE" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "PROPERTY_CODE_MOBILE" => array(),
-                                            "RCM_PROD_ID" => $_REQUEST["PRODUCT_ID"],
-                                            "RCM_TYPE" => "personal",
-                                            "SECTION_CODE" => "",
-                                            "SECTION_ID" => " ={\$_REQUEST[\"SECTION_ID\"]}",
-                                            "SECTION_ID_VARIABLE" => "SECTION_ID",
-                                            "SECTION_URL" => "",
-                                            "SECTION_USER_FIELDS" => array(
-                                                0 => "",
-                                                1 => "",
-                                            ),
-                                            "SEF_MODE" => "N",
-                                            "SET_BROWSER_TITLE" => "Y",
-                                            "SET_LAST_MODIFIED" => "N",
-                                            "SET_META_DESCRIPTION" => "Y",
-                                            "SET_META_KEYWORDS" => "Y",
-                                            "SET_STATUS_404" => "N",
-                                            "SET_TITLE" => "Y",
-                                            "SHOW_404" => "N",
-                                            "SHOW_ALL_WO_SECTION" => "Y",
-                                            "SHOW_CLOSE_POPUP" => "N",
-                                            "SHOW_DISCOUNT_PERCENT" => "N",
-                                            "SHOW_FROM_SECTION" => "N",
-                                            "SHOW_MAX_QUANTITY" => "N",
-                                            "SHOW_OLD_PRICE" => "N",
-                                            "SHOW_PRICE_COUNT" => "1",
-                                            "SHOW_SLIDER" => "Y",
-                                            "SLIDER_INTERVAL" => "3000",
-                                            "SLIDER_PROGRESS" => "N",
-                                            "TEMPLATE_THEME" => "blue",
-                                            "USE_ENHANCED_ECOMMERCE" => "N",
-                                            "USE_MAIN_ELEMENT_SECTION" => "N",
-                                            "USE_PRICE_COUNT" => "N",
-                                            "USE_PRODUCT_QUANTITY" => "N",
-                                            "COMPONENT_TEMPLATE" => ".default"
-                                        ),
-                                        false
-                                    ); ?>
-                             
-                            
-					  </div> 
-					   
-					   
-					   
+                            } ?>
+                            <? $APPLICATION->IncludeComponent(
+                                "bitrix:catalog.section",
+                                ".default",
+                                array(
+                                    "ACTION_VARIABLE" => "action",
+                                    "ADD_PICT_PROP" => "-",
+                                    "ADD_PROPERTIES_TO_BASKET" => "Y",
+                                    "ADD_SECTIONS_CHAIN" => "N",
+                                    "ADD_TO_BASKET_ACTION" => "ADD",
+                                    "AJAX_MODE" => "N",
+                                    "AJAX_OPTION_ADDITIONAL" => "",
+                                    "AJAX_OPTION_HISTORY" => "N",
+                                    "AJAX_OPTION_JUMP" => "N",
+                                    "AJAX_OPTION_STYLE" => "Y",
+                                    "BACKGROUND_IMAGE" => "-",
+                                    "BASKET_URL" => "/personal/basket.php",
+                                    "BROWSER_TITLE" => "-",
+                                    "CACHE_FILTER" => "N",
+                                    "CACHE_GROUPS" => "Y",
+                                    "CACHE_TIME" => "3600",
+                                    "CACHE_TYPE" => "A",
+                                    "COMPATIBLE_MODE" => "Y",
+                                    "COMPOSITE_FRAME_MODE" => "A",
+                                    "COMPOSITE_FRAME_TYPE" => "AUTO",
+                                    "CONVERT_CURRENCY" => "Y",
+                                    "CURRENCY_ID" => "RUB",
+                                    "CUSTOM_FILTER" => "",
+                                    "DETAIL_URL" => "",
+                                    "DISABLE_INIT_JS_IN_COMPONENT" => "N",
+                                    "DISPLAY_BOTTOM_PAGER" => "Y",
+                                    "DISPLAY_COMPARE" => "N",
+                                    "DISPLAY_TOP_PAGER" => "N",
+                                    "ELEMENT_SORT_FIELD" => "sort",
+                                    "ELEMENT_SORT_FIELD2" => "id",
+                                    "ELEMENT_SORT_ORDER" => "asc",
+                                    "ELEMENT_SORT_ORDER2" => "desc",
+                                    "ENLARGE_PRODUCT" => "STRICT",
+                                    "FILTER_NAME" => "arRelatFilter",
+                                    "HIDE_NOT_AVAILABLE" => "N",
+                                    "HIDE_NOT_AVAILABLE_OFFERS" => "N",
+                                    "IBLOCK_ID" => "7",
+                                    "IBLOCK_TYPE" => "1c_catalog",
+                                    "INCLUDE_SUBSECTIONS" => "Y",
+                                    "LABEL_PROP" => array(),
+                                    "LAZY_LOAD" => "N",
+                                    "LINE_ELEMENT_COUNT" => "3",
+                                    "LOAD_ON_SCROLL" => "N",
+                                    "MESSAGE_404" => "",
+                                    "MESS_BTN_ADD_TO_BASKET" => "В корзину",
+                                    "MESS_BTN_BUY" => "Купить",
+                                    "MESS_BTN_DETAIL" => "Подробнее",
+                                    "MESS_BTN_SUBSCRIBE" => "Подписаться",
+                                    "MESS_NOT_AVAILABLE" => "Нет в наличии",
+                                    "META_DESCRIPTION" => "-",
+                                    "META_KEYWORDS" => "-",
+                                    "OFFERS_CART_PROPERTIES" => array(),
+                                    "OFFERS_FIELD_CODE" => array(
+                                        0 => "",
+                                        1 => "",
+                                    ),
+                                    "OFFERS_LIMIT" => "5",
+                                    "OFFERS_PROPERTY_CODE" => array(
+                                        0 => "",
+                                        1 => "",
+                                    ),
+                                    "OFFERS_SORT_FIELD" => "sort",
+                                    "OFFERS_SORT_FIELD2" => "id",
+                                    "OFFERS_SORT_ORDER" => "asc",
+                                    "OFFERS_SORT_ORDER2" => "desc",
+                                    "PAGER_BASE_LINK_ENABLE" => "N",
+                                    "PAGER_DESC_NUMBERING" => "N",
+                                    "PAGER_DESC_NUMBERING_CACHE_TIME" => "36000",
+                                    "PAGER_SHOW_ALL" => "N",
+                                    "PAGER_SHOW_ALWAYS" => "N",
+                                    "PAGER_TEMPLATE" => ".default",
+                                    "PAGER_TITLE" => "Товары",
+                                    "PAGE_ELEMENT_COUNT" => "12",
+                                    "PARTIAL_PRODUCT_PROPERTIES" => "N",
+                                    "PRICE_CODE" => array(
+                                        0 => "BASE",
+                                        1 => "Интернет-магазин",
+                                        2 => "Розничные продажи (EUR)",
+                                    ),
+                                    "PRICE_VAT_INCLUDE" => "Y",
+                                    "PRODUCT_BLOCKS_ORDER" => "price,props,sku,quantityLimit,quantity,buttons",
+                                    "PRODUCT_DISPLAY_MODE" => "N",
+                                    "PRODUCT_ID_VARIABLE" => "id",
+                                    "PRODUCT_PROPERTIES" => array(),
+                                    "PRODUCT_PROPS_VARIABLE" => "prop",
+                                    "PRODUCT_QUANTITY_VARIABLE" => "quantity",
+                                    "PRODUCT_ROW_VARIANTS" => "[{'VARIANT':'6','BIG_DATA':false},{'VARIANT':'6','BIG_DATA':false}]",
+                                    "PRODUCT_SUBSCRIPTION" => "Y",
+                                    "PROPERTY_CODE" => array(
+                                        0 => "",
+                                        1 => "",
+                                    ),
+                                    "PROPERTY_CODE_MOBILE" => array(),
+                                    "RCM_PROD_ID" => $_REQUEST["PRODUCT_ID"],
+                                    "RCM_TYPE" => "personal",
+                                    "SECTION_CODE" => "",
+                                    "SECTION_ID" => " ={\$_REQUEST[\"SECTION_ID\"]}",
+                                    "SECTION_ID_VARIABLE" => "SECTION_ID",
+                                    "SECTION_URL" => "",
+                                    "SECTION_USER_FIELDS" => array(
+                                        0 => "",
+                                        1 => "",
+                                    ),
+                                    "SEF_MODE" => "N",
+                                    "SET_BROWSER_TITLE" => "Y",
+                                    "SET_LAST_MODIFIED" => "N",
+                                    "SET_META_DESCRIPTION" => "Y",
+                                    "SET_META_KEYWORDS" => "Y",
+                                    "SET_STATUS_404" => "N",
+                                    "SET_TITLE" => "Y",
+                                    "SHOW_404" => "N",
+                                    "SHOW_ALL_WO_SECTION" => "Y",
+                                    "SHOW_CLOSE_POPUP" => "N",
+                                    "SHOW_DISCOUNT_PERCENT" => "N",
+                                    "SHOW_FROM_SECTION" => "N",
+                                    "SHOW_MAX_QUANTITY" => "N",
+                                    "SHOW_OLD_PRICE" => "N",
+                                    "SHOW_PRICE_COUNT" => "1",
+                                    "SHOW_SLIDER" => "Y",
+                                    "SLIDER_INTERVAL" => "3000",
+                                    "SLIDER_PROGRESS" => "N",
+                                    "TEMPLATE_THEME" => "blue",
+                                    "USE_ENHANCED_ECOMMERCE" => "N",
+                                    "USE_MAIN_ELEMENT_SECTION" => "N",
+                                    "USE_PRICE_COUNT" => "N",
+                                    "USE_PRODUCT_QUANTITY" => "N",
+                                    "COMPONENT_TEMPLATE" => ".default"
+                                ),
+                                false
+                            ); ?>
+					    </div>
                     </div>
                 <? } ?>
                 <?if($isVIDEOYOUTUBE){ ?>
@@ -1998,7 +1952,145 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
 						<?}?>
                     </div>
                 <?}?>
+                <?if(isset($nadejnostTovara)){?>
+                    <div class="col-xs-12">
+                        <div class="nadejnost-block" id="catalog-nadejnost">
+                            <div class="nadejnost-header">
+                                <h5><?=GetMessage('CATALOG_NADEJNOST_MODELI').' '.$nadejnostTovara?>%</h5>
+                                <img src="/images/shield-green.png">
+                                <span><?=GetMessage('CATALOG_NADEJNOST_MODELI_PROBLEM', ["percent" => (100-$nadejnostTovara)])?></span>
+                                <h6><b><?=GetMessage('CATALOG_NADEJNOST_MODELI_INFO_TEXT');?></b></h6>
+                            </div>
+                            <?if(!empty($arResult['PROPERTIES']['PROBLEMS']['VALUE']) && is_array($arResult['PROPERTIES']['PROBLEMS']['VALUE'])):?>
+                                <h4><?=GetMessage('CATALOG_NADEJNOST_MODELI_PROBLEM_TEXT');?></h4>
+                                <ul>
+                                    <?foreach ($arResult['PROPERTIES']['PROBLEMS']['VALUE'] as $item) echo '<li>'.$item.'</li>';?>
+                                </ul>
+                                <h5><span>*</span><?=GetMessage('CATALOG_NADEJNOST_MODELI_STAT_TEXT');?></h5>
+                            <?endif;?>
+                        </div>
+                </div>
+                <?}?>
+                <?//if($USER->isAdmin()):?>
+                <div class="col-xs-12">
+                    <?$APPLICATION->IncludeComponent(
+	"api:reviews", 
+	"template_rev", 
+	array(
+		"CACHE_TIME" => "600",
+		"CACHE_TYPE" => "N",
+		"COLOR" => "blue2",
+		"COMPOSITE_FRAME_MODE" => "A",
+		"COMPOSITE_FRAME_TYPE" => "AUTO",
+		"DETAIL_HASH" => "",
+		"DISPLAY_BOTTOM_PAGER" => "Y",
+		"DISPLAY_TOP_PAGER" => "N",
+		"ELEMENT_ID" => $arResult["ID"],
+		"EMAIL_TO" => "",
+		"FORM_CITY_VIEW" => "Y",
+		"FORM_DELIVERY" => array(
+		),
+		"FORM_DISPLAY_FIELDS" => array(
+			0 => "RATING",
+			1 => "ANNOTATION",
+			2 => "GUEST_NAME",
+			3 => "GUEST_EMAIL",
+		),
+		"FORM_FORM_SUBTITLE" => "",
+		"FORM_FORM_TITLE" => "Отзыв о товаре",
+		"FORM_MESS_ADD_REVIEW_ERROR" => "Внимание!<br>Ошибка добавления отзыва",
+		"FORM_MESS_ADD_REVIEW_EVENT_TEXT" => "<p>#USER_NAME# добавил(а) новый отзыв (оценка: #RATING#) ##ID#</p>
+                                                                                        <p>Открыть в админке #LINK_ADMIN#</p>
+                                                                                        <p>Открыть на сайте #LINK#</p>",
+		"FORM_MESS_ADD_REVIEW_EVENT_THEME" => "Отзыв о товаре в магазине PODTEK.RU (оценка: #RATING#) ##ID#",
+		"FORM_MESS_ADD_REVIEW_MODERATION" => "Спасибо!<br>Ваш отзыв отправлен на модерацию",
+		"FORM_MESS_ADD_REVIEW_VIZIBLE" => "Спасибо!<br>Ваш отзыв №#ID# опубликован",
+		"FORM_MESS_EULA" => "Нажимая кнопку «Отправить отзыв», я принимаю условия Пользовательского соглашения и даю своё согласие на обработку моих персональных данных, в соответствии с Федеральным законом от 27.07.2006 года №152-ФЗ «О персональных данных», на условиях и для целей, определенных Политикой конфиденциальности.",
+		"FORM_MESS_EULA_CONFIRM" => "Для продолжения вы должны принять условия Пользовательского соглашения",
+		"FORM_MESS_PRIVACY" => "Я согласен на обработку персональных данных",
+		"FORM_MESS_PRIVACY_CONFIRM" => "Для продолжения вы должны принять соглашение на обработку персональных данных",
+		"FORM_MESS_PRIVACY_LINK" => "",
+		"FORM_MESS_STAR_RATING_1" => "Ужасный товар",
+		"FORM_MESS_STAR_RATING_2" => "Плохой товар",
+		"FORM_MESS_STAR_RATING_3" => "Обычный товар",
+		"FORM_MESS_STAR_RATING_4" => "Хороший товар",
+		"FORM_MESS_STAR_RATING_5" => "Отличный товар",
+		"FORM_PREMODERATION" => "Y",
+		"FORM_REQUIRED_FIELDS" => array(
+			0 => "RATING",
+			1 => "ANNOTATION",
+		),
+		"FORM_RULES_LINK" => "http://podtek.ru/rules/",
+		"FORM_RULES_TEXT" => "Правила публикации отзывов",
+		"FORM_SHOP_BTN_TEXT" => "Оставить свой отзыв",
+		"FORM_SHOP_TEXT" => "",
+		"FORM_USE_EULA" => "Y",
+		"FORM_USE_PRIVACY" => "Y",
+		"IBLOCK_ID" => $arResult["IBLOCK_ID"],
+		"INCLUDE_CSS" => "Y",
+		"INCLUDE_JQUERY" => "N",
+		"LIST_ACTIVE_DATE_FORMAT" => "d.m.Y",
+		"LIST_ITEMS_LIMIT" => "10",
+		"LIST_MESS_ADD_UNSWER_EVENT_TEXT" => "#USER_NAME#, здравствуйте! 
+                                                                        К Вашему отзыву добавлен официальный ответ, для просмотра перейдите по ссылке #LINK#",
+		"LIST_MESS_ADD_UNSWER_EVENT_THEME" => "Официальный ответ к вашему отзыву",
+		"LIST_MESS_HELPFUL_REVIEW" => "Отзыв полезен?",
+		"LIST_MESS_TRUE_BUYER" => "Проверенный покупатель",
+		"LIST_SET_TITLE" => "N",
+		"LIST_SHOP_NAME_REPLY" => "Интернет-магазин PODTEK.RU",
+		"LIST_SHOW_THUMBS" => "N",
+		"LIST_SORT_FIELDS" => array(
+		),
+		"LIST_SORT_FIELD_1" => "ACTIVE_FROM",
+		"LIST_SORT_FIELD_2" => "DATE_CREATE",
+		"LIST_SORT_FIELD_3" => "ID",
+		"LIST_SORT_ORDER_1" => "DESC",
+		"LIST_SORT_ORDER_2" => "DESC",
+		"LIST_SORT_ORDER_3" => "DESC",
+		"MESSAGE_404" => "",
+		"PAGER_DESC_NUMBERING" => "Y",
+		"PAGER_DESC_NUMBERING_CACHE_TIME" => "600",
+		"PAGER_SHOW_ALWAYS" => "N",
+		"PAGER_TEMPLATE" => ".default",
+		"PAGER_THEME" => "blue",
+		"PAGER_TITLE" => "Отзывы",
+		"PICTURE" => array(
+		),
+		"RESIZE_PICTURE" => "48x48",
+		"SECTION_ID" => $arResult["SECTION_ID"]??"",
+		"SEF_MODE" => "N",
+		"SET_STATUS_404" => "Y",
+		"SHOP_NAME" => "PODTEK.RU",
+		"SHOW_404" => "N",
+		"STAT_MESS_CUSTOMER_RATING" => "На основе #N# оценок покупателей",
+		"STAT_MESS_CUSTOMER_REVIEWS" => "Отзывы покупателей <span class=\"api-reviews-count\"></span>",
+		"STAT_MESS_TOTAL_RATING" => "Рейтинг покупателей",
+		"STAT_MIN_AVERAGE_RATING" => "5",
+		"THEME" => "flat",
+		"THUMBNAIL_HEIGHT" => "72",
+		"THUMBNAIL_WIDTH" => "114",
+		"UPLOAD_FILE_LIMIT" => "1",
+		"UPLOAD_FILE_SIZE" => "1M",
+		"UPLOAD_FILE_TYPE" => "jpg, gif, bmp, png, jpeg",
+		"UPLOAD_VIDEO_LIMIT" => "1",
+		"URL" => "",
+		"USE_FORM_MESS_FIELD_PLACEHOLDER" => "N",
+		"USE_MESS_FIELD_NAME" => "N",
+		"USE_STAT" => "N",
+		"USE_SUBSCRIBE" => "N",
+		"USE_USER" => "N",
+		"COMPONENT_TEMPLATE" => "template_rev",
+		"VARIABLE_ALIASES" => array(
+			"review_id" => "review_id",
+			"user_id" => "user_id",
+		)
+	),
+	false
+);?>
+                </div>
+                <?//endif;?>
 				<!---- end 09/2021 ---->
+
 				<?//if($USER->IsAdmin()) {echo '<pre>'; print_r($arResult); echo '</pre>';}?>
                 <div class="col-sm-4 col-md-3">
                     <div>
@@ -2516,8 +2608,7 @@ if(!empty($price['PRINT_RATIO_PRICE']) && !empty($price['RATIO_PRICE']))
         ?>
     </div>
 
-<?
-if ($haveOffers) {
+<?if ($haveOffers) {
     $offerIds = array();
     $offerCodes = array();
 
@@ -2803,34 +2894,31 @@ if ($arParams['DISPLAY_COMPARE']) {
         'COMPARE_DELETE_URL_TEMPLATE' => $arResult['~COMPARE_DELETE_URL_TEMPLATE'],
         'COMPARE_PATH' => $arParams['COMPARE_PATH']
     );
-}
+}?>
 
-?>
+<script>
+    BX.message({
+        ECONOMY_INFO_MESSAGE: '<?=GetMessageJS('CT_BCE_CATALOG_ECONOMY_INFO2')?>',
+        TITLE_ERROR: '<?=GetMessageJS('CT_BCE_CATALOG_TITLE_ERROR')?>',
+        TITLE_BASKET_PROPS: '<?=GetMessageJS('CT_BCE_CATALOG_TITLE_BASKET_PROPS')?>',
+        BASKET_UNKNOWN_ERROR: '<?=GetMessageJS('CT_BCE_CATALOG_BASKET_UNKNOWN_ERROR')?>',
+        BTN_SEND_PROPS: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_SEND_PROPS')?>',
+        BTN_MESSAGE_BASKET_REDIRECT: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_BASKET_REDIRECT')?>',
+        BTN_MESSAGE_CLOSE: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_CLOSE')?>',
+        BTN_MESSAGE_CLOSE_POPUP: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_CLOSE_POPUP')?>',
+        TITLE_SUCCESSFUL: '<?=GetMessageJS('CT_BCE_CATALOG_ADD_TO_BASKET_OK')?>',
+        COMPARE_MESSAGE_OK: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_COMPARE_OK')?>',
+        COMPARE_UNKNOWN_ERROR: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_COMPARE_UNKNOWN_ERROR')?>',
+        COMPARE_TITLE: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_COMPARE_TITLE')?>',
+        BTN_MESSAGE_COMPARE_REDIRECT: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_COMPARE_REDIRECT')?>',
+        PRODUCT_GIFT_LABEL: '<?=GetMessageJS('CT_BCE_CATALOG_PRODUCT_GIFT_LABEL')?>',
+        PRICE_TOTAL_PREFIX: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_PRICE_TOTAL_PREFIX')?>',
+        RELATIVE_QUANTITY_MANY: '<?=CUtil::JSEscape($arParams['MESS_RELATIVE_QUANTITY_MANY'])?>',
+        RELATIVE_QUANTITY_FEW: '<?=CUtil::JSEscape($arParams['MESS_RELATIVE_QUANTITY_FEW'])?>',
+        SITE_ID: '<?=$component->getSiteId()?>'
+    });
+    var <?=$obName?> = new JCCatalogElement(<?=CUtil::PhpToJSObject($jsParams, false, true)?>);
+</script>
 
-    <script>
-        BX.message({
-            ECONOMY_INFO_MESSAGE: '<?=GetMessageJS('CT_BCE_CATALOG_ECONOMY_INFO2')?>',
-            TITLE_ERROR: '<?=GetMessageJS('CT_BCE_CATALOG_TITLE_ERROR')?>',
-            TITLE_BASKET_PROPS: '<?=GetMessageJS('CT_BCE_CATALOG_TITLE_BASKET_PROPS')?>',
-            BASKET_UNKNOWN_ERROR: '<?=GetMessageJS('CT_BCE_CATALOG_BASKET_UNKNOWN_ERROR')?>',
-            BTN_SEND_PROPS: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_SEND_PROPS')?>',
-            BTN_MESSAGE_BASKET_REDIRECT: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_BASKET_REDIRECT')?>',
-            BTN_MESSAGE_CLOSE: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_CLOSE')?>',
-            BTN_MESSAGE_CLOSE_POPUP: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_CLOSE_POPUP')?>',
-            TITLE_SUCCESSFUL: '<?=GetMessageJS('CT_BCE_CATALOG_ADD_TO_BASKET_OK')?>',
-            COMPARE_MESSAGE_OK: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_COMPARE_OK')?>',
-            COMPARE_UNKNOWN_ERROR: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_COMPARE_UNKNOWN_ERROR')?>',
-            COMPARE_TITLE: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_COMPARE_TITLE')?>',
-            BTN_MESSAGE_COMPARE_REDIRECT: '<?=GetMessageJS('CT_BCE_CATALOG_BTN_MESSAGE_COMPARE_REDIRECT')?>',
-            PRODUCT_GIFT_LABEL: '<?=GetMessageJS('CT_BCE_CATALOG_PRODUCT_GIFT_LABEL')?>',
-            PRICE_TOTAL_PREFIX: '<?=GetMessageJS('CT_BCE_CATALOG_MESS_PRICE_TOTAL_PREFIX')?>',
-            RELATIVE_QUANTITY_MANY: '<?=CUtil::JSEscape($arParams['MESS_RELATIVE_QUANTITY_MANY'])?>',
-            RELATIVE_QUANTITY_FEW: '<?=CUtil::JSEscape($arParams['MESS_RELATIVE_QUANTITY_FEW'])?>',
-            SITE_ID: '<?=$component->getSiteId()?>'
-        });
-
-        var <?=$obName?> =
-        new JCCatalogElement(<?=CUtil::PhpToJSObject($jsParams, false, true)?>);
-    </script>
-<?
-unset($actualItem, $itemIds, $jsParams);
+<?//if($USER->IsAdmin()){echo'<pre>';print_r($arResult);echo'</pre>';}?>
+<? unset($actualItem, $itemIds, $jsParams);?>

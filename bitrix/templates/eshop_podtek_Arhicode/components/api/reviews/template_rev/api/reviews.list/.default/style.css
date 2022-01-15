@@ -22,7 +22,7 @@
 .api-reviews-list .api-item{background: #f8f8f8; padding: 30px; position: relative; -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px;}
 .api-reviews-list .api-item.api-active{ background: #fffbe6 }
 .api-reviews-list .api-item + *{ margin-top: 30px; }
-.api-reviews-list .api-item-hidden{ background: #f3f2f2 !important; border: 1px solid #ccc !important; }
+.api-reviews-list .api-item-hidden{ background: white; border: none; }
 .api-reviews-list .api-item-hidden .api-item-status{ background: #212121; display: block; position: absolute; right: 0; top: 0; color: #f3f2f2; font-size: 12px; padding: 3px 10px; min-width: 140px; text-align: center }
 .api-reviews-list .api-review-link{float: right;}
 .api-reviews-list .api-review-link a{line-height: normal; cursor: pointer}

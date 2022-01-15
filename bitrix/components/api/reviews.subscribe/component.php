@@ -24,6 +24,10 @@ if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
  * @var CMain            $APPLICATION
  */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.subscribe-component'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 if(!Loader::includeModule('api.reviews')) {

@@ -39,8 +39,11 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 //$parent = $component->getParent();
 //$parentPath = $parent->getPath();
 
+// --- DEBUG
+if(/*$USER->isAdmin()]*/ $_SERVER['REMOTE_ADDR'] == '188.163.120.85')
+    Bitrix\Main\Diag\Debug::writeToFile(array('list'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
-if($USER->isAdmin()) Bitrix\Main\Diag\Debug::writeToFile(array('user'),"","/test-1234/log.txt");
 
 if(method_exists($this, 'setFrameMode'))
 	$this->setFrameMode(true);

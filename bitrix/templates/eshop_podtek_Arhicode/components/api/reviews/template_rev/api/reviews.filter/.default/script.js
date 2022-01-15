@@ -3,6 +3,8 @@
  */
 (function ($) {
 
+	console.log('api:reviews api:review.filter copy');
+
 	"use strict"; // Hide scope, no $ conflict
 
 	var defaults = {};

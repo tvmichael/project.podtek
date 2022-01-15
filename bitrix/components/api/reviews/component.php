@@ -25,6 +25,10 @@ use \Bitrix\Main\Application;
 use \Bitrix\Main\Loader;
 use \Bitrix\Main\Localization\Loc;
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews-component'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 if(!Loader::includeModule('api.reviews')) {

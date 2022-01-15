@@ -18,6 +18,10 @@ define('BX_SECURITY_SHOW_MESSAGE', true);
 if($_SERVER['REQUEST_METHOD'] != 'POST' || !preg_match('/^[A-Za-z0-9_]{2}$/', $_POST['siteId']))
 	die();
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.subscribe.-ajax'),"","/test-1234/log.txt");
+
 define('SITE_ID', htmlspecialchars($_POST['siteId']));
 require_once($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_before.php');
 if(!check_bitrix_sessid())
@@ -45,18 +49,18 @@ $server  = $context->getServer();
 
 //Bitrix\Main\Localization\Loc::loadMessages(dirname(__FILE__).'/class.php');
 
-//Получаем данные
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 $return   = array();
 $siteId   = $request->getPost('siteId');
 $arParams = $request->getPost('params');
 $form     = $request->getPost('form');
 
-//Конвертируем данные
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 if(!Application::isUtfMode())
 	$form = Encoding::convertEncoding($form, 'UTF-8', $context->getCulture()->getCharset());
 
 
-//Обрабатываем данные
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 if($form) {
 	foreach($form as $key => $val)
 		$form[ $key ] = htmlspecialcharsbx(trim($val));
@@ -87,7 +91,7 @@ if(!$return) {
 
 
 
-	//Фильтр
+	//пїЅпїЅпїЅпїЅпїЅпїЅ
 	$arFilter = array(
 		 'SITE_ID' => $siteId,
 		 'EMAIL'   => $form['email'],

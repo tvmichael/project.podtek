@@ -25,6 +25,10 @@ if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
  * @var CMain            $APPLICATION
  */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.star-component'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 if(!Loader::includeModule('api.reviews')) {
@@ -118,7 +122,7 @@ if($cache_time > 0 && $cache->initCache($cache_time, $cache_id, $cache_path)) {
 }
 else {
 
-	//Обновление кэша при аякс-изменениях
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	if($cache_time == 0) {
 		//$cache->clean($cache_id, $cache_path);
 		$cache->cleanDir($cache_path);
@@ -172,10 +176,10 @@ else {
 		$arResult['MIN_AVERAGE_RATING'] = $arResult['AVERAGE_RATING'];
 
 	if($cache_time) {
-		//начинаем буферизирование вывода
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 		$cache->startDataCache($cache_time, $cache_id, $cache_path);
 
-		//Кэшируем переменные
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		$cache->endDataCache($arResult);
 	}
 }

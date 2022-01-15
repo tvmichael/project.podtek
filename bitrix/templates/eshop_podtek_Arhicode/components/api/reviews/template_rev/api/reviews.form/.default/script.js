@@ -5,7 +5,10 @@
 
 	"use strict"; // Hide scope, no $ conflict
 
+	console.log('api:reviews api:review.form copy');
+
 	var defaults = {};
+	var isSendAjax = true;
 
 	var methods = {
 
@@ -163,8 +166,9 @@
 					}
 				});
 
-				//Form submit
+				// Form submit
 				review_submit.on('click', function (e) {
+					e.preventDefault();
 
 					var bError = false;
 
@@ -190,7 +194,6 @@
 					if(bError)
 						return false;
 
-
 					//block fields before ajax
 					review_submit.prop('disabled', true).find('.api-button-text').html(options.message.submit_text_ajax);
 					//review_form.find('.api-field, .dropdown-field').attr('readonly', true);
@@ -205,112 +208,116 @@
 						postData[name] = $(this).val();
 					});
 
-					$.ajax({
-						type: 'POST',
-						data: postData,
-						dataType: 'json',
-						error: function (jqXHR, textStatus, errorThrown) {
-							console.error('textStatus: ' + textStatus);
-							console.error('errorThrown: ' + errorThrown);
-							alert(textStatus);
-						},
-						success: function (response) {
+					if(isSendAjax)
+					{
+						isSendAjax = false;
 
-							$(modalId).find('.api_modal_loader').fadeOut(200);
+						$.ajax({
+							type: 'POST',
+							data: postData,
+							dataType: 'json',
+							error: function (jqXHR, textStatus, errorThrown) {
+								isSendAjax = true;
+								console.error('textStatus: ' + textStatus);
+								console.error('errorThrown: ' + errorThrown);
+								console.log(textStatus);
+							},
+							success: function (response) {
+								isSendAjax = true;
+								$(modalId).find('.api_modal_loader').fadeOut(200);
 
-							//console.log(response);
+								//console.log(response);
 
-							//unblock fields after ajax
-							review_submit.prop('disabled', false).find('.api-button-text').html(options.message.submit_text_default);
-							review_form.find('.api-field, .dropdown-field').attr('readonly', false);
+								//unblock fields after ajax
+								review_submit.prop('disabled', false).find('.api-button-text').html(options.message.submit_text_default);
+								review_form.find('.api-field, .dropdown-field').attr('readonly', false);
 
-							if (response.STATUS === 'ERROR') {
+								if (response.STATUS === 'ERROR') {
 
-								for (var key in postData) {
-									if(key === 'FILES[]'){
-										key = 'FILES';
+									for (var key in postData) {
+										if(key === 'FILES[]'){
+											key = 'FILES';
+										}
+										else if(key === 'VIDEOS[]'){
+											key = 'VIDEOS';
+										}
+
+										if (response.FIELDS[key]) {
+											review_form
+												.find('[name*=' + key + ']')
+												.addClass('api_field_error')
+												.closest('.api_row')
+												.addClass('api_row_error');
+										}
+										else{
+											review_form
+												.find('[name*=' + key + ']')
+												.removeClass('api_field_error')
+												.closest('.api_row')
+												.removeClass('api_row_error');
+										}
 									}
-									else if(key === 'VIDEOS[]'){
-										key = 'VIDEOS';
-									}
 
-									if (response.FIELDS[key]) {
-										review_form
-											 .find('[name*=' + key + ']')
-											 .addClass('api_field_error')
-											 .closest('.api_row')
-											 .addClass('api_row_error');
-									}
-									else{
-										review_form
-											 .find('[name*=' + key + ']')
-											 .removeClass('api_field_error')
-											 .closest('.api_row')
-											 .removeClass('api_row_error');
-									}
-								}
-
-								review_form.find('.api_field_error').each(function () {
-									$(this).on('keyup change', function () {
-										if ($(this).val().length)
-											$(this)
-												 .removeClass('api_field_error')
-												 .closest('.api_row')
-												 .removeClass('api_row_error');
+									review_form.find('.api_field_error').each(function () {
+										$(this).on('keyup change', function () {
+											if ($(this).val().length)
+												$(this)
+													.removeClass('api_field_error')
+													.closest('.api_row')
+													.removeClass('api_row_error');
+										});
 									});
-								});
+								}
+								else if (response.STATUS === 'OK') {
+									//$.fn.apiReviewsForm('alert', modalId, response)
+
+									review_form.find('.api-field:not([name=RATING])').val('');
+
+									$.fn.apiModal('hide', {id:modalId});
+									$.fn.apiReviewsList('refresh');
+
+									$.fn.apiAlert({
+										class: 'success',
+										showIcon: true,
+										title: response.MESSAGE,
+									});
+								}
 							}
-							else if (response.STATUS === 'OK') {
-								//$.fn.apiReviewsForm('alert', modalId, response)
+						});
+					}
 
-								review_form.find('.api-field:not([name=RATING])').val('');
-
-								$.fn.apiModal('hide', {id:modalId});
-								$.fn.apiReviewsList('refresh');
-
-								$.fn.apiAlert({
-									class: 'success',
-									showIcon: true,
-									title: response.MESSAGE,
-								});
-							}
-						}
-					});
-
-					e.preventDefault();
+					return false;
 				});
 			}
 
 			return this;
 		},
 		alert: function (modalId, data) {
-			/*
-			 $.fn.apiModal('alert',{
-			 type: 'success',
-			 autoHide: true, //2000
-			 modalId: modalId,
-			 message: data.MESSAGE
-			 });
-			 */
-
-			/*var dialogStyle = $(modalId + ' .api_modal_dialog').attr('style') + ';display: block;';
-
-			var content = '' +
-				 '<div class="api_modal_dialog api_alert" style="'+dialogStyle+'">' +
-				 '<div class="api_modal_close"></div>' +
-				 '<div class="api_alert_success">' +
-				 '<span></span>' +
-				 '<div class="api_alert_title">'+data.MESSAGE+'</div>' +
-				 '</div>' +
-				 '</div>';
-
-			$(modalId).html(content);
-			$.fn.apiModal('resize',{id:modalId});*/
-
-			/*window.setTimeout(function(){
-				$.fn.apiModal('hide', {id:modalId});
-				$.fn.apiReviewsList('refresh');
-			},2000);*/
+			//  $.fn.apiModal('alert',{
+			//  	type: 'success',
+			//  	autoHide: true, //2000
+			//  	modalId: modalId,
+			//  	message: data.MESSAGE
+			//  });
+			//
+			// var dialogStyle = $(modalId + ' .api_modal_dialog').attr('style') + ';display: block;';
+			//
+			// var content = '' +
+			// 	 '<div class="api_modal_dialog api_alert" style="'+dialogStyle+'">' +
+			// 	 '<div class="api_modal_close"></div>' +
+			// 	 '<div class="api_alert_success">' +
+			// 	 '<span></span>' +
+			// 	 '<div class="api_alert_title">'+data.MESSAGE+'</div>' +
+			// 	 '</div>' +
+			// 	 '</div>';
+			//
+			// $(modalId).html(content);
+			// $.fn.apiModal('resize',{id:modalId});
+			//
+			// window.setTimeout(function(){
+			// 	$.fn.apiModal('hide', {id:modalId});
+			// 	$.fn.apiReviewsList('refresh');
+			// },2000);
 		}
 
 	};

@@ -5,6 +5,10 @@ use Bitrix\Main\Loader,
 if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 	die();
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.recent-class'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 if(!Loader::includeModule('api.reviews')) {

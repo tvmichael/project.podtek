@@ -2,6 +2,8 @@
  * $.fn.apiReviews
  */
 
+console.log('api:reviews copy');
+
 if (typeof jQuery === 'undefined') {
 	console.error('api:reviews component requires jQuery. jQuery must be included before all plugins in one copy');
 }

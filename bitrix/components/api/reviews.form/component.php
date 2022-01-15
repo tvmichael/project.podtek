@@ -27,6 +27,10 @@ if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
  * @var CMain            $APPLICATION
  */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.form-component', $_REQUEST),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 $arResultModules = array(
@@ -472,6 +476,9 @@ if($isAction) {
 		$response['result'] = 'ok';
 	}
 
+	$out = ob_get_clean();
+    unset($out);
+
 	$APPLICATION->RestartBuffer();
 	header('Content-Type: application/json');
 	echo Json::encode($response);
@@ -709,7 +716,16 @@ if($request->isPost() && $request->get('API_REVIEWS_FORM_AJAX') == 'Y') {
 
 	$sendResult['MESSAGE'] = join('<br>', $sendResult['MESSAGE']);
 
-	$APPLICATION->RestartBuffer();
+    $out = ob_get_clean();
+    unset($out);
+
+    $APPLICATION->RestartBuffer();
+
+    // --- DEBUG
+    if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+        Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.form-component >> API_REVIEWS_FORM_AJAX' => $sendResult),"","/test-1234/log.txt");
+
+    header('Content-Type: application/json');
 	echo Json::encode($sendResult);
 	CMain::FinalActions();
 	die();

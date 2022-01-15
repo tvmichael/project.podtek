@@ -29,6 +29,10 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
  * @var CMain                    $APPLICATION
  */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('list:form'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 if(method_exists($this, 'setFrameMode'))
@@ -381,7 +385,9 @@ $modalId = $formId . '_modal';
 
 					<div class="api_row api_buttons">
 						<button class="api-button api-button-large api-form-submit api_button_block">
-							<span class="api-icon"></span><span class="api-button-text"><?=Loc::getMessage('API_REVIEWS_FORM_SUBMIT_TEXT_DEFAULT')?></span>
+							<span class="api-icon"></span><span class="api-button-text">
+                                <?=Loc::getMessage('API_REVIEWS_FORM_SUBMIT_TEXT_DEFAULT')?>
+                            </span>
 						</button>
 					</div>
 

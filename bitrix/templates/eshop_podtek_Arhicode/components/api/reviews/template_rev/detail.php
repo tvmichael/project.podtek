@@ -28,7 +28,9 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
  * @var CMain                    $APPLICATION
  */
 
-if($USER->isAdmin()) Bitrix\Main\Diag\Debug::writeToFile(array('detail'),"","/test-1234/log.txt");
+// --- DEBUG
+if(/*$USER->isAdmin()]*/ $_SERVER['REMOTE_ADDR'] == '188.163.120.85')
+    Bitrix\Main\Diag\Debug::writeToFile(array('list'),"","/test-1234/log.txt");
 
 Loc::loadMessages(__FILE__);
 

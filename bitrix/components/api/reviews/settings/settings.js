@@ -1,3 +1,5 @@
+console.log('api:settings-OnApiReviewsSettingsEdit');
+
 function OnApiReviewsSettingsEdit(arParams) {
 	if (null != window.jsApiReviewsOpener) {
 		try {window.jsApiReviewsOpener.Close();} catch (e) {}

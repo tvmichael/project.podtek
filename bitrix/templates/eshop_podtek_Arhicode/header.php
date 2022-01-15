@@ -49,12 +49,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
     <link rel="shortcut icon" type="image/x-icon" href="<?= SITE_DIR ?>favicon.ico"/>
+    <script src="/bitrix/templates/eshop_podtek_Arhicode/js/jquery-2.1.3.min.js"></script>
     <? $APPLICATION->ShowHead(); ?>
     <?
     $APPLICATION->SetAdditionalCSS(SITE_TEMPLATE_PATH . "/colors.css", true);
     $APPLICATION->SetAdditionalCSS("/bitrix/css/main/bootstrap.css");
     $APPLICATION->SetAdditionalCSS("/bitrix/css/main/font-awesome.css");
-    $APPLICATION->AddHeadScript('/bitrix/templates/eshop_podtek_Arhicode/js/jquery-1.9.1.min.js');
+    //$APPLICATION->AddHeadScript('/bitrix/templates/eshop_podtek_Arhicode/js/jquery-1.9.1.min.js');
     $APPLICATION->AddHeadScript('/bitrix/templates/eshop_podtek_Arhicode/js/bootstrap-dropdown.js');
     ?>
     <title><? $APPLICATION->ShowTitle() ?></title>

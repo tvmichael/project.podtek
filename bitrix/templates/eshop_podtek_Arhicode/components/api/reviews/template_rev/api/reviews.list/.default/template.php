@@ -29,6 +29,10 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
  * @var CMain                    $APPLICATION
  */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('list:list'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 if(method_exists($this, 'setFrameMode'))
@@ -41,7 +45,7 @@ if($arParams['INCLUDE_CSS'] == 'Y') {
 include 'ajax.php';
 
 /*
-	//Режим 1
+	//пїЅпїЅпїЅпїЅпїЅ 1
 	$reviewsId = "API_REVIEWS_LIST_" . $component->randString();
 ?>
 	<div id="<?=$reviewsId?>">
@@ -58,13 +62,13 @@ include 'ajax.php';
 <?
 */
 /*
-	//Режим 2
+	//пїЅпїЅпїЅпїЅпїЅ 2
 	$frame = $this->createFrame()->begin('Loading...');
 	include 'ajax.php';
 	$frame->end();
 */
 /*
-	//Режим 3
+	//пїЅпїЅпїЅпїЅпїЅ 3
 	$reviewsId = "api_reviews_".$component->randString();
 ?>
 	<div id="<?=$reviewsId?>">

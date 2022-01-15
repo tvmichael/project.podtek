@@ -30,6 +30,10 @@ if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 /** @global CCacheManager $CACHE_MANAGER */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.detail-component'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 $arResultModules = array(
@@ -80,7 +84,7 @@ $arParams['LIST_URL']   = ($arParams['~LIST_URL']   ? $httpHost . $arParams['~LI
 //$arParams['DETAIL_URL'] .= $arParams['~DETAIL_HASH'];
 
 
-//Правила доступа к модулю
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 $isEditor              = ($APPLICATION->GetGroupRight('api.reviews') >= 'W');
 $arParams['IS_EDITOR'] = $isEditor;
 
@@ -94,18 +98,18 @@ $arParams['MESS_ADD_UNSWER_EVENT_TEXT']  = $arParams['~MESS_ADD_UNSWER_EVENT_TEX
 $arParams['MESS_TRUE_BUYER']             = $arParams['~MESS_TRUE_BUYER'] ? $arParams['~MESS_TRUE_BUYER'] : Loc::getMessage('API_REVIEWS_LIST_MESS_TRUE_BUYER');
 $arParams['MESS_HELPFUL_REVIEW']         = $arParams['~MESS_HELPFUL_REVIEW'] ? $arParams['~MESS_HELPFUL_REVIEW'] : Loc::getMessage('API_REVIEWS_LIST_MESS_HELPFUL_REVIEW');
 
-//Лэнги полей
+//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 if($arParams['DISPLAY_FIELDS']) {
 	foreach($arParams['DISPLAY_FIELDS'] as $FIELD) {
 
-		//Заменить встроенные названия полей на свои
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
 		$pFieldNameMess   = $arParams[ 'MESS_FIELD_NAME_' . $FIELD ];
 		$tplFieldNameMess = Loc::getMessage('API_REVIEWS_FORM_' . $FIELD);
 
 		$arParams[ 'MESS_FIELD_NAME_' . $FIELD ] = ($pFieldNameMess ? $pFieldNameMess : $tplFieldNameMess['NAME']);
 
 
-		//Заменить встроенные placeholder полей на свои
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ placeholder пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
 		$pFieldPlaceholderMess   = $arParams[ 'MESS_FIELD_PLACEHOLDER_' . $FIELD ];
 		$tplFieldPlaceholderMess = Loc::getMessage('API_REVIEWS_FORM_' . $FIELD);
 
@@ -256,7 +260,7 @@ if($isPost) {
 		if($arParams['DETAIL_URL'])
 			$arParams['PAGE_URL'] = Tools::makeUrl($id, $arParams['DETAIL_URL']);
 
-		//---------- Проверим существование отзыва с таким ID ----------//
+		//---------- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ ID ----------//
 		$row = ReviewsTable::getRow(array(
 			 'select' => array('ID', 'REPLY_SEND', 'FILES', 'VIDEOS'),
 			 'filter' => array('=ID' => $id),
@@ -266,7 +270,7 @@ if($isPost) {
 			die();
 
 
-		//---------- Админский экшн ----------//
+		//---------- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ ----------//
 		if($isEditor) {
 			if($action == 'send') {
 				if($arParams['USE_SUBSCRIBE'] == 'Y') {
@@ -313,7 +317,7 @@ if($isPost) {
 							unset($fields[ $key ]);
 					}
 
-					//Обязательно обновить эти поля если изменяется отзыв
+					//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 					$fields['PAGE_URL']   = $arParams['PAGE_URL'];
 					$fields['PAGE_TITLE'] = $arParams['PAGE_TITLE'];
 
@@ -416,7 +420,7 @@ if($isPost) {
 			}
 		}
 
-		//---------- Публичный экшн ----------//
+		//---------- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ ----------//
 		if($action == 'vote') {
 
 			$vote     = $request->getPost('value');
@@ -466,7 +470,7 @@ if($cache_time > 0 && $cache->initCache($cache_time, $cache_id, $cache_path)) {
 }
 else {
 
-	//Обновление кэша при аякс-изменениях
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	if($cache_time == 0) {
 		//$cache->clean($cache_id, $cache_path);
 		$cache->cleanDir($cache_path);
@@ -796,19 +800,19 @@ else {
 		$taggetCache->endTagCache();
 
 		if($cache_time) {
-			//начинаем буферизирование вывода
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			$cache->startDataCache($cache_time, $cache_id, $cache_path);
 
-			//Кэшируем переменные
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			$cache->endDataCache($arResult);
 		}
 	}
 	else {
 
-		//Отменяем кэширование
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		$cache->abortDataCache();
 
-		//Выводим 404 страницу
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 404 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		Tools::send404(
 			 trim($arParams["MESSAGE_404"]) ?: Loc::getMessage('API_REVIEWS_STATUS_404')
 			 , true

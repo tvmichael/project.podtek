@@ -29,10 +29,11 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
  * @var CMain                    $APPLICATION
  */
 
-Loc::loadMessages(__FILE__);
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('list', $arParams['THEME']),"","/test-1234/log.txt");
 
-if(/*$USER->isAdmin()]*/ $_SERVER['REMOTE_ADDR'] == '188.163.120.85')
-Bitrix\Main\Diag\Debug::writeToFile(array('list'=>$_SERVER),"","/test-1234/log.txt");
+Loc::loadMessages(__FILE__);
 
 if(method_exists($this, 'setFrameMode'))
 	$this->setFrameMode(true);
@@ -45,11 +46,11 @@ $stat_class = ($arParams['USE_STAT'] ? ' api-stat-on' : ' api-stat-off');
 ?>
 	<div id="reviews" class="api-reviews <?=$stat_class?>" itemscope itemtype="http://schema.org/Product">
 		<?
-		$dynamicArea = new \Bitrix\Main\Page\FrameStatic("reviews");
-		$dynamicArea->setAnimation(true);
-		$dynamicArea->setStub('');
-		$dynamicArea->setContainerID("reviews");
-		$dynamicArea->startDynamicArea();
+		//$dynamicArea = new \Bitrix\Main\Page\FrameStatic("reviews");
+		//$dynamicArea->setAnimation(true);
+		//$dynamicArea->setStub('');
+		//$dynamicArea->setContainerID("reviews");
+		//$dynamicArea->startDynamicArea();
 		?>
 		<div class="api-block-top arbt-color-<?=$arParams['COLOR']?>">
 			<?/*
@@ -312,7 +313,7 @@ $stat_class = ($arParams['USE_STAT'] ? ' api-stat-on' : ' api-stat-off');
 			);?>
 		</div>
 		<?
-		$dynamicArea->finishDynamicArea();
+		//$dynamicArea->finishDynamicArea();
 		?>
 	</div>
 <?

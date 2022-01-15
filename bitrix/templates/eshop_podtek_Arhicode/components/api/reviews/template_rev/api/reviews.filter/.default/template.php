@@ -28,6 +28,10 @@ use Bitrix\Main\Page\Asset,
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	die();
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('list:filter'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 if(method_exists($this, 'setFrameMode'))

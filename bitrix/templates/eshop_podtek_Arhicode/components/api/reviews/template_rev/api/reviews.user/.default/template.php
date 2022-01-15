@@ -27,6 +27,10 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
  * @var CMain                    $APPLICATION
  */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('user'),"","/test-1234/log.txt");
+
 Loc::loadMessages(dirname(__FILE__) . '/template.php');
 
 if(method_exists($this, 'setFrameMode'))

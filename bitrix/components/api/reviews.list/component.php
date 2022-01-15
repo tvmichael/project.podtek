@@ -31,6 +31,10 @@ if(!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 /** @global CCacheManager $CACHE_MANAGER */
 
+// --- DEBUG
+if(isset($_REQUEST['log']) && $_REQUEST['log'] == 'write')
+    Bitrix\Main\Diag\Debug::writeToFile(array('api:reviews.list-component'),"","/test-1234/log.txt");
+
 Loc::loadMessages(__FILE__);
 
 $arResultModules = array(
@@ -545,6 +549,9 @@ if($isPost) {
 
 	//return result
 	if($return) {
+        $out = ob_get_clean();
+        unset($out);
+
 		$APPLICATION->RestartBuffer();
 		header('Content-Type: application/json');
 		echo Json::encode($return);
@@ -567,9 +574,9 @@ $cache_id   = $this->getCacheID(array($isEditor, $arFilter, $arSort, $navParams)
 $cache_path = $managedCache->getCompCachePath($this->__relativePath);
 
 //Refresh ajax cache
-if($isClearCache) {
+//if($isClearCache) {
 	$cache_time = 0;
-}
+//}
 
 if($cache_time > 0 && $cache->initCache($cache_time, $cache_id, $cache_path)) {
 

@@ -3,6 +3,8 @@
  */
 (function ($) {
 
+	console.log('api:reviews api:review.list copy');
+
 	"use strict"; // Hide scope, no $ conflict
 
 	var location = window.history.location || window.location;
